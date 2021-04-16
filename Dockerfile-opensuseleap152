@@ -7,7 +7,7 @@ RUN zypper --non-interactive install \
     libopenssl-devel \
     curl \
     git \
-    clang
+    gcc
 
 WORKDIR /tmp/
 COPY install-rust.sh ./

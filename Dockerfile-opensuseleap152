@@ -1,0 +1,14 @@
+FROM opensuse/leap:15.2
+
+RUN zypper update
+RUN zypper --non-interactive install libudev-devel sqlite3-devel libopenssl-devel curl git
+
+WORKDIR /tmp/
+COPY install-rust.sh ./
+RUN chmod +x install-rust.sh
+RUN ./install-rust.sh
+RUN rm install-rust.sh
+
+COPY build_local_arch.sh /usr/local/sbin/
+
+CMD ["/usr/local/sbin/build_local_arch.sh" ]

@@ -66,3 +66,4 @@ cd kanidm_unix_int || {
     exit 1
 }
 cargo build --release --message-format=json
+copy -R /source/target/release/* "${OUTPUT}"

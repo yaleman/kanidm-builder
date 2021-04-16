@@ -11,7 +11,7 @@ fi
 echo "###########################"
 echo "Building images"
 echo "###########################"
-docker-compose build
+docker-compose build || exit 1
 echo "###########################"
 echo "Building kanidm"
 echo "###########################"

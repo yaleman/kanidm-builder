@@ -8,5 +8,12 @@ if [ ! -f ".env" ]; then
     touch .env
 fi
 
+echo "###########################"
+echo "Building images"
+echo "###########################"
 docker-compose build
+echo "###########################"
+echo "Building kanidm"
+echo "###########################"
+
 docker-compose up

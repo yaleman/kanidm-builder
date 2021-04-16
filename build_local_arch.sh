@@ -43,12 +43,14 @@ echo "Running OS-specific things"
 if [ -z "${SOURCE_REPO}" ]; then
     SOURCE_REPO="https://github.com/kanidm/kanidm.git"
 fi
-echo "Building from ${SOURCE_REPO}"
-
-
-
+echo "######################################################"
+echo " Updating rust"
+echo "######################################################"
 rustup default 1.49.0
 
+echo "######################################################"
+echo " Cloning from ${SOURCE_REPO}"
+echo "######################################################"
 git clone "${SOURCE_REPO}" /source/
 
 cd /source/ || {
@@ -56,6 +58,9 @@ cd /source/ || {
     exit 1
 }
 
+echo "######################################################"
+echo " Building kanidm_unix_int"
+echo "######################################################"
 cd kanidm_unix_int || {
     echo "Failed to cd into kanidm_unix_int, bailing"
     exit 1

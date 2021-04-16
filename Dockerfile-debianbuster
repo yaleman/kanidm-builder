@@ -3,8 +3,11 @@ RUN apt-get update
 RUN apt-get install -y git curl build-essential
 
 
+
 #RUN zypper update
 #RUN zypper install libudev-devel sqlite3-devel libopenssl-devel npm-default
+
+
 
 WORKDIR /tmp/
 COPY install-rust.sh ./
@@ -12,6 +15,7 @@ RUN chmod +x install-rust.sh
 RUN ./install-rust.sh
 RUN rm install-rust.sh
 
+RUN apt-get -y install librust-openssl-dev libssl-dev libsqlite3-dev clang
 
 COPY build_local_arch.sh /usr/local/sbin/
 

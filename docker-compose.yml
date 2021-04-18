@@ -7,30 +7,30 @@ services:
         dockerfile: Dockerfile-opensuseleap152
         args:
           - HTTP_PROXY=${HTTP_PROXY}
+          - SOURCE_REPO=${SOURCE_REPO}
     # platform: linux/amd64
     env_file: .env
 
     volumes:
       - ./output:/output/
-    # command: ["/usr/local/sbin/build_local_arch.sh"]
 
-#   ubuntu_bionic:
-#     image: ubuntu:bionic
-#     platform: linux/amd64
-#     env_file: .env
-#     volumes:
-  #       - ./build_local_arch.sh:/usr/local/sbin/build_local_arch.sh
-  #       - ./output
-  #   command: ["/usr/local/sbin/build_local_arch.sh"]
+  ubuntu_bionic:
+    image: ubuntu:bionic
+    # platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: Dockerfile-debianbuster
+      args:
+        - HTTP_PROXY=${HTTP_PROXY}
+        - SOURCE_REPO=${SOURCE_REPO}
+    env_file: .env
 
-  #   ubuntu_focal:
+    volumes:
+      - ./output:/output/
+    command: ["/usr/local/sbin/build_local_arch.sh"]
+
+    # ubuntu_focal:
     #     image: ubuntu:focal
-    #     platform: linux/amd64
-  #     env_file: .env
-    #     volumes:
-#       - ./build_local_arch.sh:/usr/local/sbin/build_local_arch.sh
-#       - ./output
-#     command: ["/usr/local/sbin/build_local_arch.sh"]
 
 
   debian_buster:
@@ -39,6 +39,7 @@ services:
       dockerfile: Dockerfile-debianbuster
       args:
         - HTTP_PROXY=${HTTP_PROXY}
+        - SOURCE_REPO=${SOURCE_REPO}
     # platform: linux/amd64
     env_file: .env
     volumes:

@@ -6,8 +6,5 @@ FROM opensuse/leap:15.2
 RUN zypper update
 RUN zypper --non-interactive install libudev-devel sqlite3-devel libopenssl-devel curl git gcc sccache which pam-devel
 
-# for s3cmd
-RUN zypper --non-interactive install python3-pip python3
-
 INCLUDE+ Dockerfile-common
 

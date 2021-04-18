@@ -4,6 +4,9 @@
 # designed to work on ubuntu/debian/opensuse
 # James Hodgkinson 2021
 
+
+RUST_VERSION="$(cat /etc/RUST_VERSION)"
+
 PATH=/root/.cargo/bin:$PATH
 export PATH
 
@@ -55,25 +58,14 @@ if [ -z "${SOURCE_REPO}" ]; then
 fi
 
 echo "######################################################"
-echo " Updating rust"
+echo " Setting rust version to ${RUST_VERSION}"
 echo "######################################################"
-rustup default 1.49.0
+rustup default "${RUST_VERSION}"
 
 echo "######################################################"
 echo " Cloning from ${SOURCE_REPO}"
 echo "######################################################"
 rm -rf /source/
-
-mkdir -p ~/.ssh/
-chmod 700 ~/.ssh/
-
-cat > "$HOME/.ssh/config" <<-EOF
-Host github.com
-  StrictHostKeyChecking no
-  UserKnownHostsFile=/dev/null
-
-EOF
-
 
 git clone --depth=1 "${SOURCE_REPO}" /source/
 
@@ -96,6 +88,6 @@ git status
 #     exit 1
 # }
 
-cargo build --release
+cargo build --release || exit 1
 
 cp -R /source/target/release/* "${OUTPUT}"

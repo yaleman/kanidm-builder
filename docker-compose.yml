@@ -20,7 +20,7 @@ services:
     # platform: linux/amd64
     build:
       context: ./
-      dockerfile: Dockerfile-debianbuster
+      dockerfile: Dockerfile-ubuntu-bionic
       args:
         - HTTP_PROXY=${HTTP_PROXY}
         - SOURCE_REPO=${SOURCE_REPO}

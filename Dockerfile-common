@@ -3,12 +3,12 @@ WORKDIR /tmp/
 COPY install-rust.sh ./
 RUN chmod +x install-rust.sh
 RUN chown -R 9000 /tmp/
+RUN ./install-rust.sh
+RUN rm install-rust.sh
 
 COPY build_local_arch.sh /usr/local/sbin/
 
-# because we don't need to run as root
-USER 9000
-RUN ./install-rust.sh
-RUN rm install-rust.sh
+# because we don't need to run as root, it'd be nice to do this... but rustup gets in the way
+# USER 9000
 
 CMD ["/usr/local/sbin/build_local_arch.sh" ]

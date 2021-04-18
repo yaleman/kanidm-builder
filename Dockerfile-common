@@ -2,6 +2,8 @@
 COPY RUST_VERSION /etc/RUST_VERSION
 COPY install-rust.sh /usr/local/bin/
 RUN chmod 755 /usr/local/bin/install-rust.sh
+# because paths are hard
+RUN echo 'PATH=$HOME/.cargo/bin:$PATH' >> /etc/profile
 
 WORKDIR /tmp/
 

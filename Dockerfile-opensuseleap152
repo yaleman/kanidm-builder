@@ -1,7 +1,7 @@
 FROM opensuse/leap:15.2
 
 RUN zypper update
-RUN zypper --non-interactive install libudev-devel sqlite3-devel libopenssl-devel curl git gcc sccache
+RUN zypper --non-interactive install libudev-devel sqlite3-devel libopenssl-devel curl git gcc sccache which
 
 WORKDIR /tmp/
 COPY install-rust.sh ./

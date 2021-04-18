@@ -71,7 +71,7 @@ cd /source/ || {
 }
 
 if [ -n "${SOURCE_REPO_BRANCH}" ]; then
-    git checkolut "${SOURCE_REPO_BRANCH}"
+    git checkout "${SOURCE_REPO_BRANCH}"
 fi
 
 git status

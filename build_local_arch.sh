@@ -74,13 +74,16 @@ if [ -n "${SOURCE_REPO_BRANCH}" ]; then
     git checkolut "${SOURCE_REPO_BRANCH}"
 fi
 
-echo "######################################################"
-echo " Building kanidm_unix_int"
-echo "######################################################"
-cd kanidm_unix_int || {
-    echo "Failed to cd into kanidm_unix_int, bailing"
-    exit 1
-}
+git status
+
+# echo "######################################################"
+# echo " Building kanidm_unix_int"
+# echo "######################################################"
+# cd kanidm_unix_int || {
+#     echo "Failed to cd into kanidm_unix_int, bailing"
+#     exit 1
+# }
 
 cargo build --release
+
 cp -R /source/target/release/* "${OUTPUT}"

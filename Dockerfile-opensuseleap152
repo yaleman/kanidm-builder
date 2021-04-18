@@ -1,3 +1,6 @@
+# syntax = edrevo/dockerfile-plus
+# allow using include+
+
 FROM opensuse/leap:15.2
 
 RUN zypper update

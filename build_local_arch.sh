@@ -16,7 +16,7 @@ if [ "$(which sccache | wc -l)" -ne 0 ]; then
 
     $SCCACHE --start-server
 else
-    echo "Couldn't find sccache, output from sccache was:"
+    echo "Couldn't find sccache, output from 'which sccache' was:"
     which -a sccache
 fi
 
@@ -61,7 +61,8 @@ rustup default 1.49.0
 echo "######################################################"
 echo " Cloning from ${SOURCE_REPO}"
 echo "######################################################"
-git clone "${SOURCE_REPO}" /source/
+rm -rf /source/
+git clone --depth=1 "${SOURCE_REPO}" /source/
 
 cd /source/ || {
     echo "Failed to download source from ${SOURCE_REPO} bailing"

@@ -16,4 +16,6 @@ echo "###########################"
 echo "Building kanidm"
 echo "###########################"
 
-docker-compose up
+docker-compose up -d --force-recreate
+
+docker-compose logs -f

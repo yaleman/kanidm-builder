@@ -88,6 +88,18 @@ git status
 #     exit 1
 # }
 
-cargo build --release || exit 1
+if [ -n "$*" ]; then
+    echo "Was requested to do a particular task, will do that"
+    # shellcheck disable=SC2068
+    cargo $@
 
-cp -R /source/target/release/* "${OUTPUT}"
+else
+    echo "Doing default thing, building."
+    cargo test --release --workspace || {
+        echo "Failed to pass tests, not doing build/copy stage"
+        exit 1
+    }
+    cargo build --release || exit 1
+
+    cp -R /source/target/release/* "${OUTPUT}"
+fi

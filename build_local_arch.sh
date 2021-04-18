@@ -63,6 +63,18 @@ echo "######################################################"
 echo " Cloning from ${SOURCE_REPO}"
 echo "######################################################"
 rm -rf /source/
+
+mkdir -p ~/.ssh/
+chmod 700 ~/.ssh/
+
+cat > "$HOME/.ssh/config" <<-EOF
+Host github.com
+  StrictHostKeyChecking no
+  UserKnownHostsFile=/dev/null
+
+EOF
+
+
 git clone --depth=1 "${SOURCE_REPO}" /source/
 
 cd /source/ || {

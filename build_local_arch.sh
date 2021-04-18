@@ -15,6 +15,9 @@ if [ "$(which sccache | wc -l)" -ne 0 ]; then
     export RUSTC_WRAPPER="${SCCACHE}"
 
     $SCCACHE --start-server
+else
+    echo "Couldn't find sccache, output from sccache was:"
+    which -a sccache
 fi
 
 # let's see if we're on suse

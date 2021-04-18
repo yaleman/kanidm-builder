@@ -1,6 +1,6 @@
 FROM debian:buster
 RUN apt-get update
-RUN apt-get install -y git curl build-essential
+RUN apt-get install -y git curl build-essential sccache
 
 
 

@@ -9,6 +9,10 @@ export PATH
 
 BUILD_OUTPUT_BASE='/output' # no trailing slash
 OSID="Unknown"
+SCCACHE="$(which sccache)"
+export RUSTC_WRAPPER="${SCCACHE}"
+
+$SCCACHE --start-server
 
 # let's see if we're on suse
 if [ -f /etc/os-release ]; then
@@ -65,5 +69,7 @@ cd kanidm_unix_int || {
     echo "Failed to cd into kanidm_unix_int, bailing"
     exit 1
 }
+
+
 cargo build --release --message-format=json
 cp -R /source/target/release/* "${OUTPUT}"

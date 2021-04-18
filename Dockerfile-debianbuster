@@ -4,7 +4,7 @@
 FROM debian:buster
 
 RUN apt-get update
-RUN apt-get install -y git curl build-essential librust-openssl-dev libssl-dev libsqlite3-dev clang
+RUN apt-get install -y git curl build-essential librust-openssl-dev libssl-dev libsqlite3-dev clang libudev-dev
 # TODO: get sccache working
 
 INCLUDE+ Dockerfile-common

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RUST_VERSION="$(cat RUST_VERSION)"
+RUST_VERSION="$(cat /etc/RUST_VERSION)"
 
 echo "Installing rust ${RUST_VERSION} with rustup"
 curl --proto '=https' --tlsv1.2 --output /tmp/rustup.sh -sSf https://sh.rustup.rs

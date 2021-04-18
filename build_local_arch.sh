@@ -53,6 +53,7 @@ echo "Running OS-specific things"
 if [ -z "${SOURCE_REPO}" ]; then
     SOURCE_REPO="https://github.com/kanidm/kanidm.git"
 fi
+
 echo "######################################################"
 echo " Updating rust"
 echo "######################################################"
@@ -68,6 +69,10 @@ cd /source/ || {
     echo "Failed to download source from ${SOURCE_REPO} bailing"
     exit 1
 }
+
+if [ -n "${SOURCE_REPO_BRANCH}" ]; then
+    git checkolut "${SOURCE_REPO_BRANCH}"
+fi
 
 echo "######################################################"
 echo " Building kanidm_unix_int"

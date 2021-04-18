@@ -8,6 +8,7 @@ services:
         args:
           - HTTP_PROXY=${HTTP_PROXY}
           - SOURCE_REPO=${SOURCE_REPO}
+          - SOURCE_REPO_BRANCH=${SOURCE_REPO_BRANCH}
     # platform: linux/amd64
     env_file: .env
 
@@ -23,6 +24,7 @@ services:
       args:
         - HTTP_PROXY=${HTTP_PROXY}
         - SOURCE_REPO=${SOURCE_REPO}
+        - SOURCE_REPO_BRANCH=${SOURCE_REPO_BRANCH}
     env_file: .env
 
     volumes:
@@ -40,6 +42,7 @@ services:
       args:
         - HTTP_PROXY=${HTTP_PROXY}
         - SOURCE_REPO=${SOURCE_REPO}
+        - SOURCE_REPO_BRANCH=${SOURCE_REPO_BRANCH}
     # platform: linux/amd64
     env_file: .env
     volumes:

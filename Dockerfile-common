@@ -1,12 +1,14 @@
+
 WORKDIR /tmp/
 COPY install-rust.sh ./
 RUN chmod +x install-rust.sh
-RUN ./install-rust.sh
-RUN rm install-rust.sh
+RUN chown -R 9000 /tmp/
 
 COPY build_local_arch.sh /usr/local/sbin/
 
 # because we don't need to run as root
 USER 9000
+RUN ./install-rust.sh
+RUN rm install-rust.sh
 
 CMD ["/usr/local/sbin/build_local_arch.sh" ]

@@ -7,7 +7,7 @@ services:
         dockerfile: Dockerfile-opensuseleap152
         args:
           - HTTP_PROXY=${HTTP_PROXY}
-    platform: linux/amd64
+    # platform: linux/amd64
     env_file: .env
 
     volumes:
@@ -39,7 +39,7 @@ services:
       dockerfile: Dockerfile-debianbuster
       args:
         - HTTP_PROXY=${HTTP_PROXY}
-    platform: linux/amd64
+    # platform: linux/amd64
     env_file: .env
     volumes:
       - ./output:/output/

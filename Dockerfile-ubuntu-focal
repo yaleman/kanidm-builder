@@ -1,0 +1,6 @@
+# syntax = edrevo/dockerfile-plus
+# allow using include+
+
+FROM ubuntu:focal
+
+INCLUDE+ Dockerfile-ubuntu-common

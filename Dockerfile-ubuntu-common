@@ -1,0 +1,9 @@
+# syntax = edrevo/dockerfile-plus
+# allow using include+
+
+RUN apt-get update
+RUN apt-get install -y git curl build-essential librust-openssl-dev libssl-dev libsqlite3-dev clang libudev-dev libpam0g-dev
+
+# TODO: get sccache working
+
+INCLUDE+ Dockerfile-common

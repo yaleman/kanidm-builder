@@ -14,4 +14,4 @@ RUN /usr/local/bin/install-rust.sh
 
 COPY build_local_arch.sh /usr/local/sbin/
 
-CMD ["/usr/local/sbin/build_local_arch.sh" ]
+ENTRYPOINT ["/usr/local/sbin/build_local_arch.sh" ]

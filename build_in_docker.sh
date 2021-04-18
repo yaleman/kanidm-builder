@@ -1,5 +1,15 @@
 #!/bin/bash
 
+echo "###########################"
+echo "Starting sccache"
+echo "###########################"
+sccache --start-server
+
+echo "###########################"
+echo "Starting sccache"
+echo "###########################"
+sccache -s
+
 # builds the packages in docker
 mkdir -p ./output
 

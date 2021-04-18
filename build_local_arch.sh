@@ -9,10 +9,13 @@ export PATH
 
 BUILD_OUTPUT_BASE='/output' # no trailing slash
 OSID="Unknown"
-SCCACHE="$(which sccache)"
-export RUSTC_WRAPPER="${SCCACHE}"
 
-$SCCACHE --start-server
+if [ "$(which sccache | wc -l)" -ne 0 ]; then
+    SCCACHE="$(which sccache)"
+    export RUSTC_WRAPPER="${SCCACHE}"
+
+    $SCCACHE --start-server
+fi
 
 # let's see if we're on suse
 if [ -f /etc/os-release ]; then

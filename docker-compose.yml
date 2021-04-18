@@ -31,6 +31,8 @@ services:
 #       - ./build_local_arch.sh:/usr/local/sbin/build_local_arch.sh
 #       - ./output
 #     command: ["/usr/local/sbin/build_local_arch.sh"]
+
+
   debian_buster:
     build:
       context: ./
@@ -41,4 +43,3 @@ services:
     env_file: .env
     volumes:
       - ./output:/output/
-    # command: ["/usr/local/sbin/build_local_arch.sh"]

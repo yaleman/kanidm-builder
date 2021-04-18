@@ -11,11 +11,17 @@ fi
 echo "###########################"
 echo "Building images"
 echo "###########################"
-docker-compose build || exit 1
+docker-compose build || {
+    echo "Failed to build docker imags, quitting"
+    exit 1
+}
 echo "###########################"
 echo "Building kanidm"
 echo "###########################"
 
-docker-compose up -d --force-recreate
+docker-compose up -d --force-recreate || {
+    echo "Couldn't bring up instances"
+    exit 1
+}
 
 docker-compose logs -f

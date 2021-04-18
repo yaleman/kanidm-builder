@@ -1,0 +1,12 @@
+# because we don't need to run as root
+USER 9000
+
+WORKDIR /tmp/
+COPY install-rust.sh ./
+RUN chmod +x install-rust.sh
+RUN ./install-rust.sh
+RUN rm install-rust.sh
+
+COPY build_local_arch.sh /usr/local/sbin/
+
+CMD ["/usr/local/sbin/build_local_arch.sh" ]

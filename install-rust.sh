@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+
 if [ -f "/etc/RUST_VERSION" ]; then
     RUST_VERSION="$(cat /etc/RUST_VERSION)"
 elif [ -f "./RUST_VERSION" ]; then

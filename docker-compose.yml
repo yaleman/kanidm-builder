@@ -65,8 +65,8 @@ services:
     volumes:
       - ./output:/output/
       - debian_buster:/source
-  volumes:
-    debian_buster:
-    ubuntu_bionic:
-    opensuse_tumbleweed:
-    opensuse_leap_152:
+volumes:
+  debian_buster:
+  ubuntu_bionic:
+  opensuse_tumbleweed:
+  opensuse_leap_152:

@@ -90,8 +90,9 @@ git status
 
 if [ -n "$*" ]; then
     echo "Was requested to do a particular task, will do that"
+    echo "task: ${*}"
     # shellcheck disable=SC2068
-    cargo $@
+    $@
 
 else
     echo "Doing default thing, building."

@@ -74,9 +74,11 @@ cd /source/ || {
     exit 1
 }
 
+# change to the requested branch
 if [ -n "${SOURCE_REPO_BRANCH}" ]; then
     git checkout -b "${SOURCE_REPO_BRANCH}"
     git pull origin "${SOURCE_REPO_BRANCH}"
+
 fi
 
 git status

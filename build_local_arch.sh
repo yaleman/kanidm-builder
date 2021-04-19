@@ -78,7 +78,7 @@ echo "Doing pwd"
 pwd
 echo "Done pwd"
 
-echo "changing into ${BUILD_DIR}"
+echo "Changing working dir into ${BUILD_DIR}"
 cd "${BUILD_DIR}" || {
     echo "Failed to download source from ${SOURCE_REPO} bailing"
     exit 1

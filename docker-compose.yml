@@ -14,6 +14,7 @@ services:
 
     volumes:
       - ./output:/output/
+      - opensuse_leap_152:/source
 
   opensuse_tumbleweed:
     build:
@@ -28,6 +29,7 @@ services:
 
     volumes:
       - ./output:/output/
+      - opensuse_tumbleweed:/source
 
   build_ubuntu_bionic:
     image: ubuntu:bionic
@@ -43,6 +45,7 @@ services:
 
     volumes:
       - ./output:/output/
+      - ubuntu_bionic:/source
     command: ["/usr/local/sbin/build_local_arch.sh"]
 
     # ubuntu_focal:
@@ -61,3 +64,9 @@ services:
     env_file: .env
     volumes:
       - ./output:/output/
+      - debian_buster:/source
+  volumes:
+    - debian_buster
+    - ubuntu_bionic
+    - opensuse_tumbleweed
+    - opensuse_leap_152

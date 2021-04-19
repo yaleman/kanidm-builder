@@ -37,6 +37,8 @@ if [ -f /etc/os-release ]; then
 
     fi
 fi
+export OSID
+export VERSION
 
 if [ "${OSID}" == "Unknown" ]; then
     echo "Sorry, unsupported OS"

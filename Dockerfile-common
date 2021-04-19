@@ -5,7 +5,6 @@ RUN chmod 755 /usr/local/bin/install-rust.sh
 # because paths are hard
 RUN echo 'PATH=$HOME/.cargo/bin:$PATH' >> /etc/profile
 
-WORKDIR /tmp/
 
 # because we don't need to run as root, it'd be nice to do this... but rustup gets in the way
 # USER 9000

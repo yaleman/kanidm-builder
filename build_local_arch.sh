@@ -62,18 +62,22 @@ echo " Setting rust version to ${RUST_VERSION}"
 echo "######################################################"
 rustup default "${RUST_VERSION}"
 
+BUILD_DIR="/source/${OSID}/${VERSION}"
 echo "######################################################"
-echo " Cloning from ${SOURCE_REPO}"
+echo " Cloning from ${SOURCE_REPO} into ${BUILD_DIR}"
 echo "######################################################"
 
 rm -rf /source/
 
 mkdir -p "/source/${OSID}"
-BUILD_DIR="/source/${OSID}/${VERSION}"
+
 
 git clone --depth=1 "${SOURCE_REPO}" "${BUILD_DIR}"
+echo "Doing pwd"
+pwd
+echo "Done pwd"
 
-
+echo "changing into ${BUILD_DIR}"
 cd "${BUILD_DIR}" || {
     echo "Failed to download source from ${SOURCE_REPO} bailing"
     exit 1

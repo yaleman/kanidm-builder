@@ -31,6 +31,7 @@ services:
 
   ubuntu_bionic:
     image: ubuntu:bionic
+    name: ubuntu_bionic_builder
     # platform: linux/amd64
     build:
       context: ./

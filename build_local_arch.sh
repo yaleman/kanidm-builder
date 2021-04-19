@@ -62,6 +62,7 @@ echo " Setting rust version to ${RUST_VERSION}"
 echo "######################################################"
 rustup default "${RUST_VERSION}"
 
+cd /
 BUILD_DIR="/source/${OSID}/${VERSION}"
 echo "######################################################"
 echo " Cloning from ${SOURCE_REPO} into ${BUILD_DIR}"

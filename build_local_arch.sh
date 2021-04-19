@@ -65,11 +65,16 @@ rustup default "${RUST_VERSION}"
 echo "######################################################"
 echo " Cloning from ${SOURCE_REPO}"
 echo "######################################################"
+
 rm -rf /source/
 
-git clone --depth=1 "${SOURCE_REPO}" /source/
+mkdir -p "/source/${OSID}"
+BUILD_DIR="/source/${OSID}/${VERSION}"
 
-cd /source/ || {
+git clone --depth=1 "${SOURCE_REPO}" "${BUILD_DIR}"
+
+
+cd "${BUILD_DIR}" || {
     echo "Failed to download source from ${SOURCE_REPO} bailing"
     exit 1
 }
@@ -99,11 +104,11 @@ if [ -n "$*" ]; then
 
 else
     echo "Doing default thing, building."
-    cargo test --release --workspace || {
+    cargo test --release || {
         echo "Failed to pass tests, not doing build/copy stage"
         exit 1
     }
     cargo build --release || exit 1
 
-    cp -R /source/target/release/* "${OUTPUT}"
+    rsync --delete -av "${BUILD_DIR}/target/release/kani*" "${OUTPUT}"
 fi

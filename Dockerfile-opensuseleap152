@@ -5,6 +5,7 @@ FROM opensuse/leap:15.2
 
 RUN zypper update
 RUN zypper --non-interactive install libudev-devel sqlite3-devel libopenssl-devel curl git gcc sccache which pam-devel
+RUN zypper clean -a
 
 INCLUDE+ Dockerfile-common
 

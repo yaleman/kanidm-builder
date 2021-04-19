@@ -68,7 +68,7 @@ echo "######################################################"
 echo " Cloning from ${SOURCE_REPO} into ${BUILD_DIR}"
 echo "######################################################"
 
-rm -rf /source/
+rm -rf /source/*
 
 mkdir -p "/source/${OSID}"
 

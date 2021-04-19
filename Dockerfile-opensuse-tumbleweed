@@ -1,0 +1,10 @@
+# syntax = edrevo/dockerfile-plus
+# allow using include+
+
+FROM opensuse/tumbleweed
+
+RUN zypper update
+RUN zypper --non-interactive install libudev-devel sqlite3-devel libopenssl-devel curl git gcc sccache which pam-devel
+
+INCLUDE+ Dockerfile-common
+

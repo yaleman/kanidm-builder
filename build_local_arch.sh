@@ -75,7 +75,8 @@ cd /source/ || {
 }
 
 if [ -n "${SOURCE_REPO_BRANCH}" ]; then
-    git checkout "${SOURCE_REPO_BRANCH}"
+    git checkout -b "${SOURCE_REPO_BRANCH}"
+    git pull "upstream/${SOURCE_REPO_BRANCH}"
 fi
 
 git status

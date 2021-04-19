@@ -29,9 +29,8 @@ services:
     volumes:
       - ./output:/output/
 
-  ubuntu_bionic:
+  build_ubuntu_bionic:
     image: ubuntu:bionic
-    container_name: ubuntu_bionic_builder
     # platform: linux/amd64
     build:
       context: ./

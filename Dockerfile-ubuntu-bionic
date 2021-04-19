@@ -4,7 +4,7 @@
 FROM ubuntu:bionic
 
 RUN apt-get update
-RUN apt-get install -y git curl build-essential libstd-rust-dev libssl-dev libsqlite3-dev clang libudev-dev libpam0g-dev
+RUN apt-get install -y git curl build-essential libstd-rust-dev libssl-dev libsqlite3-dev clang libudev-dev libpam0g-dev python3-pkgconfig
 
 # TODO: get sccache working
 

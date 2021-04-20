@@ -110,7 +110,7 @@ if [ -n "$*" ]; then
 
 else
     echo "Doing default thing, building."
-    cargo test --release || {
+    RUST_BACKTRACE=1 cargo test --release || {
         echo "Failed to pass tests, not doing build/copy stage"
         exit 1
     }

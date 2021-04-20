@@ -72,11 +72,8 @@ rm -rf /source/*
 
 mkdir -p "/source/${OSID}"
 
-
-git clone --depth=1 "${SOURCE_REPO}" "${BUILD_DIR}"
-echo "Doing pwd"
-pwd
-echo "Done pwd"
+git clone "${SOURCE_REPO}" "${BUILD_DIR}"
+git fetch --all
 
 echo "Changing working dir into ${BUILD_DIR}"
 cd "${BUILD_DIR}" || {
@@ -86,11 +83,17 @@ cd "${BUILD_DIR}" || {
 
 # change to the requested branch
 if [ -n "${SOURCE_REPO_BRANCH}" ]; then
-    git checkout -b "${SOURCE_REPO_BRANCH}"
+    git branch --all
+    git fetch "${SOURCE_REPO_BRANCH}"
+    git branch --all
+    git checkout "${SOURCE_REPO_BRANCH}"
+    #git checkout -b "${SOURCE_REPO_BRANCH}"
     #pull origin "${SOURCE_REPO_BRANCH}"
 
 fi
-
+echo "Branches"
+git branch -vv
+echo "Status"
 git status
 
 # echo "######################################################"

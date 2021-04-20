@@ -83,14 +83,15 @@ git fetch --all
 
 # change to the requested branch
 if [ -n "${SOURCE_REPO_BRANCH}" ]; then
+    echo "Listing branches"
     git branch --all
-    git fetch "${SOURCE_REPO_BRANCH}"
-    git branch --all
+    echo "Checking out ${SOURCE_REPO_BRANCH}"
     git checkout "${SOURCE_REPO_BRANCH}"
 fi
-echo "Branches"
+
+echo " ### Branches ### "
 git branch -vv
-echo "Status"
+echo " ### Status ### "
 git status
 
 # echo "######################################################"

@@ -116,5 +116,5 @@ else
     }
     cargo build --release || exit 1
 
-    rsync --delete -av "${BUILD_DIR}/target/release/kani*" "${OUTPUT}"
+    # rsync --delete -av "${BUILD_DIR}/target/release/kani*" "${OUTPUT}"
 fi

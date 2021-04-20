@@ -13,7 +13,7 @@ services:
     env_file: .env
 
     volumes:
-      - ./output:/output/
+      # - ./output:/output/
       - opensuse_leap_152:/source
 
   opensuse_tumbleweed:
@@ -28,7 +28,7 @@ services:
     env_file: .env
 
     volumes:
-      - ./output:/output/
+      # - ./output:/output/
       - opensuse_tumbleweed:/source
 
   build_ubuntu_bionic:
@@ -44,7 +44,7 @@ services:
     env_file: .env
 
     volumes:
-      - ./output:/output/
+      # - ./output:/output/
       - ubuntu_bionic:/source
     command: ["/usr/local/sbin/build_local_arch.sh"]
 
@@ -63,7 +63,7 @@ services:
     # platform: linux/amd64
     env_file: .env
     volumes:
-      - ./output:/output/
+      # - ./output:/output/
       - debian_buster:/source
 volumes:
   debian_buster:

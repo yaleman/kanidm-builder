@@ -3,9 +3,20 @@
 
 FROM opensuse/leap:15.2
 
-RUN zypper update
-RUN zypper --non-interactive install libudev-devel sqlite3-devel libopenssl-devel curl git gcc sccache which pam-devel
+RUN zypper -vv ref
+RUN zypper --non-interactive install \
+    libudev-devel \
+    sqlite3-devel \
+    libopenssl-devel pam-devel \
+    timezone pam \
+    sqlite3-devel sqlite3 \
+    make automake autoconf \
+    sccache \
+    curl git gcc sccache which \
+    iproute2
 RUN zypper clean -a
+RUN ln -s -f /usr/bin/clang /usr/bin/cc && \
+	ln -s -f /usr/bin/ld.lld /usr/bin/ld
 
 INCLUDE+ Dockerfile-common
 

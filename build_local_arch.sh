@@ -73,13 +73,13 @@ rm -rf /source/*
 mkdir -p "/source/${OSID}"
 
 git clone "${SOURCE_REPO}" "${BUILD_DIR}"
-git fetch --all
 
 echo "Changing working dir into ${BUILD_DIR}"
 cd "${BUILD_DIR}" || {
     echo "Failed to download source from ${SOURCE_REPO} bailing"
     exit 1
 }
+git fetch --all
 
 # change to the requested branch
 if [ -n "${SOURCE_REPO_BRANCH}" ]; then
@@ -87,9 +87,6 @@ if [ -n "${SOURCE_REPO_BRANCH}" ]; then
     git fetch "${SOURCE_REPO_BRANCH}"
     git branch --all
     git checkout "${SOURCE_REPO_BRANCH}"
-    #git checkout -b "${SOURCE_REPO_BRANCH}"
-    #pull origin "${SOURCE_REPO_BRANCH}"
-
 fi
 echo "Branches"
 git branch -vv

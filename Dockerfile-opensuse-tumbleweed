@@ -4,7 +4,7 @@
 FROM opensuse/tumbleweed
 
 RUN zypper update
-RUN zypper --non-interactive install libudev-devel sqlite3-devel libopenssl-devel curl git gcc sccache which pam-devel
+RUN zypper --non-interactive install libudev-devel sqlite3-devel libopenssl-devel curl git gcc sccache which pam-devel iproute2
 RUN zypper clean -a
 
 INCLUDE+ Dockerfile-common

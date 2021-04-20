@@ -13,7 +13,7 @@ services:
     env_file: .env
 
     volumes:
-      # - ./output:/output/
+      # - ./outp`ut:/output/
       - opensuse_leap_152:/source
 
   opensuse_tumbleweed:

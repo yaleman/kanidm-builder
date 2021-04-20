@@ -16,8 +16,8 @@ RUN zypper --non-interactive install \
     curl git gcc sccache which \
     iproute2
 RUN zypper clean -a
-RUN ln -s -f /usr/bin/clang /usr/bin/cc && \
-	ln -s -f /usr/bin/ld.lld /usr/bin/ld
+#RUN ln -s -f /usr/bin/clang /usr/bin/cc && \
+#	ln -s -f /usr/bin/ld.lld /usr/bin/ld
 
 INCLUDE+ Dockerfile-common
 

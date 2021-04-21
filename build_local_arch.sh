@@ -78,6 +78,8 @@ echo "######################################################"
 rm -rf /source/*
 
 mkdir -p "/source/${OSID}"
+mkdir -p "/buildlogs/"
+BUILD_LOG="$(date "+%Y-%m-%d-${OS}-${VERSION}").log"
 
 git clone "${SOURCE_REPO}" "${BUILD_DIR}"
 
@@ -113,15 +115,15 @@ if [ -n "$*" ]; then
     echo "Was requested to do a particular task, will do that"
     echo "task: ${*}"
     # shellcheck disable=SC2068
-    $@
+    $@  | tee -a "${BUILD_LOG}"
 
 else
     echo "Doing default thing, building."
-    RUST_BACKTRACE=1 cargo test --release || {
+    RUST_BACKTRACE=1 cargo test --release | tee -a "${BUILD_LOG}" || {
         echo "Failed to pass tests, not doing build/copy stage"
         exit 1
     }
-    cargo build --release || exit 1
+    cargo build --release | tee -a "${BUILD_LOG}" || exit 1
 
     # rsync --delete -av "${BUILD_DIR}/target/release/kani*" "${OUTPUT}"
 fi
@@ -154,3 +156,11 @@ aws --endpoint-url \
     s3 sync \
     "${BUILD_DIR}/target/" \
     "s3://kanidm-builds/${OSID}/${VERSION}"
+
+aws --endpoint-url \
+    --no-verify-ssl \
+    "${S3_HOSTNAME}" \
+    s3 sync \
+    "/buildlogs/" \
+    "s3://kanidm-builds/logs/"
+

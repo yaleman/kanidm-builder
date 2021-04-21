@@ -89,6 +89,7 @@ cd "${BUILD_DIR}" || {
     exit 1
 }
 git fetch --all
+mkdir -p "${BUILD_DIR}/target"
 
 # change to the requested branch
 if [ -n "${SOURCE_REPO_BRANCH}" ]; then
@@ -150,12 +151,13 @@ s3 =
 EOF
 
 # no verify ssl because docker is dumb and ipv6 is hard it seems
+echo "Copying build artifacts to s3"
 aws --endpoint-url "${S3_HOSTNAME}" \
     --no-verify-ssl \
     s3 sync \
     "${BUILD_DIR}/target/" \
     "s3://kanidm-builds/${OSID}/${VERSION}"
-
+echo "Copying build logs to s3"
 aws --endpoint-url "${S3_HOSTNAME}" \
     --no-verify-ssl \
     s3 sync \

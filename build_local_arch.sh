@@ -126,6 +126,9 @@ else
     # rsync --delete -av "${BUILD_DIR}/target/release/kani*" "${OUTPUT}"
 fi
 
+echo "######################################################"
+echo " Done building, copying to s3://kanidm-builds/${OSID}/${VERSION}"
+echo "######################################################"
 
 
 mkdir -p "$HOME/.aws/"
@@ -144,7 +147,7 @@ s3 =
     signature_version = s3v4
 EOF
 
-aws --endpoint-url https://${S3_HOSTNAME} \
+aws --endpoint-url "${S3_HOSTNAME}" \
     s3 sync \
-    "${BUILD_DIR}/target/release/" \
-    "s3://kanidm-builds/${OSID}/$VERSION"
+    "${BUILD_DIR}/target/" \
+    "s3://kanidm-builds/${OSID}/${VERSION}"

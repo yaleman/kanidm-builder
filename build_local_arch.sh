@@ -150,16 +150,14 @@ s3 =
 EOF
 
 # no verify ssl because docker is dumb and ipv6 is hard it seems
-aws --endpoint-url \
+aws --endpoint-url "${S3_HOSTNAME}" \
     --no-verify-ssl \
-    "${S3_HOSTNAME}" \
     s3 sync \
     "${BUILD_DIR}/target/" \
     "s3://kanidm-builds/${OSID}/${VERSION}"
 
-aws --endpoint-url \
+aws --endpoint-url "${S3_HOSTNAME}" \
     --no-verify-ssl \
-    "${S3_HOSTNAME}" \
     s3 sync \
     "/buildlogs/" \
     "s3://kanidm-builds/logs/"

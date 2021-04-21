@@ -147,7 +147,10 @@ s3 =
     signature_version = s3v4
 EOF
 
-aws --endpoint-url "${S3_HOSTNAME}" \
+# no verify ssl because docker is dumb and ipv6 is hard it seems
+aws --endpoint-url \
+    --no-verify-ssl \
+    "${S3_HOSTNAME}" \
     s3 sync \
     "${BUILD_DIR}/target/" \
     "s3://kanidm-builds/${OSID}/${VERSION}"

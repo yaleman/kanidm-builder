@@ -118,3 +118,26 @@ else
 
     # rsync --delete -av "${BUILD_DIR}/target/release/kani*" "${OUTPUT}"
 fi
+
+
+
+mkdir -p "$HOME/.aws/"
+cat > "$HOME/.aws/config" <<-EOF
+[default]
+
+region = us-east-1
+output = json
+EOF
+
+cat > "$HOME/.aws/config" <<-EOF
+[default]
+cli_pager=
+output = json
+s3 =
+    signature_version = s3v4
+EOF
+
+aws --endpoint-url https://${S3_HOSTNAME} \
+    s3 sync \
+    "${BUILD_DIR}/target/release/" \
+    "s3://kanidm-builds/${OSID}/$VERSION"

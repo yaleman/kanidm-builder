@@ -5,11 +5,12 @@ IMAGE_VERSION ?= release
 EXT_OPTS ?=
 #IMAGE_ARCH ?= "linux/amd64,linux/arm64"
 #ARGS ?= --build-arg "SCCACHE_REDIS=redis://172.24.20.4:6379"
+DOCKER_OPTIONS ?=  --env-file .env
 
 .DEFAULT: help
 help:
-	#@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##/\n\t/'
-	echo "help file coming soon"
+	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##/\n\t/'
+	@echo "help file coming soon"
 
 all: build release
 
@@ -30,13 +31,13 @@ build_opensuse_leap_152:
 release: release_ubuntu_bionic release_debian_buster release_opensuse_tumbleweed release_opensuse_leap152
 
 release_ubuntu_bionic:
-	docker run --rm kanidm_build_ubuntu_bionic --name kanidm_build_ubuntu_bionic
+	docker run --rm kanidm_build_ubuntu_bionic --name kanidm_build_ubuntu_bionic $(DOCKER_OPTIONS)
 release_debian_buster:
-	docker run --rm kanidm_build_debian_buster --name kanidm_build_debian_buster
+	docker run --rm kanidm_build_debian_buster --name kanidm_build_debian_buster $(DOCKER_OPTIONS)
 release_opensuse_tumbleweed:
-	docker run --rm kanidm_build_opensuse_tumbleweed --name kanidm_build_opensuse_tumbleweed
+	docker run --rm kanidm_build_opensuse_tumbleweed --name kanidm_build_opensuse_tumbleweed $(DOCKER_OPTIONS)
 release_opensuse_leap152:
-	docker run --rm kanidm_build_opensuse_leap152 --name kanidm_build_opensuse_leap152
+	docker run --rm kanidm_build_opensuse_leap152 --name kanidm_build_opensuse_leap152 $(DOCKER_OPTIONS)
 
 # roll up all the builds
 debian_buster: build_debian_buster release_debian_buster

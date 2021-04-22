@@ -31,9 +31,7 @@ services:
       # - ./output:/output/
       - opensuse_tumbleweed:/source
 
-  build_ubuntu_bionic:
-    image: ubuntu:bionic
-    # platform: linux/amd64
+  ubuntu_bionic:
     build:
       context: ./
       dockerfile: Dockerfile-ubuntu-bionic
@@ -44,13 +42,8 @@ services:
     env_file: .env
 
     volumes:
-      # - ./output:/output/
       - ubuntu_bionic:/source
     command: ["/usr/local/sbin/build_local_arch.sh"]
-
-    # ubuntu_focal:
-    #     image: ubuntu:focal
-
 
   debian_buster:
     build:
@@ -63,7 +56,6 @@ services:
     # platform: linux/amd64
     env_file: .env
     volumes:
-      # - ./output:/output/
       - debian_buster:/source
 volumes:
   debian_buster:

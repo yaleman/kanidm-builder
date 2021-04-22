@@ -5,8 +5,8 @@ RUN apt-get update
 RUN apt-get -y install git curl build-essential
 RUN apt-get -y install libstd-rust-dev libssl-dev
 RUN apt-get -y install libsqlite3-dev clang libudev-dev libpam0g-dev
-#RUN apt-get -y install python3-pkgconfig
-#RUN apt-get -y install awscli
+RUN apt-get -y install python3-pkgconfig
+RUN apt-get -y install awscli
 
 COPY RUST_VERSION /etc/RUST_VERSION
 

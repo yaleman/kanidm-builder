@@ -4,7 +4,7 @@ services:
   opensuse_leap_152:
     build:
         context: ./
-        dockerfile: Dockerfile-opensuseleap152
+        dockerfile: Dockerfile_opensuse_leap152
         args:
           - HTTP_PROXY=${HTTP_PROXY}
           - SOURCE_REPO=${SOURCE_REPO}
@@ -19,7 +19,7 @@ services:
   opensuse_tumbleweed:
     build:
         context: ./
-        dockerfile: Dockerfile-opensuse-tumbleweed
+        dockerfile: Dockerfile_opensuse_tumbleweed
         args:
           - HTTP_PROXY=${HTTP_PROXY}
           - SOURCE_REPO=${SOURCE_REPO}
@@ -34,7 +34,7 @@ services:
   ubuntu_bionic:
     build:
       context: ./
-      dockerfile: Dockerfile-ubuntu-bionic
+      dockerfile: Dockerfile_ubuntu_bionic
       args:
         - HTTP_PROXY=${HTTP_PROXY}
         - SOURCE_REPO=${SOURCE_REPO}
@@ -48,7 +48,7 @@ services:
   debian_buster:
     build:
       context: ./
-      dockerfile: Dockerfile-debianbuster
+      dockerfile: Dockerfile_debian_buster
       args:
         - HTTP_PROXY=${HTTP_PROXY}
         - SOURCE_REPO=${SOURCE_REPO}

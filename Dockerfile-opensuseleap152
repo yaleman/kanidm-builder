@@ -6,12 +6,10 @@ RUN zypper --non-interactive install \
     sqlite3-devel \
     libopenssl-devel pam-devel \
     timezone \
-    #pam \
     sqlite3-devel sqlite3 \
     make automake autoconf \
-    sccache \
     curl git gcc sccache which \
-    iproute2
+    iproute2  aws-cli
 RUN zypper clean -a
 RUN ln -s -f /usr/bin/clang /usr/bin/cc && \
 	ln -s -f /usr/bin/ld.lld /usr/bin/ld

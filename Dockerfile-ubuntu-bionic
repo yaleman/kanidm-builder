@@ -1,11 +1,10 @@
 FROM ubuntu:bionic
 
 RUN apt-get update
-RUN apt-get install -y git curl build-essential \
-    libstd-rust-dev libssl-dev \
-    libsqlite3-dev clang \
-    libudev-dev libpam0g-dev \
-    python3-pkgconfig awscli
+RUN apt-get install -y git curl build-essential
+RUN apt-get install -y libstd-rust-dev libssl-dev
+RUN apt-get install -y libsqlite3-dev clang libudev-dev libpam0g-dev
+RUN apt-get install -y python3-pkgconfig awscli
 
 COPY RUST_VERSION /etc/RUST_VERSION
 

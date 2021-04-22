@@ -1,6 +1,9 @@
 FROM debian:buster
-
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update
+RUN apt-get install tzdata
+RUN ln -fs /usr/share/zoneinfo/Australia/Brisbane /etc/localtime
+RUN dpkg-reconfigure --frontend noninteractive tzdata
 RUN apt-get install -y git curl build-essential librust-openssl-dev libssl-dev libsqlite3-dev clang libudev-dev libpam0g-dev awscli
 
 COPY install-rust.sh /usr/local/bin/

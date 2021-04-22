@@ -155,6 +155,7 @@ echo "Copying build artifacts to s3"
 aws --endpoint-url "${S3_HOSTNAME}" \
     --no-verify-ssl \
     s3 sync \
+     --exclude "**/target/release/**"
     "${BUILD_DIR}/target/" \
     "s3://kanidm-builds/${OSID}/${VERSION}"
 echo "Copying build logs to s3"
@@ -164,3 +165,4 @@ aws --endpoint-url "${S3_HOSTNAME}" \
     "/buildlogs/" \
     "s3://kanidm-builds/logs/"
 
+# skip target/release/build/*

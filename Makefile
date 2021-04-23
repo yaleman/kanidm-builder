@@ -8,9 +8,10 @@ EXT_OPTS ?=
 DOCKER_OPTIONS ?=  --env-file .env
 
 .DEFAULT: help
+
 help:
-	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##/\n\t/'
-	@echo "help file coming soon"
+	@echo "Possible make options:"
+	@bash -c "grep -E '^\S+\:' Makefile | grep -vE '^\.' | awk '{print $$1}'"
 
 all: build release
 

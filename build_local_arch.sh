@@ -124,6 +124,7 @@ else
         echo "Failed to pass tests, not doing build/copy stage"
         exit 1
     }
+    cd kanidmd
     cargo build --release | tee -a "${BUILD_LOG}" || exit 1
 
     # rsync --delete -av "${BUILD_DIR}/target/release/kani*" "${OUTPUT}"

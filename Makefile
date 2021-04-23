@@ -31,13 +31,17 @@ build_opensuse_leap_152:
 release: release_ubuntu_bionic release_debian_buster release_opensuse_tumbleweed release_opensuse_leap152
 
 release_ubuntu_bionic:
-	docker run --rm  $(DOCKER_OPTIONS) --name kanidm_build_ubuntu_bionic kanidm_build_ubuntu_bionic
+	docker run --detach --rm $(DOCKER_OPTIONS) --name kanidm_build_ubuntu_bionic kanidm_build_ubuntu_bionic
+	docker logs -f --name kanidm_build_ubuntu_bionic
 release_debian_buster:
-	docker run --rm  $(DOCKER_OPTIONS) --name kanidm_build_debian_buster kanidm_build_debian_buster
+	docker run --detach --rm $(DOCKER_OPTIONS) --name kanidm_build_debian_buster kanidm_build_debian_buster
+	docker logs -f --name kanidm_build_debian_buster
 release_opensuse_tumbleweed:
-	docker run --rm $(DOCKER_OPTIONS) --name kanidm_build_opensuse_tumbleweed kanidm_build_opensuse_tumbleweed
+	docker run --detach --rm $(DOCKER_OPTIONS) --name kanidm_build_opensuse_tumbleweed kanidm_build_opensuse_tumbleweed
+	docker logs -f --name kanidm_build_opensuse_tumbleweed
 release_opensuse_leap152:
-	docker run --rm $(DOCKER_OPTIONS) --name kanidm_build_opensuse_leap152 kanidm_build_opensuse_leap152
+	docker run --detach --rm $(DOCKER_OPTIONS) --name kanidm_build_opensuse_leap152 kanidm_build_opensuse_leap152
+	docker logs -f --name kanidm_build_opensuse_leap152
 
 # roll up all the builds
 debian_buster: build_debian_buster release_debian_buster

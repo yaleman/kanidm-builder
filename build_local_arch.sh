@@ -23,7 +23,7 @@ else
     echo "Couldn't find sccache, boo."
 fi
 
-EXTRA_BUILD_OPTIONS=""
+# EXTRA_BUILD_OPTIONS=""
 # let's check which OS version we're on
 if [ -f /etc/os-release ]; then
     # SUSE-based
@@ -154,7 +154,7 @@ EOF
     rm -rf "${BUILD_DIR}/target/release/.fingerprint"
 
     echo "Listing files in release dir:"
-    ls -1 "${BUILD_DIR}/target/release" | tee -a "${
+    find "${BUILD_DIR}/target/release" -maxdepth 1 | tee -a "${BUILD_LOG}"
 
     # no verify ssl because docker is dumb and ipv6 is hard it seems
     echo "Copying build artifacts to s3"

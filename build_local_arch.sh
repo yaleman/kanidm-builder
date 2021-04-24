@@ -121,7 +121,7 @@ else
     echo "######################################################"
     echo "Doing build stage"
     echo "######################################################"
-    cargo build --release $EXTRA_BUILD_OPTIONS | tee -a "${BUILD_LOG}" || {
+    cargo build --workspace --release | tee -a "${BUILD_LOG}" || {
         echo "unable to build, bailing"
         exit 1
     }

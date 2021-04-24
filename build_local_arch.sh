@@ -114,14 +114,14 @@ else
     echo "######################################################"
     echo "Doing default thing, running tests."
     echo "######################################################"
-    RUST_BACKTRACE=1 cargo test --release | tee -a "${BUILD_LOG}" || {
+    RUST_BACKTRACE=1 cargo test --release || {
         echo "Failed to pass tests, not doing build/copy stage"
         exit 1
     }
     echo "######################################################"
     echo "Doing build stage"
     echo "######################################################"
-    cargo build --workspace --release | tee -a "${BUILD_LOG}" || {
+    cargo build --workspace --release || {
         echo "unable to build, bailing"
         exit 1
     }
@@ -154,7 +154,7 @@ EOF
     rm -rf "${BUILD_DIR}/target/release/.fingerprint"
 
     echo "Listing files in release dir:"
-    ls -1 "${BUILD_DIR}/target/release"
+    ls -1 "${BUILD_DIR}/target/release" | tee -a "${
 
     # no verify ssl because docker is dumb and ipv6 is hard it seems
     echo "Copying build artifacts to s3"
@@ -162,13 +162,13 @@ EOF
         --no-verify-ssl \
         s3 sync \
         "${BUILD_DIR}/target/release/" \
-        "s3://kanidm-builds/${OSID}/${VERSION}" 2>&1
+        "s3://kanidm-builds/${OSID}/${VERSION}" 2>&1 | grep -v InsecureRequestWarning | tee -a "${BUILD_LOG}"
 
     echo "Copying build logs to s3"
     aws --endpoint-url "${S3_HOSTNAME}" \
         --no-verify-ssl \
         s3 sync \
         "/buildlogs/" \
-        "s3://kanidm-builds/logs/" 2>&1
+        "s3://kanidm-builds/logs/" 2>&1 | grep -v InsecureRequestWarning
 
 fi

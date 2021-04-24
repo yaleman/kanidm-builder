@@ -159,13 +159,13 @@ aws --endpoint-url "${S3_HOSTNAME}" \
      --exclude "target/release/*" \
      --include "target/release/kani*" \
     "${BUILD_DIR}/target/" \
-    "s3://kanidm-builds/${OSID}/${VERSION}"
+    "s3://kanidm-builds/${OSID}/${VERSION}" 2>&1 | grep -v InsecureRequestWarning
 
 echo "Copying build logs to s3"
 aws --endpoint-url "${S3_HOSTNAME}" \
     --no-verify-ssl \
     s3 sync \
     "/buildlogs/" \
-    "s3://kanidm-builds/logs/"
+    "s3://kanidm-builds/logs/" 2>&1 | grep -v InsecureRequestWarning
 
 # skip target/release/build/*

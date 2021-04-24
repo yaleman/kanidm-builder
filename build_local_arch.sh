@@ -150,15 +150,15 @@ output = json
 s3 =
     signature_version = s3v4
 EOF
+rm -rf "${BUILD_DIR}/target/release/{build,deps,examples,incremental}"
+rm -rf "${BUILD_DIR}/target/release/*.dSYM"
 
 # no verify ssl because docker is dumb and ipv6 is hard it seems
 echo "Copying build artifacts to s3"
 aws --endpoint-url "${S3_HOSTNAME}" \
     --no-verify-ssl \
     s3 sync \
-     --exclude "target/release/*" \
-     --include "target/release/kani*" \
-    "${BUILD_DIR}/target/" \
+    "${BUILD_DIR}/target/release/" \
     "s3://kanidm-builds/${OSID}/${VERSION}" 2>&1 | grep -v InsecureRequestWarning
 
 echo "Copying build logs to s3"

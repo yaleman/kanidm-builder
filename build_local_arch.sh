@@ -20,11 +20,11 @@ if [ "$(which sccache | wc -l)" -ne 0 ]; then
 
     $SCCACHE --start-server
 else
-    echo "Couldn't find sccache, output from 'which sccache' was:"
-    which -a sccache
+    echo "Couldn't find sccache, boo."
 fi
 
-# let's see if we're on suse
+EXTRA_BUILD_OPTIONS=""
+# let's check which OS version we're on
 if [ -f /etc/os-release ]; then
     # SUSE-based
     if [ "$(grep -ci suse /etc/os-release)" -gt 0 ]; then
@@ -68,6 +68,12 @@ echo "######################################################"
 echo " Setting rust version to ${RUST_VERSION}"
 echo "######################################################"
 rustup default "${RUST_VERSION}"
+
+echo "######################################################"
+echo " Installing  wasm-pack"
+echo "######################################################"
+cargo install wasm-pack
+npm install --global rollup
 
 cd /
 BUILD_DIR="/source/${OSID}/${VERSION}"
@@ -125,7 +131,11 @@ else
         exit 1
     }
     cd kanidmd
-    cargo build --release | tee -a "${BUILD_LOG}" || exit 1
+    cargo build --release $EXTRA_BUILD_OPTIONS | tee -a "${BUILD_LOG}" || exit 1
+
+    cd "${BUILD_DIR}/kanidmd_web_ui"
+    ./build_wasm.sh
+    tar czvf "${BUILD_DIR}/webui.tar.gz" pkg/*
 
     # rsync --delete -av "${BUILD_DIR}/target/release/kani*" "${OUTPUT}"
 fi

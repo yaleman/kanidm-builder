@@ -13,7 +13,8 @@ RUN apt-get -y install \
     libsqlite3-dev \
     libudev-dev libpam0g-dev \
     python3-pkgconfig \
-    awscli
+    awscli \
+    npm
 
 COPY RUST_VERSION /etc/RUST_VERSION
 

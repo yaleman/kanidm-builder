@@ -39,7 +39,7 @@ release_debian_buster:
 	docker run $(DOCKER_OPTIONS) $(TMPFS) --name kanidm_build_debian_buster kanidm_build_debian_buster
 	docker logs -f kanidm_build_debian_buster
 release_opensuse_tumbleweed:
-	docker run $(DOCKER_OPTIONS) $(TMPFS)--name kanidm_build_opensuse_tumbleweed kanidm_build_opensuse_tumbleweed
+	docker run $(DOCKER_OPTIONS) $(TMPFS) --name kanidm_build_opensuse_tumbleweed kanidm_build_opensuse_tumbleweed
 	docker logs -f kanidm_build_opensuse_tumbleweed
 release_opensuse_leap152:
 	docker run $(DOCKER_OPTIONS) $(TMPFS) --name kanidm_build_opensuse_leap152 kanidm_build_opensuse_leap152

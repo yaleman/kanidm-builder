@@ -121,7 +121,7 @@ else
     echo "######################################################"
     echo "Doing build stage"
     echo "######################################################"
-    cargo build --workspace --release || {
+    cargo build --workspace --bins --release || {
         echo "unable to build, bailing"
         exit 1
     }

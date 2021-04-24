@@ -1,16 +1,11 @@
 FROM opensuse/leap:15.2
 
 RUN zypper -vv ref
-RUN zypper --non-interactive install \
-    libudev-devel \
-    sqlite3-devel \
-    libopenssl-devel pam-devel \
-    timezone \
-    sqlite3-devel sqlite3 \
-    make automake autoconf \
-    curl git gcc sccache which \
-    iproute2  aws-cli
+RUN zypper --non-interactive install libudev-devel sqlite3-devel libopenssl-devel pam-devel timezone sqlite3 make automake autoconf curl git gcc sccache which iproute2 aws-cli lld
 RUN zypper clean -a
+
+RUN ln -s -f /usr/bin/clang /usr/bin/cc
+RUN ln -s -f /usr/bin/ld.lld /usr/bin/ld
 
 COPY install-rust.sh /usr/local/bin/
 COPY RUST_VERSION /etc/RUST_VERSION

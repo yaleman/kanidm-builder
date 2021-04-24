@@ -1,7 +1,7 @@
 FROM opensuse/leap:15.2
 
 RUN zypper -vv ref
-RUN zypper --non-interactive install libudev-devel sqlite3-devel libopenssl-devel pam-devel timezone sqlite3 make automake autoconf curl git gcc sccache which iproute2 aws-cli lld
+RUN zypper --non-interactive install libudev-devel sqlite3-devel libopenssl-devel pam-devel timezone sqlite3 make automake autoconf curl git gcc sccache which iproute2 aws-cli lld clang
 RUN zypper clean -a
 
 RUN ln -s -f /usr/bin/clang /usr/bin/cc

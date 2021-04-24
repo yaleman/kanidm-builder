@@ -1,4 +1,4 @@
-.PHONY: help build/kanidmd build/radiusd test/kanidmd push/kanidmd push/radiusd vendor-prep doc install-tools prep vendor
+.PHONY: help all build build_ubuntu_bionic build_debian_buster build_opensuse_tumbleweed build_opensuse_leap_152 release release_ubuntu_bionic release_debian_buster release_opensuse_tumbleweed release_opensuse_leap152 debian_buster ubuntu_bionic opensuse_leap_152 opensuse_tumbleweed clean
 
 IMAGE_BASE ?= kanidm
 IMAGE_VERSION ?= release

@@ -6,7 +6,6 @@ EXT_OPTS ?=
 #IMAGE_ARCH ?= "linux/amd64,linux/arm64"
 #ARGS ?= --build-arg "SCCACHE_REDIS=redis://172.24.20.4:6379"
 DOCKER_OPTIONS ?= --detach --rm --env-file .env
-TMPFS = --mount type=tmpfs,destination=/source
 
 .DEFAULT: help
 
@@ -33,16 +32,24 @@ build_opensuse_leap_152:
 release: release_ubuntu_bionic release_debian_buster release_opensuse_tumbleweed release_opensuse_leap152
 
 release_ubuntu_bionic:
-	docker run $(DOCKER_OPTIONS) $(TMPFS) --name kanidm_build_ubuntu_bionic kanidm_build_ubuntu_bionic
+	docker volume rm kanidm_build_ubuntu_bionic
+	docker volume create kanidm_build_ubuntu_bionic
+	docker run $(DOCKER_OPTIONS) --volume "kanidm_build_ubuntu_bionic:/source"  --name kanidm_build_ubuntu_bionic kanidm_build_ubuntu_bionic
 	docker logs -f kanidm_build_ubuntu_bionic
 release_debian_buster:
-	docker run $(DOCKER_OPTIONS) $(TMPFS) --name kanidm_build_debian_buster kanidm_build_debian_buster
+	docker volume rm kanidm_build_debian_buster
+	docker volume create kanidm_build_debian_buster
+	docker run $(DOCKER_OPTIONS) --volume "kanidm_build_ubuntu_bionic:/source" --name kanidm_build_debian_buster kanidm_build_debian_buster
 	docker logs -f kanidm_build_debian_buster
 release_opensuse_tumbleweed:
-	docker run $(DOCKER_OPTIONS) $(TMPFS) --name kanidm_build_opensuse_tumbleweed kanidm_build_opensuse_tumbleweed
+	docker volume rm kanidm_build_opensuse_tumbleweed
+	docker volume create kanidm_build_opensuse_tumbleweed
+	docker run $(DOCKER_OPTIONS) --volume "kanidm_build_ubuntu_bionic:/source" --name kanidm_build_opensuse_tumbleweed kanidm_build_opensuse_tumbleweed
 	docker logs -f kanidm_build_opensuse_tumbleweed
 release_opensuse_leap152:
-	docker run $(DOCKER_OPTIONS) $(TMPFS) --name kanidm_build_opensuse_leap152 kanidm_build_opensuse_leap152
+	docker volume rm kanidm_build_opensuse_leap152
+	docker volume create kanidm_build_opensuse_leap152
+	docker run $(DOCKER_OPTIONS) --volume "kanidm_build_ubuntu_bionic:/source" --name kanidm_build_opensuse_leap152 kanidm_build_opensuse_leap152
 	docker logs -f kanidm_build_opensuse_leap152
 
 # roll up all the builds

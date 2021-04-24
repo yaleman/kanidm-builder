@@ -153,19 +153,22 @@ EOF
     rm -rf "${BUILD_DIR}/target/release/*.dSYM"
     rm -rf "${BUILD_DIR}/target/release/.fingerprint"
 
+    echo "Listing files in release dir:"
+    ls -1 "${BUILD_DIR}/target/release"
+
     # no verify ssl because docker is dumb and ipv6 is hard it seems
     echo "Copying build artifacts to s3"
     aws --endpoint-url "${S3_HOSTNAME}" \
         --no-verify-ssl \
         s3 sync \
         "${BUILD_DIR}/target/release/" \
-        "s3://kanidm-builds/${OSID}/${VERSION}" 2>&1 | grep -v InsecureRequestWarning | grep -v 'warnings.warn'
+        "s3://kanidm-builds/${OSID}/${VERSION}" 2>&1
 
     echo "Copying build logs to s3"
     aws --endpoint-url "${S3_HOSTNAME}" \
         --no-verify-ssl \
         s3 sync \
         "/buildlogs/" \
-        "s3://kanidm-builds/logs/" 2>&1 | grep -v InsecureRequestWarning | grep -v 'warnings.warn'
+        "s3://kanidm-builds/logs/" 2>&1
 
 fi

@@ -39,35 +39,26 @@ release_ubuntu_bionic:
 	docker volume create kanidm_build_ubuntu_bionic
 	docker run $(DOCKER_OPTIONS) --volume "kanidm_build_ubuntu_bionic:/source"  --name kanidm_build_ubuntu_bionic kanidm_build_ubuntu_bionic
 	docker logs -f kanidm_build_ubuntu_bionic
-	@-docker volume rm kanidm_build_ubuntu_bionic ||:
 release_debian_buster:
 	@-docker volume rm kanidm_build_debian_buster ||:
 	docker volume create kanidm_build_debian_buster
 	docker run $(DOCKER_OPTIONS) --volume "kanidm_build_debian_buster:/source" --name kanidm_build_debian_buster kanidm_build_debian_buster
 	docker logs -f kanidm_build_debian_buster
-	@-docker volume rm kanidm_build_debian_buster ||:
 release_opensuse_tumbleweed:
 	@-docker volume rm kanidm_build_opensuse_tumbleweed ||:
 	docker volume create kanidm_build_opensuse_tumbleweed
 	docker run $(DOCKER_OPTIONS) --volume "kanidm_build_opensuse_tumbleweed:/source" --name kanidm_build_opensuse_tumbleweed kanidm_build_opensuse_tumbleweed
 	docker logs -f kanidm_build_opensuse_tumbleweed
-	@-docker volume rm kanidm_build_opensuse_tumbleweed ||:
-
 release_opensuse_leap152:
 	@-docker volume rm kanidm_build_opensuse_leap152 ||:
 	docker volume create kanidm_build_opensuse_leap152
 	docker run $(DOCKER_OPTIONS) --volume "kanidm_build_opensuse_leap152:/source" --name kanidm_build_opensuse_leap152 kanidm_build_opensuse_leap152
 	docker logs -f kanidm_build_opensuse_leap152
-	@-docker volume rm kanidm_build_opensuse_leap152 ||:
-
 release_wasm:
 	@-docker volume rm kanidm_build_wasm ||:
 	docker volume create kanidm_build_wasm
 	docker run $(DOCKER_OPTIONS) --volume "kanidm_build_wasm:/source" --name kanidm_build_wasm kanidm_build_wasm
 	docker logs -f kanidm_build_wasm
-	@-docker volume rm kanidm_build_wasm ||:
-
-
 
 # roll up all the builds
 debian_buster: build_debian_buster release_debian_buster

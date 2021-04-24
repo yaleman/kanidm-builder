@@ -155,6 +155,7 @@ rm -rf "${BUILD_DIR}/target/release/deps"
 rm -rf "${BUILD_DIR}/target/release/examples"
 rm -rf "${BUILD_DIR}/target/release/incremental"
 rm -rf "${BUILD_DIR}/target/release/*.dSYM"
+rm -rf "${BUILD_DIR}/target/release/.fingerprint"
 
 # no verify ssl because docker is dumb and ipv6 is hard it seems
 echo "Copying build artifacts to s3"

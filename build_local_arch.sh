@@ -125,16 +125,30 @@ if [ -n "$*" ]; then
     $@  | tee -a "${BUILD_LOG}"
 
 else
-    echo "Doing default thing, building."
+    echo "######################################################"
+    echo "Doing default thing, running tests."
+    echo "######################################################"
     RUST_BACKTRACE=1 cargo test --release | tee -a "${BUILD_LOG}" || {
         echo "Failed to pass tests, not doing build/copy stage"
         exit 1
     }
+    echo "######################################################"
+    echo "Doing build stage"
+    echo "######################################################"
     cd kanidmd
-    cargo build --release $EXTRA_BUILD_OPTIONS | tee -a "${BUILD_LOG}" || exit 1
+    cargo build --release $EXTRA_BUILD_OPTIONS | tee -a "${BUILD_LOG}" || {
+        echo "unable to build, bailing"
+        exit 1
+    }
+    echo "######################################################"
+    echo "Building webui"
+    echo "######################################################"
 
     cd "${BUILD_DIR}/kanidmd_web_ui"
-    ./build_wasm.sh
+    ./build_wasm.sh || {
+        echo "Unable to build WASM, bailing"
+        exit 1
+    }
     tar czvf "${BUILD_DIR}/webui.tar.gz" pkg/*
 
     # rsync --delete -av "${BUILD_DIR}/target/release/kani*" "${OUTPUT}"

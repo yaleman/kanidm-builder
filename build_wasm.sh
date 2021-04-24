@@ -108,6 +108,11 @@ git branch -vv
 echo " ### Status ### "
 git status
 
+echo "######################################################"
+echo " Building WASM UI"
+echo "######################################################"
+
+
 
 cd "${BUILD_DIR}/kanidmd_web_ui" || {
     echo "Coudln't move into ${BUILD_DIR}/kanidmd_web_ui bailing"

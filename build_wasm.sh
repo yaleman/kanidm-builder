@@ -122,6 +122,12 @@ cd "${BUILD_DIR}/kanidmd_web_ui" || {
     echo "Unable to build WASM, bailing"
     exit 1
 }
+
+
+echo "######################################################"
+echo " Compressing widget"
+echo "######################################################"
+
 tar czvf "${BUILD_DIR}/webui.tar.gz" pkg/*
 
 echo "######################################################"

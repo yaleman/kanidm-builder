@@ -4,7 +4,7 @@ ARG TUMBLEWEED_REPO_OSS=http://download.opensuse.org/tumbleweed/repo/oss/
 RUN /usr/bin/sed -ibak -e "s#baseurl.*#baseurl=$TUMBLEWEED_REPO_OSS#" /etc/zypp/repos.d/repo-oss.repo
 
 RUN zypper refresh
-RUN zypper update
+RUN zypper --non-interactive update
 RUN zypper --non-interactive install \
     libudev-devel libopenssl-devel \
     sqlite3-devel \
@@ -27,7 +27,7 @@ RUN echo 'PATH=$HOME/.cargo/bin:$PATH' >> /etc/profile
 
 RUN /usr/local/bin/install-rust.sh
 
-COPY build_local_arch.sh /usr/local/sbin/
-RUN chmod 755 /usr/local/sbin/build_local_arch.sh
+COPY build_wasm.sh /usr/local/sbin/
+RUN chmod 755 /usr/local/sbin/build_wasm.sh
 
-ENTRYPOINT ["/usr/local/sbin/build_local_arch.sh" ]
+ENTRYPOINT ["/usr/local/sbin/build_wasm.sh" ]

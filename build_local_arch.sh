@@ -138,48 +138,48 @@ else
     tar czvf "${BUILD_DIR}/webui.tar.gz" pkg/*
 
     # rsync --delete -av "${BUILD_DIR}/target/release/kani*" "${OUTPUT}"
-fi
-
-echo "######################################################"
-echo " Done building, copying to s3://kanidm-builds/${OSID}/${VERSION}"
-echo "######################################################"
 
 
-mkdir -p "$HOME/.aws/"
-cat > "$HOME/.aws/config" <<-EOF
+    echo "######################################################"
+    echo " Done building, copying to s3://kanidm-builds/${OSID}/${VERSION}"
+    echo "######################################################"
+
+
+    mkdir -p "$HOME/.aws/"
+    cat > "$HOME/.aws/config" <<-EOF
 [default]
 
 region = us-east-1
 output = json
 EOF
 
-cat > "$HOME/.aws/config" <<-EOF
+    cat > "$HOME/.aws/config" <<-EOF
 [default]
 cli_pager=
 output = json
 s3 =
-    signature_version = s3v4
+signature_version = s3v4
 EOF
-rm -rf "${BUILD_DIR}/target/release/build"
-rm -rf "${BUILD_DIR}/target/release/deps"
-rm -rf "${BUILD_DIR}/target/release/examples"
-rm -rf "${BUILD_DIR}/target/release/incremental"
-rm -rf "${BUILD_DIR}/target/release/*.dSYM"
-rm -rf "${BUILD_DIR}/target/release/.fingerprint"
+    rm -rf "${BUILD_DIR}/target/release/build"
+    rm -rf "${BUILD_DIR}/target/release/deps"
+    rm -rf "${BUILD_DIR}/target/release/examples"
+    rm -rf "${BUILD_DIR}/target/release/incremental"
+    rm -rf "${BUILD_DIR}/target/release/*.dSYM"
+    rm -rf "${BUILD_DIR}/target/release/.fingerprint"
 
-# no verify ssl because docker is dumb and ipv6 is hard it seems
-echo "Copying build artifacts to s3"
-aws --endpoint-url "${S3_HOSTNAME}" \
-    --no-verify-ssl \
-    s3 sync \
-    "${BUILD_DIR}/target/release/" \
-    "s3://kanidm-builds/${OSID}/${VERSION}" 2>&1 | grep -v InsecureRequestWarning | grep -v 'warnings.warn'
+    # no verify ssl because docker is dumb and ipv6 is hard it seems
+    echo "Copying build artifacts to s3"
+    aws --endpoint-url "${S3_HOSTNAME}" \
+        --no-verify-ssl \
+        s3 sync \
+        "${BUILD_DIR}/target/release/" \
+        "s3://kanidm-builds/${OSID}/${VERSION}" 2>&1 | grep -v InsecureRequestWarning | grep -v 'warnings.warn'
 
-echo "Copying build logs to s3"
-aws --endpoint-url "${S3_HOSTNAME}" \
-    --no-verify-ssl \
-    s3 sync \
-    "/buildlogs/" \
-    "s3://kanidm-builds/logs/" 2>&1 | grep -v InsecureRequestWarning| grep -v 'warnings.warn'
+    echo "Copying build logs to s3"
+    aws --endpoint-url "${S3_HOSTNAME}" \
+        --no-verify-ssl \
+        s3 sync \
+        "/buildlogs/" \
+        "s3://kanidm-builds/logs/" 2>&1 | grep -v InsecureRequestWarning | grep -v 'warnings.warn'
 
-# skip target/release/build/*
+fi

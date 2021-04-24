@@ -10,9 +10,7 @@ RUN zypper --non-interactive install \
     sqlite3-devel \
     curl git gcc sccache which \
     pam-devel \
-    iproute2 aws-cli \
-    nodejs-default npm-default \
-    tar gzip
+    iproute2 aws-cli
 RUN zypper clean -a
 
 COPY install-rust.sh /usr/local/bin/

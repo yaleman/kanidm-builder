@@ -1,13 +1,19 @@
-FROM debian:buster
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update
-RUN apt-get install tzdata
-RUN ln -fs /usr/share/zoneinfo/Australia/Brisbane /etc/localtime
-RUN dpkg-reconfigure --frontend noninteractive tzdata
-RUN apt-get install -y git curl \
-    clang build-essential \
-    librust-openssl-dev libssl-dev libsqlite3-dev libudev-dev libpam0g-dev \
-    awscli
+FROM opensuse/tumbleweed
+
+ARG TUMBLEWEED_REPO_OSS=http://download.opensuse.org/tumbleweed/repo/oss/
+RUN /usr/bin/sed -ibak -e "s#baseurl.*#baseurl=$TUMBLEWEED_REPO_OSS#" /etc/zypp/repos.d/repo-oss.repo
+
+RUN zypper refresh
+RUN zypper update
+RUN zypper --non-interactive install \
+    libudev-devel libopenssl-devel \
+    sqlite3-devel \
+    curl git gcc sccache which \
+    pam-devel \
+    iproute2 aws-cli \
+    nodejs-default npm-default \
+    tar gzip
+RUN zypper clean -a
 
 COPY install-rust.sh /usr/local/bin/
 COPY RUST_VERSION /etc/RUST_VERSION

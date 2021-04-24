@@ -1,9 +1,8 @@
 #!/bin/bash
 
-# builds kanidm on the local architecture
+# builds kanidm's wasm on opensuse_tumbleweed
 # designed to work on ubuntu/debian/opensuse
 # James Hodgkinson 2021
-
 
 RUST_VERSION="$(cat /etc/RUST_VERSION)"
 
@@ -23,7 +22,6 @@ else
     echo "Couldn't find sccache, boo."
 fi
 
-EXTRA_BUILD_OPTIONS=""
 # let's check which OS version we're on
 if [ -f /etc/os-release ]; then
     # SUSE-based
@@ -69,6 +67,12 @@ echo " Setting rust version to ${RUST_VERSION}"
 echo "######################################################"
 rustup default "${RUST_VERSION}"
 
+echo "######################################################"
+echo " Installing  wasm-pack"
+echo "######################################################"
+cargo install wasm-pack
+npm install --global rollup
+
 cd /
 BUILD_DIR="/source/${OSID}/${VERSION}"
 echo "######################################################"
@@ -104,68 +108,42 @@ git branch -vv
 echo " ### Status ### "
 git status
 
-if [ -n "$*" ]; then
-    echo "Was requested to do a particular task, will do that"
-    echo "task: ${*}"
-    # shellcheck disable=SC2068
-    $@  | tee -a "${BUILD_LOG}"
 
-else
-    echo "######################################################"
-    echo "Doing default thing, running tests."
-    echo "######################################################"
-    RUST_BACKTRACE=1 cargo test --release | tee -a "${BUILD_LOG}" || {
-        echo "Failed to pass tests, not doing build/copy stage"
-        exit 1
-    }
-    echo "######################################################"
-    echo "Doing build stage"
-    echo "######################################################"
-    cargo build --release $EXTRA_BUILD_OPTIONS | tee -a "${BUILD_LOG}" || {
-        echo "unable to build, bailing"
-        exit 1
-    }
+cd "${BUILD_DIR}/kanidmd_web_ui" || {
+    echo "Coudln't move into ${BUILD_DIR}/kanidmd_web_ui bailing"
+    exit 1
+}
+./build_wasm.sh || {
+    echo "Unable to build WASM, bailing"
+    exit 1
+}
+tar czvf "${BUILD_DIR}/webui.tar.gz" pkg/*
 
-    echo "######################################################"
-    echo " Done building, copying to s3://kanidm-builds/${OSID}/${VERSION}"
-    echo "######################################################"
+echo "######################################################"
+echo " Done building, copying to s3://kanidm-builds/"
+echo "######################################################"
 
 
-    mkdir -p "$HOME/.aws/"
-    cat > "$HOME/.aws/config" <<-EOF
+mkdir -p "$HOME/.aws/"
+cat > "$HOME/.aws/config" <<-EOF
 [default]
 
 region = us-east-1
 output = json
 EOF
 
-    cat > "$HOME/.aws/config" <<-EOF
+cat > "$HOME/.aws/config" <<-EOF
 [default]
 cli_pager=
 output = json
 s3 =
 signature_version = s3v4
 EOF
-    rm -rf "${BUILD_DIR}/target/release/build"
-    rm -rf "${BUILD_DIR}/target/release/deps"
-    rm -rf "${BUILD_DIR}/target/release/examples"
-    rm -rf "${BUILD_DIR}/target/release/incremental"
-    rm -rf "${BUILD_DIR}/target/release/*.dSYM"
-    rm -rf "${BUILD_DIR}/target/release/.fingerprint"
 
-    # no verify ssl because docker is dumb and ipv6 is hard it seems
-    echo "Copying build artifacts to s3"
-    aws --endpoint-url "${S3_HOSTNAME}" \
-        --no-verify-ssl \
-        s3 sync \
-        "${BUILD_DIR}/target/release/" \
-        "s3://kanidm-builds/${OSID}/${VERSION}" 2>&1 | grep -v InsecureRequestWarning | grep -v 'warnings.warn'
-
-    echo "Copying build logs to s3"
-    aws --endpoint-url "${S3_HOSTNAME}" \
-        --no-verify-ssl \
-        s3 sync \
-        "/buildlogs/" \
-        "s3://kanidm-builds/logs/" 2>&1 | grep -v InsecureRequestWarning | grep -v 'warnings.warn'
-
-fi
+# no verify ssl because docker is dumb and ipv6 is hard it seems
+echo "Copying build artifacts to s3"
+aws --endpoint-url "${S3_HOSTNAME}" \
+    --no-verify-ssl \
+    s3 sync \
+    "${BUILD_DIR}/webui.tar.gz" \
+    "s3://kanidm-builds/" 2>&1 | grep -v InsecureRequestWarning | grep -v 'warnings.warn'

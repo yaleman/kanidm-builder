@@ -144,13 +144,16 @@ EOF
     rm -rf "${BUILD_DIR}/target/release/*.dSYM"
     rm -rf "${BUILD_DIR}/target/release/.fingerprint"
 
-    echo "Listing files in release dir:"
-    find "${BUILD_DIR}/target/release" -maxdepth 1 | tee -a "${BUILD_LOG}"
 
-    # no verify ssl because docker is dumb and ipv6 is hard it seems
+
     S3_SOURCE="${BUILD_DIR}/target/release/"
     S3_DESTINATION="s3://kanidm-builds/${OSID}/${VERSION}/$(uname -m)/"
+
+    echo "Listing files in release dir:"
+    find "${S3_SOURCE}" -maxdepth 1 | tee -a "${BUILD_LOG}"
+
     echo "Copying build artifacts to s3 (source=${S3_SOURCE} destination=${S3_DESTINATION})"
+    # no verify ssl because docker is dumb and ipv6 is hard it seems
     aws --debug --endpoint-url "${S3_HOSTNAME}" \
         --no-verify-ssl \
         s3 sync "${S3_SOURCE}" "${S3_DESTINATION}"

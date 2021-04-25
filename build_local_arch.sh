@@ -34,7 +34,7 @@ fi
 # EXTRA_BUILD_OPTIONS=""
 # let's check which OS version we're on
 # shellcheck disable=SC1091
-source /usr/local/bin/identify_os.sh
+source /etc/profile.d/identify_os.sh
 
 if [ "${OSID}" == "Unknown" ]; then
     echo "Sorry, unsupported OS"

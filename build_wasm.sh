@@ -157,4 +157,9 @@ aws --endpoint-url "${S3_HOSTNAME}" \
     --no-verify-ssl \
     s3 cp \
     "${BUILD_DIR}/webui.tar.gz" \
-    "s3://kanidm-builds/" 2>&1 | grep -v InsecureRequestWarning | grep -v 'warnings.warn'
+    "s3://kanidm-builds/" 2>&1
+
+
+echo "######################################################"
+echo " Done copying to s3://kanidm-builds/"
+echo "######################################################"

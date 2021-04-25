@@ -148,12 +148,12 @@ EOF
     find "${BUILD_DIR}/target/release" -maxdepth 1 | tee -a "${BUILD_LOG}"
 
     # no verify ssl because docker is dumb and ipv6 is hard it seems
-    echo "Copying build artifacts to s3"
-    aws --endpoint-url "${S3_HOSTNAME}" \
+    S3_SOURCE="${BUILD_DIR}/target/release/"
+    S3_DESTINATION="s3://kanidm-builds/${OSID}/${VERSION}/$(uname -m)/"
+    echo "Copying build artifacts to s3 (source=${S3_SOURCE} destination=${S3_DESTINATION})"
+    aws --debug --endpoint-url "${S3_HOSTNAME}" \
         --no-verify-ssl \
-        s3 sync \
-        "${BUILD_DIR}/target/release/" \
-        "s3://kanidm-builds/${OSID}/${VERSION}/$(uname -m)/" 2>&1 | grep -v InsecureRequestWarning
+        s3 sync "${S3_SOURCE}" "${S3_DESTINATION}"
 
     echo "Copying build logs to s3"
     aws --endpoint-url "${S3_HOSTNAME}" \

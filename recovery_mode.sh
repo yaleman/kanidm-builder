@@ -10,7 +10,7 @@ echo "######################################"
 echo 'aws --endpoint-url "${S3_HOSTNAME}" \
         --no-verify-ssl \
         s3 sync \
-        "/data/opensuse-tumbleweed/unknown/target/release" \
+        "/data/${OSID}/${VERSION}/target/release" \
         "s3://kanidm-builds/${OSID}/${VERSION}/$(uname -m)/" 2>&1'
 
 echo "######################################"

@@ -162,7 +162,7 @@ EOF
         --no-verify-ssl \
         s3 sync \
         "${BUILD_DIR}/target/release/" \
-        "s3://kanidm-builds/${OSID}/${VERSION}" 2>&1 | grep -v InsecureRequestWarning | tee -a "${BUILD_LOG}"
+        "s3://kanidm-builds/${OSID}/${VERSION}/$(uname -m)/" 2>&1 | grep -v InsecureRequestWarning | tee -a "${BUILD_LOG}"
 
     echo "Copying build logs to s3"
     aws --endpoint-url "${S3_HOSTNAME}" \

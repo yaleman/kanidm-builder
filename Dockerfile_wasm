@@ -17,6 +17,8 @@ RUN zypper clean -a
 
 COPY install-rust.sh /usr/local/bin/
 COPY RUST_VERSION /etc/RUST_VERSION
+COPY identify_os.sh /etc/profile.d/identify_os.sh
+
 
 RUN chmod 755 /usr/local/bin/install-rust.sh
 # because paths are hard

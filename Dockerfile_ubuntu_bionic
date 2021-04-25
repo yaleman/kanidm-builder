@@ -16,6 +16,8 @@ RUN apt-get -y install \
     awscli
 
 COPY RUST_VERSION /etc/RUST_VERSION
+COPY identify_os.sh /etc/profile.d/identify_os.sh
+
 
 COPY install-rust.sh /usr/local/bin/
 RUN chmod 755 /usr/local/bin/install-rust.sh

@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ -z "$1" ]; then
+        echo "Didn't specify a volume to recover, here's a list"
+        docker volume ls | awk '{print $2}' | grep -E '^kanidm_build'
+        exit 1
+fi
+
 echo "######################################"
 echo " RECOVERY COMMANDS"
 echo "######################################"

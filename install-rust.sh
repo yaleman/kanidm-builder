@@ -14,7 +14,7 @@ fi
 echo "Installing rust ${RUST_VERSION} with rustup"
 curl --proto '=https' --tlsv1.2 --output /tmp/rustup.sh -sSf https://sh.rustup.rs
 chmod +x /tmp/rustup.sh
-/tmp/rustup.sh -y
+/tmp/rustup.sh -y --default-toolchain "${RUST_VERSION}"
 rm /tmp/rustup.sh
 
 PATH=/root/.cargo/bin:$PATH

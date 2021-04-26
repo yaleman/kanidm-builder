@@ -37,6 +37,7 @@ if [ "$(which sccache | wc -l)" -ne 0 ]; then
     export RUSTC_WRAPPER="${SCCACHE}"
 
     $SCCACHE --start-server
+    sleep 2
     $SCCACHE -s
 else
     echo "######################################################"

@@ -16,6 +16,6 @@ It's designed to be able to push the artifacts to an S3 bucket
 
  ## In case of failure
 
- `recovery_mode.sh` will mount the volume with the last build, with the image it was generated with - if you used the build tooling...
+ `recovery_mode.sh` will mount the volume with the last build, with the image it was generated with - if you used the build tooling... the volume will be mounted at `/data` to avoid stepping on the default clone path of `/source`
  
  For example, run `recovery_mode.sh kanidm_build_ubuntu_focal`. Running it without specifying a unit will list the available volumes.

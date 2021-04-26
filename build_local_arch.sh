@@ -130,12 +130,12 @@ else
     echo "######################################################"
 
 
-    # mkdir -p "$HOME/.aws/"
-#     cat > "$HOME/.aws/config" <<-EOF
-# [default]
-# region=us-east-1
-# output=json
-# EOF
+    mkdir -p "$HOME/.aws/"
+    cat > "$HOME/.aws/config" <<-EOF
+[default]
+region=us-east-1
+output=json
+EOF
 
 #     cat > "$HOME/.aws/credentials" <<-EOF
 # [default]
@@ -150,7 +150,7 @@ else
     rm -rf "${BUILD_DIR}/target/release/.fingerprint"
 
 
-    export AWS_DEFAULT_PROFILE=default
+    # export AWS_DEFAULT_PROFILE=default
     echo "Setting default signature to v4"
     aws configure set s3.signature_version s3v4
     echo "Setting output json"

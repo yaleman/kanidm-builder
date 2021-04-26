@@ -13,6 +13,15 @@ BUILD_OUTPUT_BASE='/output' # no trailing slash
 OSID="Unknown"
 VERSION="unknown"
 
+# let's check which OS version we're on
+#shellcheck disable=SC1091
+source /etc/profile.d/identify_os.sh
+
+if [ "${OSID}" == "Unknown" ]; then
+    echo "Sorry, unsupported OS"
+    exit 1
+fi
+
 if [ "$(which sccache | wc -l)" -ne 0 ]; then
     SCCACHE="$(which sccache)"
     export RUSTC_WRAPPER="${SCCACHE}"
@@ -22,14 +31,6 @@ else
     echo "Couldn't find sccache, boo."
 fi
 
-# let's check which OS version we're on
-#shellcheck disable=SC1091
-source /usr/local/bin/identify_os.sh
-
-if [ "${OSID}" == "Unknown" ]; then
-    echo "Sorry, unsupported OS"
-    exit 1
-fi
 
 OUTPUT="$(echo "${BUILD_OUTPUT_BASE}/${OSID}/${VERSION}/" | tr -d '"')"
 echo "######################################################"

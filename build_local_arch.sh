@@ -130,18 +130,18 @@ else
     echo "######################################################"
 
 
-    mkdir -p "$HOME/.aws/"
-    cat > "$HOME/.aws/config" <<-EOF
-[default]
-region=us-east-1
-output=json
-EOF
+    # mkdir -p "$HOME/.aws/"
+#     cat > "$HOME/.aws/config" <<-EOF
+# [default]
+# region=us-east-1
+# output=json
+# EOF
 
-    cat > "$HOME/.aws/credentials" <<-EOF
-[default]
-region=us-east-1
+#     cat > "$HOME/.aws/credentials" <<-EOF
+# [default]
+# region=us-east-1
 
-EOF
+# EOF
     rm -rf "${BUILD_DIR}/target/release/build"
     rm -rf "${BUILD_DIR}/target/release/deps"
     rm -rf "${BUILD_DIR}/target/release/examples"
@@ -164,9 +164,10 @@ EOF
 
     echo "Copying build artifacts to s3 (source=${S3_SOURCE} destination=${S3_DESTINATION})"
     # no verify ssl because docker is dumb and ipv6 is hard it seems
-    aws --debug --endpoint-url "${S3_HOSTNAME}" \
-        --no-verify-ssl \
-        s3 sync "${S3_SOURCE}" "${S3_DESTINATION}"
+    #aws --debug --endpoint-url "${S3_HOSTNAME}" \
+    #    --no-verify-ssl \
+    #    s3 sync "${S3_SOURCE}" "${S3_DESTINATION}"
+    aws --endpoint-url "${S3_HOSTNAME}" --no-verify-ssl  s3 sync "${S3_SOURCE}" "${S3_DESTINATION}"
 
     echo "Copying build logs to s3"
     aws --endpoint-url "${S3_HOSTNAME}" \

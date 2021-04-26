@@ -15,6 +15,19 @@ BUILD_OUTPUT_BASE='/output' # no trailing slash
 OSID="Unknown"
 VERSION="unknown"
 
+# let's check which OS version we're on
+# shellcheck disable=SC1091
+source /etc/profile.d/identify_os.sh
+
+if [ "${OSID}" == "Unknown" ]; then
+    echo "Sorry, unsupported OS"
+    exit 1
+fi
+
+if [ -z "${SOURCE_REPO}" ]; then
+    SOURCE_REPO="https://github.com/kanidm/kanidm.git"
+fi
+
 if [ "$(which sccache | wc -l)" -ne 0 ]; then
 
     echo "######################################################"
@@ -31,25 +44,11 @@ else
     echo "######################################################"
 fi
 
-# EXTRA_BUILD_OPTIONS=""
-# let's check which OS version we're on
-# shellcheck disable=SC1091
-source /etc/profile.d/identify_os.sh
-
-if [ "${OSID}" == "Unknown" ]; then
-    echo "Sorry, unsupported OS"
-    exit 1
-fi
-
 OUTPUT="$(echo "${BUILD_OUTPUT_BASE}/${OSID}/${VERSION}/" | tr -d '"')"
 echo "######################################################"
-
 echo "Making output dir: ${OUTPUT}"
+echo "######################################################"
 mkdir -p "${OUTPUT}"
-
-if [ -z "${SOURCE_REPO}" ]; then
-    SOURCE_REPO="https://github.com/kanidm/kanidm.git"
-fi
 
 RUST_VERSION="$(cat /etc/RUST_VERSION)"
 echo "######################################################"
@@ -67,7 +66,7 @@ rm -rf /source/*
 
 mkdir -p "/source/${OSID}"
 mkdir -p "/buildlogs/"
-BUILD_LOG="/buildlogs/$(date "+%Y-%m-%d-%H-%M-${OS}-${VERSION}").log"
+BUILD_LOG="/buildlogs/$(date "+%Y-%m-%d-%H-%M")-${OS}-${VERSION}.log"
 
 git clone "${SOURCE_REPO}" "${BUILD_DIR}"
 
@@ -76,11 +75,16 @@ cd "${BUILD_DIR}" || {
     echo "Failed to download source from ${SOURCE_REPO} bailing"
     exit 1
 }
+
 git fetch --all
+echo "making target dir ${BUILD_DIR}/target"
 mkdir -p "${BUILD_DIR}/target"
 
 # change to the requested branch
 if [ -n "${SOURCE_REPO_BRANCH}" ]; then
+    echo "######################################################"
+    echo "Config specifies to use ${SOURCE_REPO_BRANCH}"
+    echo "######################################################"
     echo "Listing branches"
     git branch --all
     echo "Checking out ${SOURCE_REPO_BRANCH}"
@@ -92,11 +96,14 @@ git branch -vv
 echo " ### Status ### "
 git status
 
+echo "######################################################"
+echo " Setup done, starting long tasks"
+echo "######################################################"
 if [ -n "$*" ]; then
     echo "Was requested to do a particular task, will do that"
     echo "task: ${*}"
     # shellcheck disable=SC2068
-    $@  | tee -a "${BUILD_LOG}"
+    $@
 
 else
     echo "######################################################"
@@ -118,24 +125,21 @@ else
     }
 
     echo "######################################################"
-    echo " Done building, copying to s3://kanidm-builds/${OSID}/${VERSION}"
+    echo " Done building, copying to s3://${BUILD_ARTIFACT_BUCKET}/${OSID}/${VERSION}"
     echo "######################################################"
 
 
     mkdir -p "$HOME/.aws/"
     cat > "$HOME/.aws/config" <<-EOF
 [default]
-
-region = us-east-1
-output = json
+region=us-east-1
+output=json
 EOF
 
-    cat > "$HOME/.aws/config" <<-EOF
+    cat > "$HOME/.aws/credentials" <<-EOF
 [default]
-cli_pager=
-output = json
-s3 =
-signature_version = s3v4
+region=us-east-1
+
 EOF
     rm -rf "${BUILD_DIR}/target/release/build"
     rm -rf "${BUILD_DIR}/target/release/deps"
@@ -145,9 +149,14 @@ EOF
     rm -rf "${BUILD_DIR}/target/release/.fingerprint"
 
 
+    export AWS_DEFAULT_PROFILE=default
+    echo "Setting default signature to v4"
+    aws configure set s3.signature_version s3v4
+    echo "Setting output json"
+    aws configure set output json
 
     S3_SOURCE="${BUILD_DIR}/target/release/"
-    S3_DESTINATION="s3://kanidm-builds/${OSID}/${VERSION}/$(uname -m)/"
+    S3_DESTINATION="s3://${BUILD_ARTIFACT_BUCKET}/${OSID}/${VERSION}/$(uname -m)/"
 
     echo "Listing files in release dir:"
     find "${S3_SOURCE}" -maxdepth 1 | tee -a "${BUILD_LOG}"
@@ -163,6 +172,6 @@ EOF
         --no-verify-ssl \
         s3 sync \
         "/buildlogs/" \
-        "s3://kanidm-builds/logs/" 2>&1 | grep -v InsecureRequestWarning
+        "s3://${BUILD_ARTIFACT_BUCKET}/logs/" 2>&1 | grep -v InsecureRequestWarning
 
 fi

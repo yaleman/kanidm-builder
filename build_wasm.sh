@@ -92,57 +92,50 @@ echo " ### Status ### "
 git status
 
 echo "######################################################"
-echo " Building WASM UI"
+echo " Setup done, starting long tasks"
 echo "######################################################"
+if [ -n "$*" ]; then
+    echo "Was requested to do a particular task, will do that"
+    echo "task: ${*}"
+    # shellcheck disable=SC2068
+    $@
+
+else
+
+    echo "######################################################"
+    echo " Building WASM UI"
+    echo "######################################################"
+
+    cd "${BUILD_DIR}/kanidmd_web_ui" || {
+        echo "Coudln't move into ${BUILD_DIR}/kanidmd_web_ui bailing"
+        exit 1
+    }
+    ./build_wasm.sh || {
+        echo "Unable to build WASM, bailing"
+        exit 1
+    }
 
 
+    echo "######################################################"
+    echo " Compressing widget"
+    echo "######################################################"
 
-cd "${BUILD_DIR}/kanidmd_web_ui" || {
-    echo "Coudln't move into ${BUILD_DIR}/kanidmd_web_ui bailing"
-    exit 1
-}
-./build_wasm.sh || {
-    echo "Unable to build WASM, bailing"
-    exit 1
-}
+    tar czvf "${BUILD_DIR}/webui.tar.gz" pkg/*
 
+    echo "######################################################"
+    echo " Done building, copying to s3://${BUILD_ARTIFACT_BUCKET}/"
+    echo "######################################################"
 
-echo "######################################################"
-echo " Compressing widget"
-echo "######################################################"
-
-tar czvf "${BUILD_DIR}/webui.tar.gz" pkg/*
-
-echo "######################################################"
-echo " Done building, copying to s3://${BUILD_ARTIFACT_BUCKET}/"
-echo "######################################################"
+    # no verify ssl because docker is dumb and ipv6 is hard it seems
+    echo "Copying build artifacts to s3"
+    aws --endpoint-url "${S3_HOSTNAME}" \
+        --no-verify-ssl \
+        s3 cp \
+        "${BUILD_DIR}/webui.tar.gz" \
+        "s3://${BUILD_ARTIFACT_BUCKET}/" 2>&1
 
 
-mkdir -p "$HOME/.aws/"
-cat > "$HOME/.aws/config" <<-EOF
-[default]
-
-region = us-east-1
-output = json
-EOF
-
-cat > "$HOME/.aws/config" <<-EOF
-[default]
-cli_pager=
-output = json
-s3 =
-signature_version = s3v4
-EOF
-
-# no verify ssl because docker is dumb and ipv6 is hard it seems
-echo "Copying build artifacts to s3"
-aws --endpoint-url "${S3_HOSTNAME}" \
-    --no-verify-ssl \
-    s3 cp \
-    "${BUILD_DIR}/webui.tar.gz" \
-    "s3://${BUILD_ARTIFACT_BUCKET}/" 2>&1
-
-
-echo "######################################################"
-echo " Done copying to s3://${BUILD_ARTIFACT_BUCKET}/"
-echo "######################################################"
+    echo "######################################################"
+    echo " Done copying to s3://${BUILD_ARTIFACT_BUCKET}/"
+    echo "######################################################"
+fi

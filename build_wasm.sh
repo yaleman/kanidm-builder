@@ -128,12 +128,7 @@ else
 
     # no verify ssl because docker is dumb and ipv6 is hard it seems
     echo "Copying build artifacts to s3"
-    aws --endpoint-url "${S3_HOSTNAME}" \
-        --no-verify-ssl \
-        s3 cp \
-        "${BUILD_DIR}/webui.tar.gz" \
-        "s3://${BUILD_ARTIFACT_BUCKET}/" 2>&1
-
+    aws --endpoint-url "${S3_HOSTNAME}" --no-verify-ssl s3 cp "${BUILD_DIR}/webui.tar.gz" "s3://${BUILD_ARTIFACT_BUCKET}/"
 
     echo "######################################################"
     echo " Done copying to s3://${BUILD_ARTIFACT_BUCKET}/"

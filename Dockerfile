@@ -12,7 +12,7 @@ RUN     zypper install -y  cargo rust \
         sccache
 RUN     zypper clean -a
 
-COPY kanidm /usr/src/kanidm
+COPY ./kanidm /usr/src/kanidm
 WORKDIR /usr/src/kanidm/kanidmd
 
 ARG SCCACHE_REDIS

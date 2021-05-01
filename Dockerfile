@@ -9,10 +9,12 @@ RUN     zypper install -y  cargo rust \
         make automake autoconf \
         libopenssl-devel pam-devel \
         sqlite3-devel \
-        sccache
+        sccache git
 RUN     zypper clean -a
 
-COPY ./kanidm /usr/src/kanidm
+RUN git clone https://kanidm/kanidm /usr/src/kanidm
+
+#COPY ${GITHUB_WORKSPACE}/kanidm /usr/src/kanidm
 WORKDIR /usr/src/kanidm/kanidmd
 
 ARG SCCACHE_REDIS

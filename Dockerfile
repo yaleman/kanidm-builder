@@ -24,25 +24,25 @@ ARG KANIDM_BUILD_PROFILE
 RUN mkdir /scratch
 RUN ln -s -f /usr/bin/clang /usr/bin/cc
 RUN 	ln -s -f /usr/bin/ld.lld /usr/bin/ld
-RUN 	if [ "${SCCACHE_REDIS}" != "" ]; \
-		then \
-			export CC="/usr/bin/sccache /usr/bin/clang"
-RUN 			export RUSTC_WRAPPER=sccache
-RUN 			sccache --start-server; \
-		else \
-			export CC="/usr/bin/clang"; \
-	fi
-RUN 	export RUSTC_BOOTSTRAP=1
+#RUN 	if [ "${SCCACHE_REDIS}" != "" ]; \
+#		then \
+#			export CC="/usr/bin/sccache /usr/bin/clang"
+ENV RUSTC_WRAPPER=sccache
+RUN sccache --start-server
+ENV CC="/usr/bin/sccache /usr/bin/clang"
+#		else \
+#			export CC="/usr/bin/clang"; \
+#	fi
+RUN RUSTC_BOOTSTRAP=1
 RUN 	echo $KANIDM_BUILD_PROFILE
 RUN 	echo $KANIDM_FEATURES
-RUN 	CARGO_HOME=/scratch/.cargo cargo build \
+ENV CARGO_HOME=/scratch/.cargo
+RUN cargo build \
 		--features=${KANIDM_FEATURES} \
 		--target-dir=/usr/src/kanidm/target/ \
 		--release
 RUN 	ls -al /usr/src/kanidm/target/release/
-RUN 	if [ "${SCCACHE_REDIS}" != "" ]; \
-		then sccache -s; \
-	fi;
+RUN sccache -s
 
 FROM ${BASE_IMAGE}
 

@@ -10,8 +10,9 @@ jobs:
       -
         name: Checkout Kanidm
         uses: actions/checkout@v2
-        repository: kanidm/kanidm
-        path: kanidm
+        with:
+          repository: kanidm/kanidm
+          path: kanidm
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v1

@@ -12,7 +12,7 @@ RUN     zypper install -y  cargo rust \
         sccache git
 RUN     zypper clean -a
 
-RUN git clone https://kanidm/kanidm /usr/src/kanidm
+RUN git clone https://github.com/kanidm/kanidm /usr/src/kanidm
 
 #COPY ${GITHUB_WORKSPACE}/kanidm /usr/src/kanidm
 WORKDIR /usr/src/kanidm/kanidmd

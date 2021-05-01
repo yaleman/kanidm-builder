@@ -7,12 +7,12 @@ jobs:
       -
         name: Checkout Here
         uses: actions/checkout@v2
-      -
-        name: Checkout Kanidm
-        uses: actions/checkout@v2
-        with:
-          repository: kanidm/kanidm
-          path: kanidm
+      #-
+      #  name: Checkout Kanidm
+      #  uses: actions/checkout@v2
+      #  with:
+      #    repository: kanidm/kanidm
+      #    path: kanidm
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v1

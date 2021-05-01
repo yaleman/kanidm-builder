@@ -27,9 +27,10 @@ RUN 	ln -s -f /usr/bin/ld.lld /usr/bin/ld
 #RUN 	if [ "${SCCACHE_REDIS}" != "" ]; \
 #		then \
 #			export CC="/usr/bin/sccache /usr/bin/clang"
-ENV RUSTC_WRAPPER=sccache
-RUN sccache --start-server
-ENV CC="/usr/bin/sccache /usr/bin/clang"
+#ENV RUSTC_WRAPPER=sccache
+#RUN sccache --start-server
+#ENV CC="/usr/bin/sccache /usr/bin/clang"
+ENV CC="/usr/bin/clang"
 #		else \
 #			export CC="/usr/bin/clang"; \
 #	fi
@@ -42,7 +43,7 @@ RUN cargo build \
 		--target-dir=/usr/src/kanidm/target/ \
 		--release
 RUN 	ls -al /usr/src/kanidm/target/release/
-RUN sccache -s
+#RUN sccache -s
 
 FROM ${BASE_IMAGE}
 

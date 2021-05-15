@@ -19,7 +19,7 @@ echo "Building .deb package for ${OSID} ${VERSION}"
 
 mkdir -p /tmp/kanidmd/pkg-debian/DEBIAN
 # {conffiles,control,md5sums,postinst,prerm}
-mkdir -p /tmp/kanidmd/pkg-debian/etc/kanidm/
+mkdir -p /tmp/kanidmd/pkg-debian/etc/kandim/
 mkdir -p /tmp/kanidmd/pkg-debian/etc/systemd/system/
 mkdir -p /tmp/kanidmd/pkg-debian/var/lib/kanidm/
 mkdir -p /tmp/kanidmd/pkg-debian/usr/local/sbin/
@@ -36,7 +36,7 @@ cp "${BUILD_DIR}/examples/server.toml" /tmp/kanidmd/pkg-debian/etc/kandim/kanidm
 # Things that won't get deleted without a purge of this package
 ##############################################################################
 
-cat > /tmp/kanidmd/pkg-debian/DEBIAN/conffiles <- 'EOM'
+cat > /tmp/kanidmd/pkg-debian/DEBIAN/conffiles <<- 'EOM'
 /etc/kanidm/kanidmd.toml
 /var/lib/kanidm/kanidm.db
 EOM
@@ -91,7 +91,7 @@ find . -type f ! -regex '.*?debian-binary.*' ! -regex '.*?debian-binary.*' ! -re
 
 KANIDM_VERSION="$(head -n10 "${BUILD_DIR}/kanidmd/Cargo.toml" | grep -Eo '^version[[:space:]].*' | awk '{print $NF}' | tr -d '"')"
 
-KANIDMD_SIZE="$(du --block-size=K "/tmp/kanidmd/" | awk '{print $1}' | tr -d 'K')"
+KANIDMD_SIZE="$(du -s --block-size=K "/tmp/kanidmd/" | awk '{print $1}' | tr -d 'K')"
 
 ##############################################################################
 # Package metadata

@@ -68,8 +68,9 @@ EOM
 # Pre-rm script
 ##############################################################################
 cat > /tmp/kanidmd/pkg-debian/DEBIAN/prerm <<- 'EOM'
-/bin/systemctl stop kanidmd
-
+if [ -f /bin/systemctl ]; then
+    /bin/systemctl stop kanidmd
+fi
 EOM
 chmod 0755 /tmp/kanidmd/pkg-debian/DEBIAN/prerm
 

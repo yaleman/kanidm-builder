@@ -22,6 +22,7 @@ mkdir -p /tmp/kanidmd/pkg-debian/DEBIAN
 mkdir -p /tmp/kanidmd/pkg-debian/etc/kanidm/
 mkdir -p /tmp/kanidmd/pkg-debian/etc/systemd/system/
 mkdir -p /tmp/kanidmd/pkg-debian/var/lib/kanidm/
+touch /tmp/kanidmd/pkg-debian/var/lib/kanidm/kanidm.db
 mkdir -p /tmp/kanidmd/pkg-debian/usr/local/sbin/
 
 cp "${BUILD_DIR}/target/release/kanidmd" /tmp/kanidmd/pkg-debian/usr/local/sbin/

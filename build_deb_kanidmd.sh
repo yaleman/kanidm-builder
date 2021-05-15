@@ -81,8 +81,11 @@ useradd --defaults --home-dir /var/lib/kanidm/ --user-group --system --shell /bi
 
 chmod +x /usr/local/sbin/kanidmd
 
-/bin/systemctl daemon-reload
-
+if [ -f /bin/systemctl ]; then
+    /bin/systemctl daemon-reload
+else
+    echo "/bin/systemctl not found, skipping systemctl daemon-reload"
+fi
 EOM
 chmod +x /tmp/kanidmd/pkg-debian/DEBIAN/postinst
 

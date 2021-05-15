@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# make the package directories
+# based on information from https://blog.serverdensity.com/how-to-create-a-debian-deb-package/
+
 
 BUILD_DIR=$1
 OSID=$2

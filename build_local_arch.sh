@@ -158,6 +158,7 @@ EOF
     rm -rf "${S3_SOURCE}deps"
     rm -rf "${S3_SOURCE}examples"
     rm -rf "${S3_SOURCE}incremental"
+    rm -rf "${S3_SOURCE}.cargo.lock"
     rm -rf "${S3_SOURCE}*.dSYM"
     rm -rf "${S3_SOURCE}.fingerprint"
     # remove *.d

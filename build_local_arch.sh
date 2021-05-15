@@ -125,6 +125,13 @@ else
         exit 1
     }
 
+    if [ "$(which dpkg | wc -l)" -ne 0 ]; then
+        echo "######################################################"
+        echo " Building .deb package"
+        echo "######################################################"
+        /usr/local/sbin/build_deb_kanidmd.sh "${BUILD_DIR}" "${OSID}" "${VERSION}"
+    fi
+
     echo "######################################################"
     echo " Done building, copying to s3://${BUILD_ARTIFACT_BUCKET}/${OSID}/${VERSION}"
     echo "######################################################"
@@ -136,6 +143,8 @@ else
 region=us-east-1
 output=json
 EOF
+
+
 
     echo "Setting default signature to v4"
     aws configure set s3.signature_version s3v4

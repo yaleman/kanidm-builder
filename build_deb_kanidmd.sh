@@ -19,7 +19,7 @@ echo "Building .deb package for ${OSID} ${VERSION}"
 
 mkdir -p /tmp/kanidmd/pkg-debian/DEBIAN
 # {conffiles,control,md5sums,postinst,prerm}
-mkdir -p /tmp/kanidmd/pkg-debian/etc/kandim/
+mkdir -p /tmp/kanidmd/pkg-debian/etc/kanidm/
 mkdir -p /tmp/kanidmd/pkg-debian/etc/systemd/system/
 mkdir -p /tmp/kanidmd/pkg-debian/var/lib/kanidm/
 mkdir -p /tmp/kanidmd/pkg-debian/usr/local/sbin/
@@ -30,7 +30,7 @@ cp "${BUILD_DIR}/target/release/kanidmd" /tmp/kanidmd/pkg-debian/usr/local/sbin/
 ##############################################################################
 # Default config
 ##############################################################################
-cp "${BUILD_DIR}/examples/server.toml" /tmp/kanidmd/pkg-debian/etc/kandim/kanidmd.toml
+cp "${BUILD_DIR}/examples/server.toml" /tmp/kanidmd/pkg-debian/etc/kanidm/kanidmd.toml
 
 ##############################################################################
 # Things that won't get deleted without a purge of this package

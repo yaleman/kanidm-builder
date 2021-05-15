@@ -94,7 +94,7 @@ find . -type f ! -regex '.*?debian-binary.*' ! -regex '.*?debian-binary.*' ! -re
 KANIDM_VERSION="$(head -n10 "${BUILD_DIR}/kanidmd/Cargo.toml" | grep -Eo '^version[[:space:]].*' | awk '{print $NF}' | tr -d '"')"
 
 KANIDMD_SIZE="$(du -s --block-size=K "/tmp/kanidmd/" | awk '{print $1}' | tr -d 'K')"
-ARCH="$(uname -m | tr _ -)"
+ARCH="$(dpkg --print-architecture)"
 ##############################################################################
 # Package metadata
 ##############################################################################

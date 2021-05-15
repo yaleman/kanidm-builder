@@ -137,20 +137,6 @@ region=us-east-1
 output=json
 EOF
 
-#     cat > "$HOME/.aws/credentials" <<-EOF
-# [default]
-# region=us-east-1
-
-# EOF
-    rm -rf "${BUILD_DIR}/target/release/build"
-    rm -rf "${BUILD_DIR}/target/release/deps"
-    rm -rf "${BUILD_DIR}/target/release/examples"
-    rm -rf "${BUILD_DIR}/target/release/incremental"
-    rm -rf "${BUILD_DIR}/target/release/*.dSYM"
-    rm -rf "${BUILD_DIR}/target/release/.fingerprint"
-
-
-    # export AWS_DEFAULT_PROFILE=default
     echo "Setting default signature to v4"
     aws configure set s3.signature_version s3v4
     echo "Setting output json"
@@ -159,14 +145,20 @@ EOF
     S3_SOURCE="${BUILD_DIR}/target/release/"
     S3_DESTINATION="s3://${BUILD_ARTIFACT_BUCKET}/${OSID}/${VERSION}/$(uname -m)/"
 
+    rm -rf "${S3_SOURCE}build"
+    rm -rf "${S3_SOURCE}deps"
+    rm -rf "${S3_SOURCE}examples"
+    rm -rf "${S3_SOURCE}incremental"
+    rm -rf "${S3_SOURCE}*.dSYM"
+    rm -rf "${S3_SOURCE}.fingerprint"
+    # remove *.d
+    find "${S3_SOURCE}" -maxdepth 1 -name '*.d' -exec rm "{}" \;
+
     echo "Listing files in release dir:"
+
     find "${S3_SOURCE}" -maxdepth 1 | tee -a "${BUILD_LOG}"
 
     echo "Copying build artifacts to s3 (source=${S3_SOURCE} destination=${S3_DESTINATION})"
-    # no verify ssl because docker is dumb and ipv6 is hard it seems
-    #aws --debug --endpoint-url "${S3_HOSTNAME}" \
-    #    --no-verify-ssl \
-    #    s3 sync "${S3_SOURCE}" "${S3_DESTINATION}"
     aws --endpoint-url "${S3_HOSTNAME}" --no-verify-ssl  s3 sync "${S3_SOURCE}" "${S3_DESTINATION}"
 
     echo "Copying build logs to s3"
@@ -175,5 +167,4 @@ EOF
         s3 sync \
         "/buildlogs/" \
         "s3://${BUILD_ARTIFACT_BUCKET}/logs/" 2>&1 | grep -v InsecureRequestWarning
-
 fi

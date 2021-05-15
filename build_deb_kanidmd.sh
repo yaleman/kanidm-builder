@@ -70,6 +70,7 @@ cat > /tmp/kanidmd/pkg-debian/DEBIAN/prerm <<- 'EOM'
 /bin/systemctl stop kanidmd
 
 EOM
+chmod 0755 /tmp/kanidmd/pkg-debian/DEBIAN/prerm
 
 ##############################################################################
 # Post-install script
@@ -92,7 +93,7 @@ find . -type f ! -regex '.*?debian-binary.*' ! -regex '.*?debian-binary.*' ! -re
 KANIDM_VERSION="$(head -n10 "${BUILD_DIR}/kanidmd/Cargo.toml" | grep -Eo '^version[[:space:]].*' | awk '{print $NF}' | tr -d '"')"
 
 KANIDMD_SIZE="$(du -s --block-size=K "/tmp/kanidmd/" | awk '{print $1}' | tr -d 'K')"
-
+ARCH="$(uname -m | tr _ -)"
 ##############################################################################
 # Package metadata
 ##############################################################################
@@ -107,7 +108,7 @@ EOM
 {
     echo "Version: ${KANIDM_VERSION}"
     echo "Installed-Size: $KANIDMD_SIZE"
-    echo "Architecture: $(uname -m)"
+    echo "Architecture: ${ARCH}"
 }  >> /tmp/kanidmd/pkg-debian/DEBIAN/control
 
 
@@ -115,4 +116,4 @@ EOM
 # Generate the .deb
 ##############################################################################
 echo "Creating the package"
-dpkg -b /tmp/kanidmd/pkg-debian/  "${BUILD_DIR}/target/release/kanidmd-${KANIDM_VERSION}-$(uname -m).deb"
+dpkg -b /tmp/kanidmd/pkg-debian/  "${BUILD_DIR}/target/release/kanidmd-${KANIDM_VERSION}-${ARCH}.deb"

@@ -77,9 +77,14 @@ chmod 0755 /tmp/kanidmd/pkg-debian/DEBIAN/prerm
 # Post-install script
 ##############################################################################
 cat > /tmp/kanidmd/pkg-debian/DEBIAN/postinst <<- 'EOM'
-useradd --defaults --home-dir /var/lib/kanidm/ --user-group --system --shell /bin/ kanidm
-
 chmod +x /usr/local/sbin/kanidmd
+
+if [ "$(grep -c kanidm /etc/passwd)" -eq 0 ]; then
+    echo "Creating user kanidm"
+    useradd --home-dir /var/lib/kanidm/ --user-group --system --shell /sbin/nologin kanidm
+else
+    echo "User kanidm already exists"
+fi
 
 if [ -f /bin/systemctl ]; then
     /bin/systemctl daemon-reload

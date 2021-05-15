@@ -81,16 +81,15 @@ cat > /tmp/kanidmd/pkg-debian/DEBIAN/postinst <<- 'EOM'
 chmod +x /usr/local/sbin/kanidmd
 
 if [ "$(grep -c kanidm /etc/passwd)" -eq 0 ]; then
-    echo "Creating user kanidm"
+    echo "Creating user kanidm..."
     useradd --home-dir /var/lib/kanidm/ --user-group --system --shell /sbin/nologin kanidm
 else
     echo "User kanidm already exists"
 fi
 
 if [ -f /bin/systemctl ]; then
+    echo "Loading systemd service configuration..."
     /bin/systemctl daemon-reload
-else
-    echo "/bin/systemctl not found, skipping systemctl daemon-reload"
 fi
 EOM
 chmod +x /tmp/kanidmd/pkg-debian/DEBIAN/postinst

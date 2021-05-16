@@ -27,6 +27,40 @@ fi
 if [ -z "${SOURCE_REPO}" ]; then
     SOURCE_REPO="https://github.com/kanidm/kanidm.git"
 fi
+BUILD_DIR="/source/${OSID}/${VERSION}"
+
+echo "######################################################"
+echo " Setting up AWS Config"
+echo "######################################################"
+    mkdir -p "$HOME/.aws/"
+    cat > "$HOME/.aws/config" <<-EOF
+[default]
+region=us-east-1
+output=json
+EOF
+
+
+echo "Setting default signature to v4"
+aws configure set s3.signature_version s3v4
+echo "Setting output json"
+aws configure set output json
+
+S3_SOURCE="${BUILD_DIR}/target/release/"
+S3_DESTINATION="s3://${BUILD_ARTIFACT_BUCKET}/${OSID}/${VERSION}/$(uname -m)/"
+
+
+echo "######################################################"
+echo " Trying to grab sccache"
+echo "######################################################"
+
+if [ "$(which sccache | wc -l)" -ne 0 ]; then
+    aws --endpoint-url "${S3_HOSTNAME}" --no-verify-ssl  s3 cp "s3://kanidm-builds/sccache-${OSID}-${VERSION}" /usr/local/bin/sccache
+fi
+
+if [ -f /usr/local/bin/sccache ]; then
+    chmod +x /usr/local/bin/sccache
+fi
+
 
 if [ "$(which sccache | wc -l)" -ne 0 ]; then
 
@@ -58,7 +92,6 @@ echo "######################################################"
 rustup default "${RUST_VERSION}"
 
 cd /
-BUILD_DIR="/source/${OSID}/${VERSION}"
 echo "######################################################"
 echo " Cloning from ${SOURCE_REPO} into ${BUILD_DIR}"
 echo "######################################################"
@@ -135,24 +168,6 @@ else
     echo "######################################################"
     echo " Done building, copying to s3://${BUILD_ARTIFACT_BUCKET}/${OSID}/${VERSION}"
     echo "######################################################"
-
-
-    mkdir -p "$HOME/.aws/"
-    cat > "$HOME/.aws/config" <<-EOF
-[default]
-region=us-east-1
-output=json
-EOF
-
-
-
-    echo "Setting default signature to v4"
-    aws configure set s3.signature_version s3v4
-    echo "Setting output json"
-    aws configure set output json
-
-    S3_SOURCE="${BUILD_DIR}/target/release/"
-    S3_DESTINATION="s3://${BUILD_ARTIFACT_BUCKET}/${OSID}/${VERSION}/$(uname -m)/"
 
     rm -rf "${S3_SOURCE}build"
     rm -rf "${S3_SOURCE}deps"

@@ -81,7 +81,7 @@ fi
 
 OUTPUT="$(echo "${BUILD_OUTPUT_BASE}/${OSID}/${VERSION}/" | tr -d '"')"
 echo "######################################################"
-echo "Making output dir: ${OUTPUT}"
+echo " Making output dir: ${OUTPUT}"
 echo "######################################################"
 mkdir -p "${OUTPUT}"
 
@@ -117,7 +117,7 @@ mkdir -p "${BUILD_DIR}/target"
 # change to the requested branch
 if [ -n "${SOURCE_REPO_BRANCH}" ]; then
     echo "######################################################"
-    echo "Config specifies to use ${SOURCE_REPO_BRANCH}"
+    echo " Config specifies to use ${SOURCE_REPO_BRANCH}"
     echo "######################################################"
     echo "Listing branches"
     git branch --all
@@ -193,3 +193,13 @@ else
         "/buildlogs/" \
         "s3://${BUILD_ARTIFACT_BUCKET}/logs/" 2>&1 | grep -v InsecureRequestWarning
 fi
+
+if [ "$(pgrep sccache | wc -l)" -ne 0 ]; then
+    echo "######################################################"
+    echo " sccache stats"
+    echo "######################################################"
+    $SCCACHE -s
+fi
+echo "######################################################"
+echo " All done!"
+echo "######################################################"

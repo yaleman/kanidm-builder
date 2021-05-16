@@ -54,7 +54,7 @@ echo " Trying to grab sccache"
 echo "######################################################"
 
 if [ "$(which sccache | wc -l)" -ne 0 ]; then
-    aws --endpoint-url "${S3_HOSTNAME}" --no-verify-ssl  s3 cp "s3://kanidm-builds/sccache-${OSID}-${VERSION}" /usr/local/bin/sccache
+    aws --endpoint-url "${S3_HOSTNAME}"  s3 cp "s3://kanidm-builds/sccache-${OSID}-${VERSION}" /usr/local/bin/sccache
     chmod +x /usr/local/bin/sccache
 fi
 
@@ -187,11 +187,10 @@ else
     find "${S3_SOURCE}" -maxdepth 1 | tee -a "${BUILD_LOG}"
 
     echo "Copying build artifacts to s3 (source=${S3_SOURCE} destination=${S3_DESTINATION})"
-    aws --endpoint-url "${S3_HOSTNAME}" --no-verify-ssl  s3 sync "${S3_SOURCE}" "${S3_DESTINATION}"
+    aws --endpoint-url "${S3_HOSTNAME}"  s3 sync "${S3_SOURCE}" "${S3_DESTINATION}"
 
     echo "Copying build logs to s3"
     aws --endpoint-url "${S3_HOSTNAME}" \
-        --no-verify-ssl \
         s3 sync \
         "/buildlogs/" \
         "s3://${BUILD_ARTIFACT_BUCKET}/logs/" 2>&1 | grep -v InsecureRequestWarning

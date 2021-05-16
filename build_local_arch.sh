@@ -55,6 +55,7 @@ echo "######################################################"
 
 if [ "$(which sccache | wc -l)" -ne 0 ]; then
     aws --endpoint-url "${S3_HOSTNAME}" --no-verify-ssl  s3 cp "s3://kanidm-builds/sccache-${OSID}-${VERSION}" /usr/local/bin/sccache
+    chmod +x /usr/local/bin/sccache
 fi
 
 if [ -f /usr/local/bin/sccache ]; then
@@ -69,6 +70,8 @@ if [ "$(which sccache | wc -l)" -ne 0 ]; then
     echo "######################################################"
     SCCACHE="$(which sccache)"
     export RUSTC_WRAPPER="${SCCACHE}"
+    # because sccache doesn't like incremental builds...
+    export CARGO_INCREMENTAL=false
 
     $SCCACHE --start-server
     sleep 2

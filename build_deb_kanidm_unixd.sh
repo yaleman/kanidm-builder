@@ -27,7 +27,7 @@ mkdir -p "${DEB_DIR}/pkg-debian/etc/systemd/system/"
 # mkdir -p "${DEB_DIR}/pkg-debian/var/lib/kanidm/"
 mkdir -p "${DEB_DIR}/pkg-debian/usr/local/sbin/"
 
-cp "${BUILD_DIR}/target/release/kanidm_unixd*" "${DEB_DIR}/pkg-debian/usr/local/sbin/"
+find "${BUILD_DIR}/target/release/" -name 'kanidm_unixd*' -exec cp "{}" "${DEB_DIR}/pkg-debian/usr/local/sbin/" \;
 
 
 ##############################################################################

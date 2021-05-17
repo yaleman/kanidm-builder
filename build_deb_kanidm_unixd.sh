@@ -40,7 +40,7 @@ cp "${BUILD_DIR}/examples/unixd" "${DEB_DIR}/pkg-debian/etc/kanidm/unixd"
 ##############################################################################
 
 cat > "${DEB_DIR}/pkg-debian/DEBIAN/conffiles" <<- 'EOM'
-/etc/kanidm/config
+/etc/kanidm/unixd
 EOM
 
 # ##############################################################################

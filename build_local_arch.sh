@@ -143,16 +143,16 @@ if [ -n "$*" ]; then
     $@
 
 else
-    echo "######################################################"
-    echo " Skipping tests due to #416."
-    echo "######################################################"
     # echo "######################################################"
-    # echo "Doing default thing, running tests."
+    # echo " Skipping tests due to #416."
     # echo "######################################################"
-    # RUST_BACKTRACE=1 cargo test --release || {
-    #     echo "Failed to pass tests, not doing build/copy stage"
-    #     exit 1
-    # }
+    echo "######################################################"
+    echo "Doing default thing, running tests."
+    echo "######################################################"
+    RUST_BACKTRACE=1 cargo test --release || {
+        echo "Failed to pass tests, not doing build/copy stage"
+        exit 1
+    }
     echo "######################################################"
     echo " Doing build stage"
     echo "######################################################"

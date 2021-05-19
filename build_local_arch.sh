@@ -29,6 +29,8 @@ if [ -z "${SOURCE_REPO}" ]; then
 fi
 BUILD_DIR="/source/${OSID}/${VERSION}"
 
+echo "Building os=${OSID} os_version=${VERSION}"
+
 echo "######################################################"
 echo " Setting up AWS Config"
 echo "######################################################"

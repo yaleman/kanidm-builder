@@ -105,7 +105,7 @@ rm -rf /source/*
 
 mkdir -p "/source/${OSID}"
 mkdir -p "/buildlogs/"
-BUILD_LOG="/buildlogs/$(date "+%Y-%m-%d-%H-%M")-${OS}-${VERSION}.log"
+BUILD_LOG="/buildlogs/$(date "+%Y-%m-%d-%H-%M")-${OSID}-${VERSION}.log"
 
 git clone "${SOURCE_REPO}" "${BUILD_DIR}"
 

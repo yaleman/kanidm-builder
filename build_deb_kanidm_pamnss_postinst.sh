@@ -10,23 +10,21 @@ fi
 if [ "${VERSION_CODENAME}" == "buster" ]; then # debian buster
     echo "Debian buster"
     NSSDIR="/usr/lib/$(uname -p)-linux-gnu"
-    PAMDIR="${NSSDIR}/security/"
 elif [ "${VERSION_CODENAME}" == "bionic" ]; then # ubuntu bionic
     echo "Ubuntu bionic"
     NSSDIR="/lib/$(uname -p)-linux-gnu"
-    PAMDIR="${NSSDIR}/security/"
 elif [ "${VERSION_CODENAME}" == "focal" ]; then # ubuntu focal
     echo "Ubuntu focal"
     NSSDIR="/usr/lib/$(uname -p)-linux-gnu"
-    PAMDIR="${NSSDIR}/security/"
 fi
+PAMDIR="${NSSDIR}/security"
 
 if [ -d "${NSSDIR}" ]; then
     echo "Linking NSS lib: /usr/local/lib/kanidm/libnss_kanidm.so.2 => ${NSSDIR}/libnss_kanidm.so.2"
-    ln -s /usr/local/lib/kanidm/libnss_kanidm.so.2 "${NSSDIR}/libnss_kanidm.so.2"
+    ln -sf /usr/local/lib/kanidm/libnss_kanidm.so.2 "${NSSDIR}/libnss_kanidm.so.2"
     if [ -d "${PAMDIR}" ]; then
       echo "Linking PAM Module: /usr/local/lib/kanidm/pam_kanidm.so => ${PAMDIR}/pam_kanidm.so"
-        ln -s /usr/local/lib/kanidm/pam_kanidm.so "${PAMDIR}/pam_kanidm.so"
+        ln -sf /usr/local/lib/kanidm/pam_kanidm.so "${PAMDIR}/pam_kanidm.so"
     fi
 else
     echo "Couldn't find NSS dir: ${NSSDIR}, bailing"

@@ -104,6 +104,7 @@ Maintainer: James Hodgkinson
 Description: Kanidm-unix daemon
 EOM
 {
+    echo "Recommends: kanidm-pamnss (>=${KANIDM_VERSION})"
     echo "Version: ${KANIDM_VERSION}"
     echo "Installed-Size: $KANIDMD_SIZE"
     echo "Architecture: ${ARCH}"

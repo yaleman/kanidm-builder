@@ -39,26 +39,18 @@ cp "${BUILD_DIR}/target/release/libnss_kanidm.so" "${TEMPDIR}/pkg-debian/usr/loc
 cat > "${TEMPDIR}/pkg-debian/DEBIAN/conffiles" <<- 'EOM'
 EOM
 
-##############################################################################
-# Pre-rm script
-##############################################################################
-#cat > "${TEMPDIR}/pkg-debian/DEBIAN/prerm" <<- 'EOM'
-#if [ -f /bin/systemctl ]; then
-#    /bin/systemctl stop kanidmd
-#fi
-#EOM
-#chmod 0755 "${TEMPDIR}/pkg-debian/DEBIAN/prerm"
 
-# ubuntu 18
-#/lib/$(uname -p)-linux-gnu/security/
-# ubuntu 20
-# /usr/lib/$(uname -p)-linux-gnu/security/
 
 ##############################################################################
 # Post-install script
 ##############################################################################
 cp /usr/local/sbin/build_deb_kanidm_pamnss_postinst.sh "${TEMPDIR}/pkg-debian/DEBIAN/postinst"
 chmod +x "${TEMPDIR}/pkg-debian/DEBIAN/postinst"
+##############################################################################
+# Pre-removal script
+##############################################################################
+cp /usr/local/sbin/build_deb_kanidm_pamnss_prerm.sh "${TEMPDIR}/pkg-debian/DEBIAN/prerm"
+chmod +x "${TEMPDIR}/pkg-debian/DEBIAN/prerm"
 
 ##############################################################################
 # Generate MD5SUMS

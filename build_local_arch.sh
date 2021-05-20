@@ -171,6 +171,7 @@ else
         /usr/local/sbin/build_deb_kanidm.sh "${BUILD_DIR}" "${OSID}" "${VERSION}"
         /usr/local/sbin/build_deb_kanidm_ssh.sh "${BUILD_DIR}" "${OSID}" "${VERSION}"
         /usr/local/sbin/build_deb_kanidm_unixd.sh "${BUILD_DIR}" "${OSID}" "${VERSION}"
+        /usr/local/sbin/build_deb_kanidm_pamnss.sh "${BUILD_DIR}" "${OSID}" "${VERSION}"
     fi
 
     echo "######################################################"

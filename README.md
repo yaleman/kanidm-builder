@@ -12,7 +12,7 @@ It's designed to be able to push the artifacts to an S3 bucket
 
  1. clone the repo `git clone https://github.com/yaleman/kanidm-builder.git`
  2. copy template.env to .env and configure all your things
- 2. run the thing `./build_in_docker.sh`
+ 2. run the thing `make all`
 
  ## In case of failure
 

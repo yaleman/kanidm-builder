@@ -184,6 +184,7 @@ else
     rm -rf "${S3_SOURCE}incremental"
     rm -rf "${S3_SOURCE}.cargo.lock"
     rm -rf "${S3_SOURCE}*.dSYM"
+    rm -rf "${S3_SOURCE}*.rlib"
     rm -rf "${S3_SOURCE}.fingerprint"
     # remove *.d
     find "${S3_SOURCE}" -maxdepth 1 -name '*.d' -exec rm "{}" \;

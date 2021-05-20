@@ -24,7 +24,7 @@ mkdir -p "${TEMPDIR}/pkg-debian/DEBIAN"
 mkdir -p "${TEMPDIR}/pkg-debian/usr/local/lib/kanidm/"
 
 cp "${BUILD_DIR}/target/release/libpam_kanidm.so" "${TEMPDIR}/pkg-debian/usr/local/lib/kanidm/pam_kanidm.so"
-cp "${BUILD_DIR}/target/release/libnss_kanidm.so" "${TEMPDIR}/pkg-debian/usr/local/lib/kanidm/nss_kanidm.so"
+cp "${BUILD_DIR}/target/release/libnss_kanidm.so" "${TEMPDIR}/pkg-debian/usr/local/lib/kanidm/libnss_kanidm.so.2"
 
 
 ##############################################################################

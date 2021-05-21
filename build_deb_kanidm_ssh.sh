@@ -114,4 +114,5 @@ EOM
 # Generate the .deb
 ##############################################################################
 echo "Creating the package"
-dpkg -b "${TEMPDIR}/pkg-debian/"  "${BUILD_DIR}/target/release/kanidm-ssh-${KANIDM_VERSION}-${ARCH}.deb"
+dpkg -b "${TEMPDIR}/pkg-debian/" "${BUILD_DIR}/target/release/kanidm-ssh-${KANIDM_VERSION}-${ARCH}.deb"
+cp "${BUILD_DIR}/target/release/kanidm-ssh-${KANIDM_VERSION}-${ARCH}.deb" "${BUILD_DIR}/target/release/kanidm-ssh-latest-${ARCH}.deb"

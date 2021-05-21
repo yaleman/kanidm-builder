@@ -118,3 +118,4 @@ EOM
 ##############################################################################
 echo "Creating the package"
 dpkg -b "${TEMPDIR}/pkg-debian/" "${BUILD_DIR}/target/release/kanidm-${KANIDM_VERSION}-${ARCH}.deb"
+cp "${BUILD_DIR}/target/release/kanidm-${KANIDM_VERSION}-${ARCH}.deb" "${BUILD_DIR}/target/release/kanidm-latest-${ARCH}.deb"

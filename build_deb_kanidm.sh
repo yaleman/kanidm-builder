@@ -101,3 +101,9 @@ EOM
 echo "Creating the package"
 dpkg -b "${TEMPDIR}/pkg-debian/" "${BUILD_DIR}/target/release/kanidm-${KANIDM_VERSION}-${ARCH}.deb"
 cp "${BUILD_DIR}/target/release/kanidm-${KANIDM_VERSION}-${ARCH}.deb" "${BUILD_DIR}/target/release/kanidm-latest-${ARCH}.deb"
+
+echo "Listing current .debs"
+
+ls "${BUILD_DIR}/target/release/*.deb"
+
+echo "Done running build_deb_kanidm.sh"

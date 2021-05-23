@@ -4,8 +4,6 @@
 
 
 BUILD_DIR=$1
-#OSID=$2
-#VERSION=$3
 TEMPDIR=$(mktemp -d)
 if [ ! -d "${BUILD_DIR}" ]; then
     echo "Coudn't find build dir (${BUILD_DIR}) bailing."

@@ -18,17 +18,20 @@ echo "Building .deb package for kanidm ${OSID} ${VERSION}"
 # All the directories
 ##############################################################################
 
+echo "Making directories"
 mkdir -p "${TEMPDIR}/pkg-debian/DEBIAN"
 # {conffiles,control,md5sums,postinst,prerm}
 mkdir -p "${TEMPDIR}/pkg-debian/etc/kanidm/"
 mkdir -p "${TEMPDIR}/pkg-debian/usr/local/bin/"
 mkdir -p "${TEMPDIR}/pkg-debian/usr/local/share/kanidm/client/"
 
+echo "Copying release file in"
 cp "${BUILD_DIR}/target/release/kanidm" "${TEMPDIR}/pkg-debian/usr/local/bin/"
 
 ##############################################################################
 # Default config
 ##############################################################################
+echo "Default config"
 cp "${BUILD_DIR}/examples/config" "${TEMPDIR}/pkg-debian/usr/local/share/kanidm/client/"
 
 ##############################################################################
@@ -36,29 +39,8 @@ cp "${BUILD_DIR}/examples/config" "${TEMPDIR}/pkg-debian/usr/local/share/kanidm/
 ##############################################################################
 
 # /etc/kanidm/config
-cat > "${TEMPDIR}/pkg-debian/DEBIAN/conffiles <<- 'EOM'"
-EOM
-
-# ##############################################################################
-# # SYSTEMD SERVICE FILE
-# ##############################################################################
-# cat > "${TEMPDIR}/pkg-debian/etc/systemd/system/kanidmd.service <<- 'EOM'"
-# [Unit]
-# Description=kanidm, the IDM for rustaceans
-# After=network-online.target
-# Wants=network-online.target
-
-# [Service]
-# Type=simple
-# User=kanidm
-# ExecStart=/usr/local/sbin/kanidmd server --config=/etc/kandim/kanidmd.toml
-# Restart=on-failure
-# RestartSec=15s
-# WorkingDirectory=/var/lib/kanidm
-
-# [Install]
-# WantedBy=multi-user.target
-
+touch "${TEMPDIR}/pkg-debian/DEBIAN/conffiles"
+# cat > "${TEMPDIR}/pkg-debian/DEBIAN/conffiles" <<- 'EOM'
 # EOM
 
 ##############################################################################

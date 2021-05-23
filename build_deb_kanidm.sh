@@ -85,7 +85,7 @@ ARCH="$(dpkg --print-architecture)"
 # Package metadata
 ##############################################################################
 echo "Writing package metadata"
-cat > "${TEMPDIR}/pkg-debian/DEBIAN/control" <<- 'EOM'"
+cat > "${TEMPDIR}/pkg-debian/DEBIAN/control" <<- 'EOM'
 Package: kanidm
 Essential: no
 Section: web
@@ -93,9 +93,10 @@ Priority: optional
 Maintainer: James Hodgkinson
 Description: Kanidm CLI Client
 EOM
+
 {
     echo "Version: ${KANIDM_VERSION}"
-    echo "Installed-Size: $KANIDMD_SIZE"
+    echo "Installed-Size: ${KANIDMD_SIZE}"
     echo "Architecture: ${ARCH}"
 }  >> "${TEMPDIR}/pkg-debian/DEBIAN/control"
 

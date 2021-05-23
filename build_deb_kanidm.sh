@@ -25,13 +25,13 @@ mkdir -p "${TEMPDIR}/pkg-debian/etc/kanidm/"
 mkdir -p "${TEMPDIR}/pkg-debian/usr/local/bin/"
 mkdir -p "${TEMPDIR}/pkg-debian/usr/local/share/kanidm/client/"
 
-echo "Copying release file in"
+echo "Copying release file"
 cp "${BUILD_DIR}/target/release/kanidm" "${TEMPDIR}/pkg-debian/usr/local/bin/"
 
 ##############################################################################
 # Default config
 ##############################################################################
-echo "Default config"
+echo "Writing default config"
 cp "${BUILD_DIR}/examples/config" "${TEMPDIR}/pkg-debian/usr/local/share/kanidm/client/"
 
 ##############################################################################
@@ -56,6 +56,7 @@ touch "${TEMPDIR}/pkg-debian/DEBIAN/conffiles"
 ##############################################################################
 # Post-install script
 ##############################################################################
+echo "Writing post-install script"
 cat > "${TEMPDIR}/pkg-debian/DEBIAN/postinst" <<- 'EOM'
 #!/bin/bash
 chmod +x /usr/local/bin/kanidm
@@ -66,6 +67,9 @@ if [ ! -f /etc/kanidm/config ]; then
 fi
 
 EOM
+
+echo "Chmod postinst +x"
+
 chmod +x "${TEMPDIR}/pkg-debian/DEBIAN/postinst"
 
 ##############################################################################
@@ -80,7 +84,8 @@ ARCH="$(dpkg --print-architecture)"
 ##############################################################################
 # Package metadata
 ##############################################################################
-cat > "${TEMPDIR}/pkg-debian/DEBIAN/control <<- 'EOM'"
+echo "Writing package metadata"
+cat > "${TEMPDIR}/pkg-debian/DEBIAN/control" <<- 'EOM'"
 Package: kanidm
 Essential: no
 Section: web

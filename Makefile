@@ -6,15 +6,10 @@ EXT_OPTS ?=
 #IMAGE_ARCH ?= "linux/amd64,linux/arm64"
 #ARGS ?= --build-arg "SCCACHE_REDIS=redis://172.24.20.4:6379"
 DOCKER_OPTIONS ?= --detach --rm --env-file .env
-BUILD_CLIENTS ?= "cargo test --workspace && cargo build --bin kanidm --bin kanidm_unixd --bin kanidm_unixd_status --bin kanidm_ssh_authorizedkeys --bin kanidm_ssh_authorizedkeys_direct --bin kanidm_cache_invalidate --bin kanidm_cache_clear && cargo build --lib"
+
 
 .DEFAULT: help
 
-help:
-	@echo "Possible make options:"
-	@bash -c "grep -E '^\S+\:' Makefile | grep -vE '^\.' | awk '{print $$1}'"
-
-all: build release
 
 build: build_ubuntu_bionic build_ubuntu_focal build_debian_buster build_opensuse_tumbleweed build_opensuse_leap_152 build_opensuse_leap_153 build_wasm
 release: release_ubuntu_bionic release_debian_buster release_opensuse_tumbleweed release_opensuse_leap152 release_opensuse_leap153 release_wasm
@@ -67,7 +62,7 @@ build_ubuntu_bionic:
 release_ubuntu_bionic:
 	@-docker volume rm kanidm_build_ubuntu_bionic ||:
 	docker volume create kanidm_build_ubuntu_bionic
-	docker run $(DOCKER_OPTIONS) --volume "kanidm_build_ubuntu_bionic:/source"  --name kanidm_build_ubuntu_bionic kanidm_build_ubuntu_bionic
+	docker run $(DOCKER_OPTIONS) --volume "kanidm_build_ubuntu_bionic:/source" --name kanidm_build_ubuntu_bionic kanidm_build_ubuntu_bionic
 	docker logs -f kanidm_build_ubuntu_bionic
 
 ubuntu_focal: build_ubuntu_focal release_ubuntu_focal
@@ -76,7 +71,7 @@ build_ubuntu_focal:
 release_ubuntu_focal:
 	@-docker volume rm kanidm_build_ubuntu_focal ||:
 	docker volume create kanidm_build_ubuntu_focal
-	docker run $(DOCKER_OPTIONS) --volume "kanidm_build_ubuntu_focal:/source"  --name kanidm_build_ubuntu_focal kanidm_build_ubuntu_focal
+	docker run $(DOCKER_OPTIONS) --volume "kanidm_build_ubuntu_focal:/source" --name kanidm_build_ubuntu_focal kanidm_build_ubuntu_focal
 	docker logs -f kanidm_build_ubuntu_focal
 
 wasm: build_wasm release_wasm

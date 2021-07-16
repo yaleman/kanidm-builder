@@ -47,14 +47,8 @@ for version in VERSIONS:
     for volume in client.volumes.list():
         logger.debug(volume)
 
-    logger.info("Creating volume {}", version_tag)
 
-    # create volume for container
-    build_volume = client.volumes.create(name=version_tag,
-        driver='local',
-        #driver_opts={'foo': 'bar', 'baz': 'false'},
-        #labels={"key": "value"},
-    )
+    logger.debug("Listing volumes")
     for volume in client.volumes.list():
         logger.debug(volume)
 
@@ -66,7 +60,14 @@ for version in VERSIONS:
             logger.error(api_error)
             sys.exit()
 
-    logger.info("Running Client Build")
+    logger.info("Creating volume {}", version_tag)
+    # create volume for container
+    build_volume = client.volumes.create(name=version_tag,
+        driver='local',
+        #driver_opts={'foo': 'bar', 'baz': 'false'},
+        #labels={"key": "value"},
+    )
+    logger.info("Running client build for {}", version)
     for command in client_build_commands:
         container = client.containers.run(
             image=version_tag,
@@ -78,3 +79,4 @@ for version in VERSIONS:
         )
         while container.status == 'running':
             time.sleep(1)
+    sys.exit()

@@ -1,4 +1,4 @@
-.PHONY: help all build build_ubuntu_bionic build_debian_buster build_opensuse_tumbleweed build_opensuse_leap_152 release release_ubuntu_bionic release_debian_buster release_opensuse_tumbleweed release_opensuse_leap152 debian_buster ubuntu_bionic opensuse_leap_152 opensuse_tumbleweed clean wasm build_wasm release_wasm opensuse_leap_153 build_opensuse_leap_153 release_opensuse_leap153
+.PHONY: help all build build_ubuntu_bionic build_debian_buster build_opensuse_tumbleweed build_opensuse_leap_152 release release_ubuntu_bionic release_debian_buster release_opensuse_tumbleweed release_opensuse_leap152 debian_buster ubuntu_bionic opensuse_leap_152 opensuse_tumbleweed clean wasm build_wasm release_wasm opensuse_leap_153 build_opensuse_leap_153 release_opensuse_leap153 build_debian_buster_clients
 
 IMAGE_BASE ?= kanidm
 IMAGE_VERSION ?= release
@@ -6,6 +6,7 @@ EXT_OPTS ?=
 #IMAGE_ARCH ?= "linux/amd64,linux/arm64"
 #ARGS ?= --build-arg "SCCACHE_REDIS=redis://172.24.20.4:6379"
 DOCKER_OPTIONS ?= --detach --rm --env-file .env
+BUILD_CLIENTS ?= "cargo test --workspace && cargo build --bin kanidm --bin kanidm_unixd --bin kanidm_unixd_status --bin kanidm_ssh_authorizedkeys --bin kanidm_ssh_authorizedkeys_direct --bin kanidm_cache_invalidate --bin kanidm_cache_clear && cargo build --lib"
 
 .DEFAULT: help
 
@@ -21,6 +22,8 @@ release: release_ubuntu_bionic release_debian_buster release_opensuse_tumbleweed
 debian_buster: build_debian_buster release_debian_buster
 build_debian_buster:
 	docker build -t kanidm_build_debian_buster . -f Dockerfile_debian_buster
+build_debian_buster_clients:
+	docker build -t kanidm_build_debian_buster . -f Dockerfile_debian_buster $(BUILD_CLIENTS)
 release_debian_buster:
 	@-docker volume rm kanidm_build_debian_buster ||:
 	docker volume create kanidm_build_debian_buster

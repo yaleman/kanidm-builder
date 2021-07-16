@@ -55,6 +55,7 @@ for version in VERSIONS:
     if client.volumes.get(version_tag):
         logger.debug("found it")
         try:
+            logger.debug("Removing tag")
             client.volumes.get(version_tag).remove()
         except docker.errors.APIError as api_error:
             logger.error(api_error)
@@ -70,6 +71,7 @@ for version in VERSIONS:
     logger.info("Running client build for {}", version)
     for command in client_build_commands:
         container = client.containers.run(
+            name=version_tag,
             image=version_tag,
             auto_remove=True,
             command=command,
@@ -78,5 +80,8 @@ for version in VERSIONS:
             volumes = { f"{version_tag}": {'bind': '/source', 'mode': 'rw'}},
         )
         while container.status == 'running':
+            logger.debug("Waiting for {} to run {}", version_tag, command)
             time.sleep(1)
+        logger.info(container.logs())
+    logger.info("Done!")
     sys.exit()

@@ -29,7 +29,7 @@ for version in VERSIONS:
     version_tag = f"kanidm_{version}"
     # check if the image has recently been created
     if client.images.get(f'{version_tag}:latest'):
-        create_time = version_tag.history()[0].get('Created')
+        create_time = client.images.get(f'{version_tag}:latest').history()[0].get('Created')
         if time.time() - create_time <= 300:
             logger.info("Skipping image create, image is only {} seconds old", time.time() - create_time)
             build_image = False

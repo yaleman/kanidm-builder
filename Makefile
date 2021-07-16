@@ -22,8 +22,11 @@ release: release_ubuntu_bionic release_debian_buster release_opensuse_tumbleweed
 debian_buster: build_debian_buster release_debian_buster
 build_debian_buster:
 	docker build -t kanidm_build_debian_buster . -f Dockerfile_debian_buster
-build_debian_buster_clients:
-	docker build -t kanidm_build_debian_buster . -f Dockerfile_debian_buster $(BUILD_CLIENTS)
+clients_debian_buster:
+	@-docker volume rm kanidm_build_debian_buster ||:
+	docker volume create kanidm_build_debian_buster
+	docker run $(DOCKER_OPTIONS) --volume "kanidm_build_debian_buster:/source" --name kanidm_build_debian_buster kanidm_build_debian_buster $(BUILD_CLIENTS)
+	docker logs -f kanidm_build_debian_buster
 release_debian_buster:
 	@-docker volume rm kanidm_build_debian_buster ||:
 	docker volume create kanidm_build_debian_buster

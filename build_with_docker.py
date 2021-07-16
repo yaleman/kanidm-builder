@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 
+import os.path
 import sys
 import time
+
 import docker
 from loguru import logger
 
@@ -22,7 +24,10 @@ client_build_commands = [
     "cargo build --lib",
 ]
 
-environment_data = []
+if not os.path.exists('.env'):
+    logger.error("Please make a .env file")
+    sys.exit(1)
+environment_data = [ line.strip() for line in open('.env','r').readlines() if (not line.startswith('#') and not line.strip() == '')]
 
 for version in VERSIONS:
     build_image = True
@@ -79,18 +84,22 @@ for version in VERSIONS:
     )
     logger.info("Running client build for {}", version)
     for command in client_build_commands:
-        container = client.containers.run(
-            name=version_tag,
-            image=version_tag,
-            auto_remove=True,
-            command=command,
-            detach=True,
-            environment=environment_data,
-            volumes = { f"{version_tag}": {'bind': '/source', 'mode': 'rw'}},
-        )
+        try:
+            container = client.containers.run(
+                name=version_tag,
+                image=version_tag,
+                auto_remove=True,
+                command=command,
+                detach=True,
+                environment=environment_data,
+                volumes = { f"{version_tag}": {'bind': '/source', 'mode': 'rw'}},
+            )
+        except docker.errors.APIError as error_message:
+            logger.error(error_message)
+            sys.exit(1)
         while container.status in ('running', 'created'):
-            logger.debug("Waiting for {} to run {}", version_tag, command)
-            time.sleep(5)
+            logger.debug("Waiting for {} (state: {}) to run {}", version_tag, container.status, command)
+            time.sleep(2)
         logger.info(container.status)
         time.sleep(5)
         logger.info(container.logs())

@@ -33,6 +33,9 @@ for version in VERSIONS:
         if (time.time() - create_time) <= 60*20:
             logger.info("Skipping image create, image is only {} seconds old", time.time() - create_time)
             build_image = False
+        else:
+            logger.debug("Build image is {} seconds old, building.", time.time() - create_time)
+
     if build_image:
         logger.info("Building {}", version)
         image = client.images.build(
@@ -85,7 +88,7 @@ for version in VERSIONS:
             environment=environment_data,
             volumes = { f"{version_tag}": {'bind': '/source', 'mode': 'rw'}},
         )
-        while container.status == 'running':
+        while container.status in ('running', 'created'):
             logger.debug("Waiting for {} to run {}", version_tag, command)
             time.sleep(5)
         logger.info(container.status)

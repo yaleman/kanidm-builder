@@ -1,0 +1,6 @@
+help:
+	@echo "Possible make options:"
+	@bash -c "grep -E '^\S+\:' Makefile | grep -vE '^\.' | awk '{print $$1}'"
+
+all: build release
+

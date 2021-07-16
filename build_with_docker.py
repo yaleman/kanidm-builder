@@ -87,7 +87,9 @@ for version in VERSIONS:
         )
         while container.status == 'running':
             logger.debug("Waiting for {} to run {}", version_tag, command)
-            time.sleep(1)
+            time.sleep(5)
+        logger.info(container.status)
+        time.sleep(5)
         logger.info(container.logs())
     logger.info("Done!")
     sys.exit()

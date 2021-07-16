@@ -25,17 +25,25 @@ client_build_commands = [
 environment_data = []
 
 for version in VERSIONS:
+    build_image = True
     version_tag = f"kanidm_{version}"
-    logger.info("Building {}", version)
-    image = client.images.build(
-        path=".",
-        dockerfile=f"Dockerfile_{version}",
-        tag=version_tag,
-        rm=True,
-        pull=True,
-        timeout=3600,
-    #TODO: can we tag this with the github commit id?
-    )
+    # check if the image has recently been created
+    if client.images.get(f'{version_tag}:latest'):
+        create_time = version_tag.history()[0].get('Created')
+        if time.time() - create_time <= 300:
+            logger.info("Skipping image create, image is only {} seconds old", time.time() - create_time)
+            build_image = False
+    if build_image:
+        logger.info("Building {}", version)
+        image = client.images.build(
+            path=".",
+            dockerfile=f"Dockerfile_{version}",
+            tag=version_tag,
+            rm=True,
+            pull=True,
+            timeout=3600,
+        #TODO: can we tag this with the github commit id?
+        )
     for volume in client.volumes.list():
         logger.debug(volume)
 
@@ -61,7 +69,7 @@ for version in VERSIONS:
     logger.info("Running Client Build")
     for command in client_build_commands:
         container = client.containers.run(
-            image=image,
+            image=version_tag,
             auto_remove=True,
             command=command,
             detach=True,

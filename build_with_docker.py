@@ -48,7 +48,7 @@ for version in VERSIONS:
         logger.debug(volume)
 
     try:
-        old_container = client.containers.get(version_tag):
+        old_container = client.containers.get(version_tag)
         logger.info("Killing container {}", version_tag)
         old_container.remove(force=True)
     except docker.errors.NotFound:

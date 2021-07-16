@@ -30,7 +30,7 @@ for version in VERSIONS:
     # check if the image has recently been created
     if client.images.get(f'{version_tag}:latest'):
         create_time = client.images.get(f'{version_tag}:latest').history()[0].get('Created')
-        if time.time() - create_time <= 300:
+        if (time.time() - create_time) <= 60*20:
             logger.info("Skipping image create, image is only {} seconds old", time.time() - create_time)
             build_image = False
     if build_image:
@@ -47,6 +47,10 @@ for version in VERSIONS:
     for volume in client.volumes.list():
         logger.debug(volume)
 
+
+    if client.containers.get(version_tag):
+        logger.info("Killing container {}", version_tag)
+        client.containers.get(version_tag).remove(force=True)
 
     logger.debug("Listing volumes")
     for volume in client.volumes.list():

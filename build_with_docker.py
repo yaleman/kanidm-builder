@@ -47,10 +47,12 @@ for version in VERSIONS:
     for volume in client.volumes.list():
         logger.debug(volume)
 
-
-    if client.containers.get(version_tag):
+    try:
+        old_container = client.containers.get(version_tag):
         logger.info("Killing container {}", version_tag)
-        client.containers.get(version_tag).remove(force=True)
+        old_container.remove(force=True)
+    except docker.errors.NotFound:
+        logger.debug("Container {} not found, don't need to kill it!", version_tag)
 
     logger.debug("Listing volumes")
     for volume in client.volumes.list():

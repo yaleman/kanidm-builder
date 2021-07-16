@@ -16,6 +16,9 @@ elif [ "${VERSION_CODENAME}" == "bionic" ]; then # ubuntu bionic
 elif [ "${VERSION_CODENAME}" == "focal" ]; then # ubuntu focal
     echo "Ubuntu focal"
     NSSDIR="/usr/lib/$(uname -p)-linux-gnu"
+elif [ "${VERSION_CODENAME}" == "groovy" ]; then # ubuntu groovy
+    echo "Ubuntu groovy"
+    NSSDIR="/usr/lib/$(uname -p)-linux-gnu"
 fi
 PAMDIR="${NSSDIR}/security"
 

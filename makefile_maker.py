@@ -22,6 +22,7 @@ VERSIONS = [
     "opensuse_tumbleweed",
     "ubuntu_bionic",
     "ubuntu_focal",
+    "ubuntu_groovy",
     "wasm",
 ]
 

@@ -8,13 +8,16 @@ else
 fi
 
 if [ "${VERSION_CODENAME}" == "buster" ]; then # debian buster
-    echo "Debian buster"
+    #echo "Debian buster"
     NSSDIR="/usr/lib/$(uname -p)-linux-gnu"
 elif [ "${VERSION_CODENAME}" == "bionic" ]; then # ubuntu bionic
-    echo "Ubuntu bionic"
+    #echo "Ubuntu bionic"
     NSSDIR="/lib/$(uname -p)-linux-gnu"
 elif [ "${VERSION_CODENAME}" == "focal" ]; then # ubuntu focal
-    echo "Ubuntu focal"
+    #echo "Ubuntu focal"
+    NSSDIR="/usr/lib/$(uname -p)-linux-gnu"
+elif [ "${VERSION_CODENAME}" == "groovy" ]; then # ubuntu groovy
+    #echo "Ubuntu groovy"
     NSSDIR="/usr/lib/$(uname -p)-linux-gnu"
 fi
 PAMDIR="${NSSDIR}/security"

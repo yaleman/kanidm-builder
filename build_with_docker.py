@@ -134,6 +134,7 @@ def build_server(version_string: str) -> bool:
     for command in build_commands:
         container = run_build_container(command, version_tag)
 
+        docker_client = get_docker_client()
         while container.status in ("running", "created"):
             logger.debug(
                 "Waiting for {} (state: {}) to finish running {}",
@@ -142,6 +143,14 @@ def build_server(version_string: str) -> bool:
                 command,
             )
             time.sleep(5)
+            try:
+                container = docker_client.containers.get(version_string)
+            except docker.errors.NotFound:
+                logger.error("Container {} not found while trying to run it, bailing because something went wrong.", version_tag)
+                sys.exit(1)
+            except docker.errors.APIError as api_error:
+                logger.error(api_error)
+                sys.exit(1)
         logger.info("Container not running/created, is now {}", container.status)
         logger.info(container.logs())
 

@@ -4,6 +4,37 @@
 # designed to work on ubuntu/debian/opensuse
 # James Hodgkinson 2021
 
+function upload_to_s3() {
+    echo "######################################################"
+    echo " Done building, copying to s3://${BUILD_ARTIFACT_BUCKET}/${OSID}/${VERSION}"
+    echo "######################################################"
+
+    rm -rf "${S3_SOURCE}build"
+    rm -rf "${S3_SOURCE}deps"
+    rm -rf "${S3_SOURCE}examples"
+    rm -rf "${S3_SOURCE}incremental"
+    rm -rf "${S3_SOURCE}.cargo-lock"
+    rm -rf "${S3_SOURCE}*.dSYM"
+    rm -rf "${S3_SOURCE}*.rlib"
+    rm -rf "${S3_SOURCE}.fingerprint"
+    # remove *.d
+    find "${S3_SOURCE}" -maxdepth 1 -name '*.d' -exec rm "{}" \;
+
+    echo "Listing files in release dir:"
+
+    find "${S3_SOURCE}" -maxdepth 1 | tee -a "${BUILD_LOG}"
+
+    echo "Copying build artifacts to s3 (source=${S3_SOURCE} destination=${S3_DESTINATION})"
+    aws --endpoint-url "${S3_HOSTNAME}"  s3 sync "${S3_SOURCE}" "${S3_DESTINATION}"
+
+    echo "Copying build logs to s3"
+    aws --endpoint-url "${S3_HOSTNAME}" \
+        s3 sync \
+        "/buildlogs/" \
+        "s3://${BUILD_ARTIFACT_BUCKET}/logs/" 2>&1 | grep -v InsecureRequestWarning
+
+}
+
 echo "######################################################"
 echo " Starting build script"
 echo "######################################################"
@@ -175,34 +206,10 @@ else
         /usr/local/sbin/build_deb_kanidm_pamnss.sh "${BUILD_DIR}"
     fi
 
-    echo "######################################################"
-    echo " Done building, copying to s3://${BUILD_ARTIFACT_BUCKET}/${OSID}/${VERSION}"
-    echo "######################################################"
-
-    rm -rf "${S3_SOURCE}build"
-    rm -rf "${S3_SOURCE}deps"
-    rm -rf "${S3_SOURCE}examples"
-    rm -rf "${S3_SOURCE}incremental"
-    rm -rf "${S3_SOURCE}.cargo-lock"
-    rm -rf "${S3_SOURCE}*.dSYM"
-    rm -rf "${S3_SOURCE}*.rlib"
-    rm -rf "${S3_SOURCE}.fingerprint"
-    # remove *.d
-    find "${S3_SOURCE}" -maxdepth 1 -name '*.d' -exec rm "{}" \;
-
-    echo "Listing files in release dir:"
-
-    find "${S3_SOURCE}" -maxdepth 1 | tee -a "${BUILD_LOG}"
-
-    echo "Copying build artifacts to s3 (source=${S3_SOURCE} destination=${S3_DESTINATION})"
-    aws --endpoint-url "${S3_HOSTNAME}"  s3 sync "${S3_SOURCE}" "${S3_DESTINATION}"
-
-    echo "Copying build logs to s3"
-    aws --endpoint-url "${S3_HOSTNAME}" \
-        s3 sync \
-        "/buildlogs/" \
-        "s3://${BUILD_ARTIFACT_BUCKET}/logs/" 2>&1 | grep -v InsecureRequestWarning
 fi
+
+upload_to_s3
+
 
 if [ "$(pgrep sccache | wc -l)" -ne 0 ]; then
     echo "######################################################"

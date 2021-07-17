@@ -252,7 +252,7 @@ def build_version(version_string: str, client_only: bool = False):
     help="Specific version to build ({})".format(",".join(VERSIONS)),
 )
 @click.option(
-    "--client-only", "-c", help="Build only the clients", type=bool, default=False
+    "--client-only", "-c", help="Build only the clients", is_flag=True, default=False
 )
 def run_cli(version: str, client_only: bool) -> None:
     """ does the CLI thing"""

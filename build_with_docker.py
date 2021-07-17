@@ -122,11 +122,11 @@ def wait_for_container_to_finish(name: str):
             )
             time.sleep(5)
             container = docker_client.containers.get(name)
+    except docker.errors.NotFound:
+        logger.info("Container not running/created, looks to be done!")
     except docker.errors.APIError as api_error:
         logger.error(api_error)
         sys.exit(1)
-    except docker.errors.NotFound:
-        logger.info("Container not running/created, looks to be done!")
     logger.info(container.logs())
 
 def build_clients(version: str):

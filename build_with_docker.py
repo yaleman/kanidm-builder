@@ -256,7 +256,13 @@ def build_version(version_string: str, client_only: bool = False):
 )
 def run_cli(version: str, client_only: bool) -> None:
     """ does the CLI thing"""
+    if client_only:
+        logger.info("Building just the clients.")
+    else:
+        logger.info("Building clients and server.")
+
     if not version:
+        logger.info("Building all versions.")
         for version_name in VERSIONS:
             build_version(version_name, client_only)
     else:

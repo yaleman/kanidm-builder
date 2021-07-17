@@ -112,7 +112,7 @@ def wait_for_container_to_finish(name: str):
     try:
         while container.status in ("running", "created"):
             logger.debug(
-                "Waiting for {} (state: {}) to finish running {}",
+                "Waiting for {} (state: {}) to finish running",
                 name,
                 container.status,
             )

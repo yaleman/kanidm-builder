@@ -75,6 +75,8 @@ def run_build_container(
 ) -> docker.client.ContainerCollection:
     """ runs a container """
     docker_client = get_docker_client()
+    if not command.strip():
+        command = None
     try:
         logger.debug("Creating container")
         container = docker_client.containers.run(
@@ -102,24 +104,36 @@ def run_build_container(
     return container
 
 
+
+def wait_for_container_to_finish(name: str):
+    """ does what it says on the tin """
+    docker_client = get_docker_client()
+    container = docker_client.containers.get(name)
+    try:
+        while container.status in ("running", "created"):
+            logger.debug(
+                "Waiting for {} (state: {}) to finish running {}",
+                name,
+                container.status,
+            )
+            time.sleep(5)
+            container = docker_client.containers.get(name)
+    except docker.errors.NotFound:
+        logger.error("Container {} not found while trying to run it, bailing because something went wrong.", name)
+        sys.exit(1)
+    except docker.errors.APIError as api_error:
+        logger.error(api_error)
+        sys.exit(1)
+    logger.info("Container not running/created, is now {}", container.status)
+    logger.info(container.logs())
+
 def build_clients(version: str):
     """ builds the clients """
     version_tag = f"kanidm_{version}"
     logger.info("Running client build for {}", version)
     for command in client_build_commands:
-        container = run_build_container(command, version_tag)
-
-        while container.status in ("running", "created"):
-            logger.debug(
-                "Waiting for {} (state: {}) to finish running {}",
-                version_tag,
-                container.status,
-                command,
-            )
-            time.sleep(5)
-        logger.info("Container not running/created, is now {}", container.status)
-        logger.info(container.logs())
-
+        run_build_container(command, version_tag)
+        wait_for_container_to_finish(version_tag)
 
 def build_server(version_string: str) -> bool:
     """ does the server build thing """
@@ -132,27 +146,8 @@ def build_server(version_string: str) -> bool:
 
     logger.info("Running server build for {}", version_string)
     for command in build_commands:
-        container = run_build_container(command, version_tag)
-
-        docker_client = get_docker_client()
-        while container.status in ("running", "created"):
-            logger.debug(
-                "Waiting for {} (state: {}) to finish running {}",
-                version_tag,
-                container.status,
-                command,
-            )
-            time.sleep(5)
-            try:
-                container = docker_client.containers.get(version_string)
-            except docker.errors.NotFound:
-                logger.error("Container {} not found while trying to run it, bailing because something went wrong.", version_tag)
-                sys.exit(1)
-            except docker.errors.APIError as api_error:
-                logger.error(api_error)
-                sys.exit(1)
-        logger.info("Container not running/created, is now {}", container.status)
-        logger.info(container.logs())
+        run_build_container(command, version_tag)
+        wait_for_container_to_finish(version_tag)
 
 
 def check_if_need_to_build_image(version: str) -> bool:

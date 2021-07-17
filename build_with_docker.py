@@ -229,19 +229,24 @@ def build_version(version_string: str, client_only: bool = False):
                 sys.exit()
     except docker.errors.NotFound as not_found:
         logger.debug("Volume {} not found: {}", version_tag, not_found)
+        logger.info("Creating volume {}", version_tag)
+        # create volume for container
+        try:
+            create_volume = client.volumes.create(
+                name=version_tag,
+                driver="local",
+                # driver_opts={'foo': 'bar', 'baz': 'false'},
+                # labels={"key": "value"},
+            )
+            logger.debug("result of build volume: {}", create_volume)
+        except docker.errors.APIError as api_error:
+            logger.error(api_error)
+            sys.exit()
     except docker.errors.APIError as api_error:
         logger.error(api_error)
         sys.exit()
 
-    logger.info("Creating volume {}", version_tag)
-    # create volume for container
-    build_volume = client.volumes.create(
-        name=version_tag,
-        driver="local",
-        # driver_opts={'foo': 'bar', 'baz': 'false'},
-        # labels={"key": "value"},
-    )
-    logger.debug("result of build volume: {}", build_volume)
+
 
     build_clients(version_string)
     if not client_only:

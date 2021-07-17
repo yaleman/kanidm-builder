@@ -127,7 +127,6 @@ def wait_for_container_to_finish(name: str):
     except docker.errors.APIError as api_error:
         logger.error(api_error)
         sys.exit(1)
-    logger.info(container.logs())
 
 def build_clients(version: str):
     """ builds the clients """

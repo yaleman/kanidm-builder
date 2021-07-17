@@ -50,14 +50,15 @@ aws configure set output json
 S3_SOURCE="${BUILD_DIR}/target/release/"
 S3_DESTINATION="s3://${BUILD_ARTIFACT_BUCKET}/${OSID}/${VERSION}/$(uname -m)/"
 
+echo "Testing if we can actually reach the S3 bucket, will bail if not"
+aws --endpoint-url "${S3_HOSTNAME}"  s3 ls "s3://${BUILD_ARTIFACT_BUCKET}" || exit 1
 
 echo "######################################################"
 echo " Trying to grab sccache"
 echo "######################################################"
 
 if [ "$(which sccache | wc -l)" -ne 0 ]; then
-    aws --endpoint-url "${S3_HOSTNAME}"  s3 cp "s3://kanidm-builds/sccache-${OSID}-${VERSION}" /usr/local/bin/sccache
-    chmod +x /usr/local/bin/sccache
+    aws --endpoint-url "${S3_HOSTNAME}"  s3 cp "s3://${BUILD_ARTIFACT_BUCKET}/sccache-${OSID}-${VERSION}" /usr/local/bin/sccache
 fi
 
 if [ -f /usr/local/bin/sccache ]; then

@@ -13,6 +13,7 @@ import click
 import docker
 from loguru import logger
 
+TIMER_LOOP_WAIT = 60
 VERSIONS = [
     "debian_buster",
     "opensuse_leap_152",
@@ -120,7 +121,7 @@ def wait_for_container_to_finish(name: str):
                 name,
                 container.status,
             )
-            time.sleep(5)
+            time.sleep(TIMER_LOOP_WAIT)
             container = docker_client.containers.get(name)
     except docker.errors.NotFound:
         logger.info("Container not running/created, looks to be done!")
@@ -251,9 +252,7 @@ def build_version(version_string: str, client_only: bool = False):
         except NotImplementedError:
             logger.warning("Not actually building the server yet... :)")
 
-    logger.info("Done!")
-    sys.exit()
-
+    logger.info("Done building {}!", version_string)
 
 @click.command()
 @click.option(

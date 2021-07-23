@@ -13,6 +13,7 @@ import click
 import docker
 from loguru import logger
 
+MIN_CONTAINER_AGE = 3600
 TIMER_LOOP_WAIT = 60
 VERSIONS = [
     "debian_buster",
@@ -29,14 +30,14 @@ VERSIONS = [
 # find . -name Cargo.toml -exec grep -A5 -E '(bin|lib)' {} \; | grep -E '(^\[|name)' | grep -v dependencies
 client_build_commands = [
     """cargo build --release \
-        --bin kanidm \
-        --bin kanidm_unixd \
-        --bin kanidm_unixd_status \
-        --bin kanidm_unixd_tasks \
-        --bin kanidm_ssh_authorizedkeys \
-        --bin kanidm_ssh_authorizedkeys_direct \
-        --bin kanidm_cache_invalidate \
-        --bin kanidm_cache_clear""",
+--bin kanidm \
+--bin kanidm_unixd \
+--bin kanidm_unixd_status \
+--bin kanidm_unixd_tasks \
+--bin kanidm_ssh_authorizedkeys \
+--bin kanidm_ssh_authorizedkeys_direct \
+--bin kanidm_cache_invalidate \
+--bin kanidm_cache_clear""",
     "cargo build --lib --release",
 ]
 server_build_commands = [
@@ -103,8 +104,6 @@ def run_build_container(
         logger.error(error_message)
         sys.exit(1)
     return container
-
-
 
 def wait_for_container_to_finish(name: str):
     """ does what it says on the tin """
@@ -174,7 +173,7 @@ def check_if_need_to_build_image(version: str) -> bool:
         logger.debug("current time: {}", time_now)
         logger.debug("create time:  {}", create_time)
         logger.debug("image age:    {}", image_age)
-        if (image_age) <= (60 * 20):
+        if (image_age) <= MIN_CONTAINER_AGE:
             logger.info(
                 "Skipping image create, image is only {} seconds old", image_age
             )
@@ -185,13 +184,13 @@ def check_if_need_to_build_image(version: str) -> bool:
     return True
 
 
-def build_version(version_string: str, client_only: bool = False):
+def build_version(version_string: str, client_only: bool, force_container_build: bool):
     """ builds a particular version """
     client = get_docker_client()
 
     version_tag = f"kanidm_{version_string}"
-    if check_if_need_to_build_image(version_string):
-        logger.info("Building {}", version_string)
+    if check_if_need_to_build_image(version_string) or force_container_build:
+        logger.info("Building container {}", version_string)
         image = client.images.build(
             path=".",
             dockerfile=f"Dockerfile_{version_string}",
@@ -265,7 +264,10 @@ def build_version(version_string: str, client_only: bool = False):
 @click.option(
     "--client-only", "-c", help="Build only the clients", is_flag=True, default=False
 )
-def run_cli(version: str, client_only: bool) -> None:
+@click.option(
+    "--force-build", "-b", help="Force container build", is_flag=True, default=False
+)
+def run_cli(version: str, client_only: bool, force_build: bool) -> None:
     """ does the CLI thing"""
     if client_only:
         logger.info("Building just the clients.")
@@ -275,7 +277,7 @@ def run_cli(version: str, client_only: bool) -> None:
     if not version:
         logger.info("Building all versions.")
         for version_name in VERSIONS:
-            build_version(version_name, client_only)
+            build_version(version_name, client_only, force_build)
     else:
         if version not in VERSIONS:
             logger.error(
@@ -285,7 +287,7 @@ def run_cli(version: str, client_only: bool) -> None:
             )
             sys.exit(1)
         else:
-            build_version(version, client_only)
+            build_version(version, client_only, force_build)
 
 
 if __name__ == "__main__":

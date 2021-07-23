@@ -79,7 +79,7 @@ def run_build_container(
     if not command.strip():
         command = None
     try:
-        logger.debug("Creating container")
+        logger.debug("Creating container={} command=\"{}\"", version_tag_str, command)
         container = docker_client.containers.run(
             name=version_tag_str,
             image=version_tag_str,
@@ -128,6 +128,8 @@ def wait_for_container_to_finish(name: str):
     except docker.errors.APIError as api_error:
         logger.error(api_error)
         sys.exit(1)
+    time.sleep(TIMER_LOOP_WAIT)
+    logger.info("Finished waiting, carrying on.")
 
 def build_clients(version: str):
     """ builds the clients """

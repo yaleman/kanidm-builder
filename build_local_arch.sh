@@ -42,6 +42,9 @@ echo "######################################################"
 PATH=/root/.cargo/bin:$PATH
 export PATH
 
+echo "Dumping environment:"
+export
+
 BUILD_OUTPUT_BASE='/output' # no trailing slash
 OSID="Unknown"
 VERSION="unknown"

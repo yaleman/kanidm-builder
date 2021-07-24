@@ -82,7 +82,7 @@ def run_build_container(
     if not command.strip():
         command = None
     try:
-        logger.debug("Creating container={} command=\"{}\"", version_tag_str, command)
+        logger.info("Creating container={} command=\"{}\"", version_tag_str, command)
         container = docker_client.containers.run(
             name=version_tag_str,
             image=version_tag_str,
@@ -97,7 +97,7 @@ def run_build_container(
                 },
             },
         )
-        logger.debug("Starting container")
+        logger.info("Starting container")
         container.start()
     except docker.errors.APIError as error_message:
         logger.error(error_message)

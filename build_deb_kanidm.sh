@@ -114,6 +114,6 @@ cp "${BUILD_DIR}/target/release/kanidm-${KANIDM_VERSION}-${ARCH}.deb" "${BUILD_D
 
 echo "Listing current .debs"
 
-ls "${BUILD_DIR}/target/release/*.deb"
+find "${BUILD_DIR}/target/release/" -type f -name '*.deb'
 
 echo "Done running build_deb_kanidm.sh"

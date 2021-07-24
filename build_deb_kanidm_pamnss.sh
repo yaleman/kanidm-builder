@@ -41,6 +41,7 @@ cp "${BUILD_DIR}/target/release/libnss_kanidm.so" "${TEMPDIR}/pkg-debian/usr/loc
 ##############################################################################
 
 cat > "${TEMPDIR}/pkg-debian/DEBIAN/conffiles" <<- 'EOM'
+/usr/local/lib/kanidm/
 EOM
 
 

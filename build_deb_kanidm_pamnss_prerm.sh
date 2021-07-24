@@ -1,6 +1,6 @@
 #!/bin/bash
 
-""" does the cleanup-before-removal-installation thing """
+# does the cleanup-before-removal-installation thing
 
 if [ -d "/usr/lib/$(uname -m)-linux-gnu" ]; then
     NSSDIR="/usr/lib/$(uname -m)-linux-gnu"
@@ -23,9 +23,11 @@ PAMDIR="${NSSDIR}/security"
 
 if [ -d "${NSSDIR}" ]; then
     echo "Removing symlinks..."
-    rm "${NSSDIR}/libnss_kanidm.so.2"
+    find "${NSSDIR}" -name libnss_kanidm.so.2 -delete
     if [ -d "${PAMDIR}" ]; then
-        rm "${PAMDIR}/pam_kanidm.so"
+        if [ -f "${PAMDIR}/pam_kanidm.so" ]; then
+            find "${PAMDIR}" -type f -name pam_kanidm.so -delete
+        fi
     else
         echo "Couldn't find PAM dir, probably need to clean that up manually. Looked in: ${PAMDIR}"
     fi

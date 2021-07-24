@@ -35,15 +35,13 @@ function upload_to_s3() {
 
 }
 
-echo "######################################################" | tee -a "${BUILD_LOG}"
-echo " Starting build script" | tee -a "${BUILD_LOG}"
-echo "######################################################" | tee -a "${BUILD_LOG}"
+echo "######################################################"
+echo " Starting build script"
+echo "######################################################"
 
 PATH=/root/.cargo/bin:$PATH
 export PATH
 
-echo "Dumping environment:" | tee -a "${BUILD_LOG}"
-export | tee -a "${BUILD_LOG}"
 
 BUILD_OUTPUT_BASE='/output' # no trailing slash
 OSID="Unknown"
@@ -53,6 +51,9 @@ VERSION="unknown"
 # shellcheck disable=SC1091
 source /etc/profile.d/identify_os.sh
 BUILD_LOG="/buildlogs/$(date "+%Y-%m-%d-%H-%M")-${OSID}-${VERSION}.log"
+
+echo "Dumping environment:" | tee -a "${BUILD_LOG}"
+export | tee -a "${BUILD_LOG}"
 
 if [ "${OSID}" == "Unknown" ]; then
     echo "Sorry, unsupported OS, quitting" | tee -a "${BUILD_LOG}"

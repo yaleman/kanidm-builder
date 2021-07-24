@@ -11,7 +11,7 @@ if [ ! -d "${BUILD_DIR}" ]; then
     exit 1
 fi
 
-echo "Building .deb package for ${OSID} ${VERSION}"
+echo "Building .deb package for kanidm-pamnss ${OSID} ${VERSION}"
 
 ##############################################################################
 # All the directories
@@ -21,8 +21,14 @@ mkdir -p "${TEMPDIR}/pkg-debian/DEBIAN"
 # {conffiles,control,md5sums,postinst,prerm}
 mkdir -p "${TEMPDIR}/pkg-debian/usr/local/lib/kanidm/"
 
-cp "${BUILD_DIR}/target/release/libpam_kanidm.so" "${TEMPDIR}/pkg-debian/usr/local/lib/kanidm/pam_kanidm.so"
-cp "${BUILD_DIR}/target/release/libnss_kanidm.so" "${TEMPDIR}/pkg-debian/usr/local/lib/kanidm/libnss_kanidm.so.2"
+cp "${BUILD_DIR}/target/release/libpam_kanidm.so" "${TEMPDIR}/pkg-debian/usr/local/lib/kanidm/pam_kanidm.so"  || {
+    echo "Couldn't find libpam_kanidm.so, quitting"
+    exit 1
+}
+cp "${BUILD_DIR}/target/release/libnss_kanidm.so" "${TEMPDIR}/pkg-debian/usr/local/lib/kanidm/libnss_kanidm.so.2"  || {
+    echo "Couldn't find libpam_libnss_kanidm.so.2, quitting"
+    exit 1
+}
 
 
 ##############################################################################

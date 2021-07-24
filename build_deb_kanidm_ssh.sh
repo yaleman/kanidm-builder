@@ -22,8 +22,14 @@ mkdir -p "${TEMPDIR}/pkg-debian/usr/local/sbin/"
 mkdir -p "${TEMPDIR}/pkg-debian/usr/local/share/kanidm/ssh/"
 
 
-cp "${BUILD_DIR}/target/release/kanidm_ssh_authorizedkeys" "${TEMPDIR}/pkg-debian/usr/local/sbin/"
-cp "${BUILD_DIR}/target/release/kanidm_ssh_authorizedkeys_direct" "${TEMPDIR}/pkg-debian/usr/local/sbin/"
+cp "${BUILD_DIR}/target/release/kanidm_ssh_authorizedkeys" "${TEMPDIR}/pkg-debian/usr/local/sbin/"  || {
+    echo "Couldn't find kanidm_ssh_authorizedkeys, quitting"
+    exit 1
+}
+cp "${BUILD_DIR}/target/release/kanidm_ssh_authorizedkeys_direct" "${TEMPDIR}/pkg-debian/usr/local/sbin/"  || {
+    echo "Couldn't find kanidm_ssh_authorizedkeys_direct, quitting"
+    exit 1
+}
 
 ##############################################################################
 # Default config

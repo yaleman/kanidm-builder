@@ -55,6 +55,8 @@ touch "${BUILD_LOG}"
 echo "Dumping environment:" | tee -a "${BUILD_LOG}"
 export | tee -a "${BUILD_LOG}"
 
+export BUILD_LOG
+
 if [ "${OSID}" == "Unknown" ]; then
     echo "Sorry, unsupported OS, quitting" | tee -a "${BUILD_LOG}"
     exit 1
@@ -133,17 +135,48 @@ echo " Setting rust version to ${RUST_VERSION}" | tee -a "${BUILD_LOG}"
 echo "######################################################"
 rustup default "${RUST_VERSION}"
 
+
+NEED_TO_REPLACE_SOURCE_REPO=1
+if [ -f "${BUILD_DIR}/.git/config" ]; then
+    echo "Found existing repo at ${BUILD_DIR}, checking to see if it's the same"
+    # pull the repo source URL
+    CHECK_SOURCE_REPO="$(grep url "${BUILD_DIR}/.git/config" | awk '{print $NF}')"
+    if [ "${CHECK_SOURCE_REPO}" != "${SOURCE_REPO}" ]; then
+        echo "Source repo has changed, was ${CHECK_SOURCE_REPO}, is now ${SOURCE_REPO}, removing source"
+        NEED_TO_REPLACE_SOURCE_REPO=1
+    else
+        echo "Is the same, carrying on."
+        NEED_TO_REPLACE_SOURCE_REPO=0
+    fi
+
+    if [ $NEED_TO_REPLACE_SOURCE_REPO -eq 0 ]; then
+        # pull the current branch
+        CHECK_REPO_BRANCH=$(git branch -C "${BUILD_DIR}" | grep -E '^\*' | awk '{print $NF}')
+        if [ "${CHECK_REPO_BRANCH}" != "${SOURCE_REPO_BRANCH}" ]; then
+            echo "Branch is different (${CHECK_REPO_BRANCH} != ${SOURCE_REPO_BRANCH}), removing source."
+            NEED_TO_REPLACE_SOURCE_REPO=1
+        fi
+    fi
+fi
+
 cd /
-echo "######################################################"
-echo " Cloning from ${SOURCE_REPO} into ${BUILD_DIR}" | tee -a "${BUILD_LOG}"
-echo "######################################################"
 
-rm -rf /source/*
+if [ $NEED_TO_REPLACE_SOURCE_REPO -eq 1 ]; then
+    echo "######################################################"
+    echo " Cloning from ${SOURCE_REPO} into ${BUILD_DIR}" | tee -a "${BUILD_LOG}"
+    echo "######################################################"
+    rm -rf /source/*
 
-mkdir -p "/source/${OSID}"
-mkdir -p "/buildlogs/"
+    mkdir -p "/source/${OSID}"
+    mkdir -p "/buildlogs/"
 
-git clone "${SOURCE_REPO}" "${BUILD_DIR}"
+    if [ ! -f "${BUILD_DIR}" ]; then
+        echo "Cloning repo"
+        git clone "${SOURCE_REPO}" "${BUILD_DIR}"
+    else
+        echo "Repo already exists at ${BUILD_DIR}, don't need to clone"
+    fi
+fi
 
 echo "Changing working dir into ${BUILD_DIR}" | tee -a "${BUILD_LOG}"
 cd "${BUILD_DIR}" || {
@@ -181,9 +214,6 @@ if [ -n "$*" ]; then
     $@
 
 else
-    # echo "######################################################"
-    # echo " Skipping tests due to #416."
-    # echo "######################################################"
     echo "######################################################"
     echo "Doing default thing, running tests." | tee -a "${BUILD_LOG}"
     echo "######################################################"
@@ -203,11 +233,7 @@ else
         echo "######################################################"
         echo " Building .deb packages" | tee -a "${BUILD_LOG}"
         echo "######################################################"
-        /usr/local/sbin/build_deb_kanidm.sh "${BUILD_DIR}" | tee -a "${BUILD_LOG}"
-        /usr/local/sbin/build_deb_kanidmd.sh "${BUILD_DIR}" | tee -a "${BUILD_LOG}"
-        /usr/local/sbin/build_deb_kanidm_ssh.sh "${BUILD_DIR}" | tee -a "${BUILD_LOG}"
-        /usr/local/sbin/build_deb_kanidm_unixd.sh "${BUILD_DIR}" | tee -a "${BUILD_LOG}"
-        /usr/local/sbin/build_deb_kanidm_pamnss.sh "${BUILD_DIR}" | tee -a "${BUILD_LOG}"
+        /usr/local/sbin/build_debs.sh "${BUILD_LOG}"
     fi
 
 fi

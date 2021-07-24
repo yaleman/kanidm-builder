@@ -193,7 +193,12 @@ def build_version(version_string: str, client_only: bool, force_container_build:
     client = get_docker_client()
 
     version_tag = f"kanidm_{version_string}"
-    if check_if_need_to_build_image(version_string) or force_container_build:
+    if not force_container_build:
+        container_build = check_if_need_to_build_image(version_string)
+    else:
+        container_build = force_container_build
+
+    if container_build:
         logger.info("Building container {}", version_string)
         image = client.images.build(
             path=".",

@@ -25,8 +25,10 @@ mkdir -p "${DEB_DIR}/pkg-debian/etc/systemd/system/"
 # mkdir -p "${DEB_DIR}/pkg-debian/var/lib/kanidm/"
 mkdir -p "${DEB_DIR}/pkg-debian/usr/local/sbin/"
 
-find "${BUILD_DIR}/target/release/" -name 'kanidm_unixd*' -exec cp "{}" "${DEB_DIR}/pkg-debian/usr/local/sbin/" \;
-
+find "${BUILD_DIR}/target/release/" -name 'kanidm_unixd*' -exec cp "{}" "${DEB_DIR}/pkg-debian/usr/local/sbin/" \;   || {
+    echo "Couldn't find kanidm_unixd, quitting"
+    exit 1
+}
 
 ##############################################################################
 # Default config

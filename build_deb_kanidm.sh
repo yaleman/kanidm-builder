@@ -24,13 +24,19 @@ mkdir -p "${TEMPDIR}/pkg-debian/usr/local/bin/"
 mkdir -p "${TEMPDIR}/pkg-debian/usr/local/share/kanidm/client/"
 
 echo "Copying release file"
-cp "${BUILD_DIR}/target/release/kanidm" "${TEMPDIR}/pkg-debian/usr/local/bin/"
+cp "${BUILD_DIR}/target/release/kanidm" "${TEMPDIR}/pkg-debian/usr/local/bin/" || {
+    echo "Couldn't find kanidm, quitting build_deb_kanidm"
+    exit 1
+}
 
 ##############################################################################
 # Default config
 ##############################################################################
 echo "Writing default config"
-cp "${BUILD_DIR}/examples/config" "${TEMPDIR}/pkg-debian/usr/local/share/kanidm/client/"
+cp "${BUILD_DIR}/examples/config" "${TEMPDIR}/pkg-debian/usr/local/share/kanidm/client/" || {
+    echo "Couldn't find default config, quitting build_deb_kanidm"
+    exit 1
+}
 
 ##############################################################################
 # Things that won't get deleted without a purge of this package

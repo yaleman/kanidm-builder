@@ -11,7 +11,7 @@ if [ ! -d "${BUILD_DIR}" ]; then
     exit 1
 fi
 
-echo "Building .deb package for ${OSID} ${VERSION}"
+echo "Building .deb package for kanidmd ${OSID} ${VERSION}"
 
 ##############################################################################
 # All the directories
@@ -25,13 +25,21 @@ mkdir -p "${TEMPDIR}/pkg-debian/var/lib/kanidm/"
 touch "${TEMPDIR}/pkg-debian/var/lib/kanidm/kanidm.db"
 mkdir -p "${TEMPDIR}/pkg-debian/usr/local/sbin/"
 
-cp "${BUILD_DIR}/target/release/kanidmd" "${TEMPDIR}/pkg-debian/usr/local/sbin/"
+cp "${BUILD_DIR}/target/release/kanidmd" "${TEMPDIR}/pkg-debian/usr/local/sbin/" || {
+    echo "Couldn't find kanidmd, quitting"
+    exit 1
+}
+
 
 
 ##############################################################################
 # Default config
 ##############################################################################
-cp "${BUILD_DIR}/examples/server.toml" "${TEMPDIR}/pkg-debian/etc/kanidm/kanidmd.toml"
+cp "${BUILD_DIR}/examples/server.toml" "${TEMPDIR}/pkg-debian/etc/kanidm/kanidmd.toml" || {
+    echo "Couldn't find server.toml examples, quitting"
+    exit 1
+}
+
 
 ##############################################################################
 # Things that won't get deleted without a purge of this package

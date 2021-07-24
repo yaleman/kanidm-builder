@@ -151,7 +151,7 @@ if [ -f "${BUILD_DIR}/.git/config" ]; then
 
     if [ $NEED_TO_REPLACE_SOURCE_REPO -eq 0 ]; then
         # pull the current branch
-        CHECK_REPO_BRANCH=$(git branch -C "${BUILD_DIR}" | grep -E '^\*' | awk '{print $NF}')
+        CHECK_REPO_BRANCH=$(git -C "${BUILD_DIR}" branch | grep -E '^\*' | awk '{print $NF}')
         if [ "${CHECK_REPO_BRANCH}" != "${SOURCE_REPO_BRANCH}" ]; then
             echo "Branch is different (${CHECK_REPO_BRANCH} != ${SOURCE_REPO_BRANCH}), removing source."
             NEED_TO_REPLACE_SOURCE_REPO=1

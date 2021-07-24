@@ -4,6 +4,11 @@
 # designed to work on ubuntu/debian/opensuse
 # James Hodgkinson 2021
 
+function failed_build_wasm {
+    echo "Failed to install wasm-pack, bailing"
+    exit 1
+}
+
 RUST_VERSION="$(cat /etc/RUST_VERSION)"
 
 PATH=/root/.cargo/bin:$PATH
@@ -54,9 +59,8 @@ rustup default "${RUST_VERSION}"
 echo "######################################################"
 echo " Installing  wasm-pack"
 echo "######################################################"
-cargo install wasm-pack
-npm install --global rollup
-
+cargo install wasm-pack || failed_build_wasm
+npm install --global rollup || failed_build_wasm
 cd /
 BUILD_DIR="/source/${OSID}/${VERSION}"
 echo "######################################################"
@@ -67,64 +71,64 @@ rm -rf /source/*
 
 mkdir -p "/source/${OSID}"
 mkdir -p "/buildlogs/"
-BUILD_LOG="/buildlogs/$(date "+%Y-%m-%d-%H-%M-${OS}-${VERSION}").log"
+BUILD_LOG="/buildlogs/$(date "+%Y-%m-%d-%H-%M-${OSID}-${VERSION}").log"
 
-git clone "${SOURCE_REPO}" "${BUILD_DIR}"
+git clone "${SOURCE_REPO}" "${BUILD_DIR}" | tee -a "${BUILD_LOG}"
 
-echo "Changing working dir into ${BUILD_DIR}"
+echo "Changing working dir into ${BUILD_DIR}" | tee -a "${BUILD_LOG}"
 cd "${BUILD_DIR}" || {
-    echo "Failed to download source from ${SOURCE_REPO} bailing"
+    echo "Failed to download source from ${SOURCE_REPO} bailing" | tee -a "${BUILD_LOG}"
     exit 1
 }
-git fetch --all
+git fetch --all | tee -a "${BUILD_LOG}"
 mkdir -p "${BUILD_DIR}/target"
 
 # change to the requested branch
 if [ -n "${SOURCE_REPO_BRANCH}" ]; then
-    echo "Listing branches"
-    git branch --all
-    echo "Checking out ${SOURCE_REPO_BRANCH}"
-    git checkout "${SOURCE_REPO_BRANCH}"
+    echo "Listing branches" | tee -a "${BUILD_LOG}"
+    git branch --all | tee -a "${BUILD_LOG}"
+    echo "Checking out ${SOURCE_REPO_BRANCH}" | tee -a "${BUILD_LOG}"
+    git checkout "${SOURCE_REPO_BRANCH}" | tee -a "${BUILD_LOG}"
 fi
 
-echo " ### Branches ### "
-git branch -vv
-echo " ### Status ### "
-git status
+echo " ### Branches ### " | tee -a "${BUILD_LOG}"
+git branch -vv | tee -a "${BUILD_LOG}"
+echo " ### Status ### " | tee -a "${BUILD_LOG}"
+git status | tee -a "${BUILD_LOG}"
 
 echo "######################################################"
-echo " Setup done, starting long tasks"
+echo " Setup done, starting long tasks" | tee -a "${BUILD_LOG}"
 echo "######################################################"
 if [ -n "$*" ]; then
-    echo "Was requested to do a particular task, will do that"
-    echo "task: ${*}"
+    echo "Was requested to do a particular task, will do that" | tee -a "${BUILD_LOG}"
+    echo "task: ${*}" | tee -a "${BUILD_LOG}"
     # shellcheck disable=SC2068
     $@
 
 else
 
     echo "######################################################"
-    echo " Building WASM UI"
+    echo " Building WASM UI" | tee -a "${BUILD_LOG}"
     echo "######################################################"
 
     cd "${BUILD_DIR}/kanidmd_web_ui" || {
-        echo "Coudln't move into ${BUILD_DIR}/kanidmd_web_ui bailing"
+        echo "Coudln't move into ${BUILD_DIR}/kanidmd_web_ui bailing" | tee -a "${BUILD_LOG}"
         exit 1
     }
     ./build_wasm.sh || {
-        echo "Unable to build WASM, bailing"
+        echo "Unable to build WASM, bailing" | tee -a "${BUILD_LOG}"
         exit 1
     }
 
 
     echo "######################################################"
-    echo " Compressing widget"
+    echo " Compressing widget" | tee -a "${BUILD_LOG}"
     echo "######################################################"
 
-    tar czvf "${BUILD_DIR}/webui.tar.gz" pkg/*
+    tar czvf "${BUILD_DIR}/webui.tar.gz" pkg/* | tee -a "${BUILD_LOG}"
 
     echo "######################################################"
-    echo " Done building, copying to s3://${BUILD_ARTIFACT_BUCKET}/"
+    echo " Done building, copying to s3://${BUILD_ARTIFACT_BUCKET}/" | tee -a "${BUILD_LOG}"
     echo "######################################################"
 
     # no verify ssl because docker is dumb and ipv6 is hard it seems

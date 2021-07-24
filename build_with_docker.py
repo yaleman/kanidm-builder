@@ -39,6 +39,7 @@ client_build_commands = [
 --bin kanidm_cache_invalidate \
 --bin kanidm_cache_clear""",
     "cargo build --lib --release",
+    "/usr/local/sbin/build_debs.sh",
 ]
 server_build_commands = [
     """cargo build --release \
@@ -48,6 +49,7 @@ server_build_commands = [
         --bin orca
     """,
     "cargo build --lib --release",
+    "/usr/local/sbin/build_debs.sh",
 ]
 
 

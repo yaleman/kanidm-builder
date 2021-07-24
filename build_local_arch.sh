@@ -51,7 +51,7 @@ VERSION="unknown"
 # shellcheck disable=SC1091
 source /etc/profile.d/identify_os.sh
 BUILD_LOG="/buildlogs/$(date "+%Y-%m-%d-%H-%M")-${OSID}-${VERSION}.log"
-
+touch "${BUILD_LOG}"
 echo "Dumping environment:" | tee -a "${BUILD_LOG}"
 export | tee -a "${BUILD_LOG}"
 

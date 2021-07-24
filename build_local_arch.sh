@@ -51,6 +51,7 @@ VERSION="unknown"
 # shellcheck disable=SC1091
 source /etc/profile.d/identify_os.sh
 BUILD_LOG="/buildlogs/$(date "+%Y-%m-%d-%H-%M")-${OSID}-${VERSION}.log"
+mkdir -p "/buildlogs/"
 touch "${BUILD_LOG}"
 echo "Dumping environment:" | tee -a "${BUILD_LOG}"
 export | tee -a "${BUILD_LOG}"
@@ -168,7 +169,6 @@ if [ $NEED_TO_REPLACE_SOURCE_REPO -eq 1 ]; then
     rm -rf /source/*
 
     mkdir -p "/source/${OSID}"
-    mkdir -p "/buildlogs/"
 
     if [ ! -f "${BUILD_DIR}" ]; then
         echo "Cloning repo"

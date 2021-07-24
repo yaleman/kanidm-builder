@@ -1,32 +1,33 @@
 #!/bin/bash
-if [ -f /etc/os-release ]; then
-    # shellcheck disable=SC1091
-    source /etc/os-release
+
+""" does the cleanup-before-removal-installation thing """
+
+if [ -d "/usr/lib/$(uname -m)-linux-gnu" ]; then
+    NSSDIR="/usr/lib/$(uname -m)-linux-gnu"
+elif [ -d "/lib/$(uname -m)-linux-gnu" ]; then
+    NSSDIR="/lib/$(uname -m)-linux-gnu"
+elif [ -d "/usr/lib/$(uname -p)-linux-gnu" ]; then
+    NSSDIR="/usr/lib/$(uname -p)-linux-gnu"
+elif [ -d "/lib/$(uname -p)-linux-gnu" ]; then
+    NSSDIR="/lib/$(uname -p)-linux-gnu"
 else
-    echo "Couldn't find /etc/os-release, bailing"
-    exit 1
+    echo "Couldn't figure out where the NSS dir is? uname -p = $(uname -p) uname -m = $(uname -m)"
 fi
 
-if [ "${VERSION_CODENAME}" == "buster" ]; then # debian buster
-    #echo "Debian buster"
-    NSSDIR="/usr/lib/$(uname -p)-linux-gnu"
-elif [ "${VERSION_CODENAME}" == "bionic" ]; then # ubuntu bionic
-    #echo "Ubuntu bionic"
-    NSSDIR="/lib/$(uname -p)-linux-gnu"
-elif [ "${VERSION_CODENAME}" == "focal" ]; then # ubuntu focal
-    #echo "Ubuntu focal"
-    NSSDIR="/usr/lib/$(uname -p)-linux-gnu"
-elif [ "${VERSION_CODENAME}" == "groovy" ]; then # ubuntu groovy
-    #echo "Ubuntu groovy"
-    NSSDIR="/usr/lib/$(uname -p)-linux-gnu"
-fi
 PAMDIR="${NSSDIR}/security"
+
+
+
+############ PRE-REMOVAL STUFF
+
 
 if [ -d "${NSSDIR}" ]; then
     echo "Removing symlinks..."
     rm "${NSSDIR}/libnss_kanidm.so.2"
     if [ -d "${PAMDIR}" ]; then
         rm "${PAMDIR}/pam_kanidm.so"
+    else
+        echo "Couldn't find PAM dir, probably need to clean that up manually. Looked in: ${PAMDIR}"
     fi
 else
     echo "Couldn't find NSS dir: ${NSSDIR}, bailing"

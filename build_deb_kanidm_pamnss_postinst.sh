@@ -4,18 +4,22 @@
 
 if [ -d "/usr/lib/$(uname -m)-linux-gnu" ]; then
     NSSDIR="/usr/lib/$(uname -m)-linux-gnu"
-
+elif [ -d "/lib/$(uname -m)-linux-gnu" ]; then
+    NSSDIR="/lib/$(uname -m)-linux-gnu"
+elif [ -d "/usr/lib/$(uname -p)-linux-gnu" ]; then
+    NSSDIR="/usr/lib/$(uname -p)-linux-gnu"
 elif [ -d "/lib/$(uname -p)-linux-gnu" ]; then
     NSSDIR="/lib/$(uname -p)-linux-gnu"
-
-elif [ -d "/usr/lib/$(uname -p)-linux-gnu" ]; then
-    NSSDIR="/usrlib/$(uname -m)-linux-gnu"
 else
     echo "Couldn't figure out where the NSS dir is? uname -p = $(uname -p) uname -m = $(uname -m)"
 fi
 
-
 PAMDIR="${NSSDIR}/security"
+
+
+
+############ POST INSTALLATION STUFF
+
 
 if [ -d "${NSSDIR}" ]; then
     echo "Linking NSS lib: /usr/local/lib/kanidm/libnss_kanidm.so.2 => ${NSSDIR}/libnss_kanidm.so.2"

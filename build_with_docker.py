@@ -107,14 +107,15 @@ def run_build_container(
 
 def wait_for_container_to_finish(name: str):
     """ does what it says on the tin """
-    docker_client = get_docker_client()
     try:
+        docker_client = get_docker_client()
         container = docker_client.containers.get(name)
     except docker.errors.NotFound:
         logger.error("Container {} not found while trying to run it, bailing because something went wrong.", name)
         sys.exit(1)
-    try:
-        while container.status in ("running", "created"):
+    while container.status in ("running", "created"):
+        try:
+            docker_client = get_docker_client()
             logger.debug(
                 "Waiting for {} (state: {}) to finish running",
                 name,
@@ -122,11 +123,12 @@ def wait_for_container_to_finish(name: str):
             )
             time.sleep(TIMER_LOOP_WAIT)
             container = docker_client.containers.get(name)
-    except docker.errors.NotFound:
-        logger.info("Container not running/created, looks to be done!")
-    except docker.errors.APIError as api_error:
-        logger.error(api_error)
-        sys.exit(1)
+        except docker.errors.NotFound:
+            logger.info("Container not running/created, looks to be done!")
+            continue
+        except docker.errors.APIError as api_error:
+            logger.error(api_error)
+            sys.exit(1)
     time.sleep(TIMER_LOOP_WAIT)
     logger.info("Finished waiting, carrying on.")
 

@@ -20,12 +20,12 @@ function upload_to_s3() {
     # remove *.d
     find "${S3_SOURCE}" -maxdepth 1 -name '*.d' -exec rm "{}" \;
 
-    echo "Listing files in release dir:"
+    echo "Listing files in release dir:" | tee -a "${BUILD_LOG}"
 
     find "${S3_SOURCE}" -maxdepth 1 | tee -a "${BUILD_LOG}"
 
-    echo "Copying build artifacts to s3 (source=${S3_SOURCE} destination=${S3_DESTINATION})"
-    aws --endpoint-url "${S3_HOSTNAME}"  s3 sync "${S3_SOURCE}" "${S3_DESTINATION}"
+    echo "Copying build artifacts to s3 (source=${S3_SOURCE} destination=${S3_DESTINATION})" | tee -a "${BUILD_LOG}"
+    aws --endpoint-url "${S3_HOSTNAME}"  s3 sync "${S3_SOURCE}" "${S3_DESTINATION}" | tee -a "${BUILD_LOG}"
 
     echo "Copying build logs to s3"
     aws --endpoint-url "${S3_HOSTNAME}" \
@@ -35,15 +35,15 @@ function upload_to_s3() {
 
 }
 
-echo "######################################################"
-echo " Starting build script"
-echo "######################################################"
+echo "######################################################" | tee -a "${BUILD_LOG}"
+echo " Starting build script" | tee -a "${BUILD_LOG}"
+echo "######################################################" | tee -a "${BUILD_LOG}"
 
 PATH=/root/.cargo/bin:$PATH
 export PATH
 
-echo "Dumping environment:"
-export
+echo "Dumping environment:" | tee -a "${BUILD_LOG}"
+export | tee -a "${BUILD_LOG}"
 
 BUILD_OUTPUT_BASE='/output' # no trailing slash
 OSID="Unknown"
@@ -52,9 +52,10 @@ VERSION="unknown"
 # let's check which OS version we're on
 # shellcheck disable=SC1091
 source /etc/profile.d/identify_os.sh
+BUILD_LOG="/buildlogs/$(date "+%Y-%m-%d-%H-%M")-${OSID}-${VERSION}.log"
 
 if [ "${OSID}" == "Unknown" ]; then
-    echo "Sorry, unsupported OS"
+    echo "Sorry, unsupported OS, quitting" | tee -a "${BUILD_LOG}"
     exit 1
 fi
 
@@ -63,10 +64,10 @@ if [ -z "${SOURCE_REPO}" ]; then
 fi
 BUILD_DIR="/source/${OSID}/${VERSION}"
 
-echo "Building os=${OSID} os_version=${VERSION}"
+echo "Building os=${OSID} os_version=${VERSION}" | tee -a "${BUILD_LOG}"
 
 echo "######################################################"
-echo " Setting up AWS Config"
+echo " Setting up AWS Config" | tee -a "${BUILD_LOG}"
 echo "######################################################"
     mkdir -p "$HOME/.aws/"
     cat > "$HOME/.aws/config" <<-EOF
@@ -76,19 +77,19 @@ output=json
 EOF
 
 
-echo "Setting default signature to v4"
+echo "Setting default signature to v4" | tee -a "${BUILD_LOG}"
 aws configure set s3.signature_version s3v4
-echo "Setting output json"
+echo "Setting output json" | tee -a "${BUILD_LOG}"
 aws configure set output json
 
 S3_SOURCE="${BUILD_DIR}/target/release/"
 S3_DESTINATION="s3://${BUILD_ARTIFACT_BUCKET}/${OSID}/${VERSION}/$(uname -m)/"
 
-echo "Testing if we can actually reach the S3 bucket, will bail if not"
+echo "Testing if we can actually reach the S3 bucket, will bail if not" | tee -a "${BUILD_LOG}"
 aws --endpoint-url "${S3_HOSTNAME}"  s3 ls "s3://${BUILD_ARTIFACT_BUCKET}" || exit 1
 
 echo "######################################################"
-echo " Trying to grab sccache"
+echo " Trying to grab sccache" | tee -a "${BUILD_LOG}"
 echo "######################################################"
 
 if [ "$(which sccache | wc -l)" -ne 0 ]; then
@@ -103,79 +104,78 @@ fi
 if [ "$(which sccache | wc -l)" -ne 0 ]; then
 
     echo "######################################################"
-    echo " Starting sccache"
+    echo " Starting sccache" | tee -a "${BUILD_LOG}"
     echo "######################################################"
     SCCACHE="$(which sccache)"
     export RUSTC_WRAPPER="${SCCACHE}"
     # because sccache doesn't like incremental builds...
     export CARGO_INCREMENTAL=false
 
-    $SCCACHE --start-server
+    $SCCACHE --start-server | tee -a "${BUILD_LOG}"
     sleep 2
-    $SCCACHE -s
+    $SCCACHE -s | tee -a "${BUILD_LOG}"
 else
     echo "######################################################"
-    echo " Couldn't find sccache, boo."
+    echo " Couldn't find sccache, boo." | tee -a "${BUILD_LOG}"
     echo "######################################################"
 fi
 
 OUTPUT="$(echo "${BUILD_OUTPUT_BASE}/${OSID}/${VERSION}/" | tr -d '"')"
 echo "######################################################"
-echo " Making output dir: ${OUTPUT}"
+echo " Making output dir: ${OUTPUT}" | tee -a "${BUILD_LOG}"
 echo "######################################################"
 mkdir -p "${OUTPUT}"
 
 RUST_VERSION="$(cat /etc/RUST_VERSION)"
 echo "######################################################"
-echo " Setting rust version to ${RUST_VERSION}"
+echo " Setting rust version to ${RUST_VERSION}" | tee -a "${BUILD_LOG}"
 echo "######################################################"
 rustup default "${RUST_VERSION}"
 
 cd /
 echo "######################################################"
-echo " Cloning from ${SOURCE_REPO} into ${BUILD_DIR}"
+echo " Cloning from ${SOURCE_REPO} into ${BUILD_DIR}" | tee -a "${BUILD_LOG}"
 echo "######################################################"
 
 rm -rf /source/*
 
 mkdir -p "/source/${OSID}"
 mkdir -p "/buildlogs/"
-BUILD_LOG="/buildlogs/$(date "+%Y-%m-%d-%H-%M")-${OSID}-${VERSION}.log"
 
 git clone "${SOURCE_REPO}" "${BUILD_DIR}"
 
-echo "Changing working dir into ${BUILD_DIR}"
+echo "Changing working dir into ${BUILD_DIR}" | tee -a "${BUILD_LOG}"
 cd "${BUILD_DIR}" || {
-    echo "Failed to download source from ${SOURCE_REPO} bailing"
+    echo "Failed to download source from ${SOURCE_REPO} bailing" | tee -a "${BUILD_LOG}"
     exit 1
 }
 
 git fetch --all
-echo "making target dir ${BUILD_DIR}/target"
+echo "making target dir ${BUILD_DIR}/target" | tee -a "${BUILD_LOG}"
 mkdir -p "${BUILD_DIR}/target"
 
 # change to the requested branch
 if [ -n "${SOURCE_REPO_BRANCH}" ]; then
     echo "######################################################"
-    echo " Config specifies to use ${SOURCE_REPO_BRANCH}"
+    echo " Config specifies to use ${SOURCE_REPO_BRANCH}" | tee -a "${BUILD_LOG}"
     echo "######################################################"
-    echo "Listing branches"
-    git branch --all
-    echo "Checking out ${SOURCE_REPO_BRANCH}"
-    git checkout "${SOURCE_REPO_BRANCH}"
+    echo "Listing branches" | tee -a "${BUILD_LOG}"
+    git branch --all | tee -a "${BUILD_LOG}"
+    echo "Checking out ${SOURCE_REPO_BRANCH}" | tee -a "${BUILD_LOG}"
+    git checkout "${SOURCE_REPO_BRANCH}" | tee -a "${BUILD_LOG}"
 fi
 
-echo " ### Branches ### "
-git branch -vv
-echo " ### Status ### "
-git status
+echo " ### Branches ### " | tee -a "${BUILD_LOG}"
+git branch -vv | tee -a "${BUILD_LOG}"
+echo " ### Status ### " | tee -a "${BUILD_LOG}"
+git status | tee -a "${BUILD_LOG}"
 
 echo "######################################################"
-echo " Setup done, starting long tasks"
+echo " Setup done, starting long tasks" | tee -a "${BUILD_LOG}"
 echo "######################################################"
 if [ -n "$*" ]; then
-    echo "Was requested to do a particular task, will do that"
-    echo "task: ${*}"
+    echo "Was requested to do a particular task, will do that" | tee -a "${BUILD_LOG}"
+    echo "task: ${*}" | tee -a "${BUILD_LOG}"
     # shellcheck disable=SC2068
     $@
 
@@ -184,42 +184,43 @@ else
     # echo " Skipping tests due to #416."
     # echo "######################################################"
     echo "######################################################"
-    echo "Doing default thing, running tests."
+    echo "Doing default thing, running tests." | tee -a "${BUILD_LOG}"
     echo "######################################################"
     RUST_BACKTRACE=1 cargo test --release || {
-        echo "Failed to pass tests, not doing build/copy stage"
+        echo "Failed to pass tests, not doing build/copy stage" | tee -a "${BUILD_LOG}"
         exit 1
     }
     echo "######################################################"
     echo " Doing build stage"
     echo "######################################################"
     cargo build --workspace --release || {
-        echo "unable to build, bailing"
+        echo "unable to build, bailing" | tee -a "${BUILD_LOG}"
         exit 1
     }
 
     if [ "$(which dpkg | wc -l)" -ne 0 ]; then
         echo "######################################################"
-        echo " Building .deb package"
+        echo " Building .deb packages" | tee -a "${BUILD_LOG}"
         echo "######################################################"
-        /usr/local/sbin/build_deb_kanidm.sh "${BUILD_DIR}"
-        /usr/local/sbin/build_deb_kanidmd.sh "${BUILD_DIR}"
-        /usr/local/sbin/build_deb_kanidm_ssh.sh "${BUILD_DIR}"
-        /usr/local/sbin/build_deb_kanidm_unixd.sh "${BUILD_DIR}"
-        /usr/local/sbin/build_deb_kanidm_pamnss.sh "${BUILD_DIR}"
+        /usr/local/sbin/build_deb_kanidm.sh "${BUILD_DIR}" | tee -a "${BUILD_LOG}"
+        /usr/local/sbin/build_deb_kanidmd.sh "${BUILD_DIR}" | tee -a "${BUILD_LOG}"
+        /usr/local/sbin/build_deb_kanidm_ssh.sh "${BUILD_DIR}" | tee -a "${BUILD_LOG}"
+        /usr/local/sbin/build_deb_kanidm_unixd.sh "${BUILD_DIR}" | tee -a "${BUILD_LOG}"
+        /usr/local/sbin/build_deb_kanidm_pamnss.sh "${BUILD_DIR}" | tee -a "${BUILD_LOG}"
     fi
 
 fi
 
-upload_to_s3
-
 
 if [ "$(pgrep sccache | wc -l)" -ne 0 ]; then
     echo "######################################################"
-    echo " sccache stats"
+    echo " sccache stats" | tee -a "${BUILD_LOG}"
     echo "######################################################"
-    $SCCACHE -s
+    $SCCACHE -s | tee -a "${BUILD_LOG}"
 fi
+
+upload_to_s3
+
 echo "######################################################"
 echo " All done!"
 echo "######################################################"

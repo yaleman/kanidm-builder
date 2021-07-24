@@ -109,8 +109,23 @@ EOM
 # Generate the .deb
 ##############################################################################
 echo "Creating the package"
-dpkg -b "${TEMPDIR}/pkg-debian/" "${BUILD_DIR}/target/release/kanidm-${KANIDM_VERSION}-${ARCH}.deb"
-cp "${BUILD_DIR}/target/release/kanidm-${KANIDM_VERSION}-${ARCH}.deb" "${BUILD_DIR}/target/release/kanidm-latest-${ARCH}.deb"
+KANIDM_PACKAGE="${BUILD_DIR}/target/release/kanidm-${KANIDM_VERSION}-${ARCH}.deb"
+dpkg -b "${TEMPDIR}/pkg-debian/" "${KANIDM_PACKAGE}"
+
+
+# fix from https://stackoverflow.com/questions/13021002/my-deb-file-removes-opt/58066154#58066154
+echo "Fixing the weird packaging issue"
+ar x "${KANIDM_PACKAGE}" data.tar.xz
+unxz data.tar.xz
+tar --delete --occurrence -f data.tar ./usr/local/bin
+tar --delete --occurrence -f data.tar ./usr/local
+tar --delete --occurrence -f data.tar ./usr
+xz data.tar
+ar r "${KANIDM_PACKAGE}" data.tar.xz
+rm data.tar.xz
+
+
+cp "${KANIDM_PACKAGE}" "${BUILD_DIR}/target/release/kanidm-latest-${ARCH}.deb"
 
 echo "Listing current .debs"
 

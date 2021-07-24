@@ -89,4 +89,17 @@ EOM
 ##############################################################################
 echo "Creating the package"
 dpkg -b "${TEMPDIR}/pkg-debian/" "${BUILD_DIR}/target/release/kanidm-pamnss-${KANIDM_VERSION}-${ARCH}.deb"
+
+echo "Fixing the weird packaging issue"
+ar x "${BUILD_DIR}/target/release/kanidm-pamnss-${KANIDM_VERSION}-${ARCH}.deb" data.tar.xz
+unxz data.tar.xz
+tar --delete --occurrence -f data.tar ./usr/local/lib
+tar --delete --occurrence -f data.tar ./usr/local/
+tar --delete --occurrence -f data.tar ./usr/
+xz data.tar
+ar r "${BUILD_DIR}/target/release/kanidm-pamnss-${KANIDM_VERSION}-${ARCH}.deb" data.tar.xz
+rm data.tar.xz
+
+
+
 cp "${BUILD_DIR}/target/release/kanidm-pamnss-${KANIDM_VERSION}-${ARCH}.deb" "${BUILD_DIR}/target/release/kanidm-pamnss-latest-${ARCH}.deb"

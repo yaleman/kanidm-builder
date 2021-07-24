@@ -1,25 +1,20 @@
 #!/bin/bash
-if [ -f /etc/os-release ]; then
-    # shellcheck disable=SC1091
-    source /etc/os-release
+
+""" does the post-installation thing """
+
+if [ -d "/usr/lib/$(uname -m)-linux-gnu" ]; then
+    NSSDIR="/usr/lib/$(uname -m)-linux-gnu"
+
+elif [ -d "/lib/$(uname -p)-linux-gnu" ]; then
+    NSSDIR="/lib/$(uname -p)-linux-gnu"
+
+elif [ -d "/usr/lib/$(uname -p)-linux-gnu" ]; then
+    NSSDIR="/usrlib/$(uname -m)-linux-gnu"
 else
-    echo "Couldn't find /etc/os-release, bailing"
-    exit 1
+    echo "Couldn't figure out where the NSS dir is? uname -p = $(uname -p) uname -m = $(uname -m)"
 fi
 
-if [ "${VERSION_CODENAME}" == "buster" ]; then # debian buster
-    echo "Debian buster"
-    NSSDIR="/usr/lib/$(uname -p)-linux-gnu"
-elif [ "${VERSION_CODENAME}" == "bionic" ]; then # ubuntu bionic
-    echo "Ubuntu bionic"
-    NSSDIR="/lib/$(uname -p)-linux-gnu"
-elif [ "${VERSION_CODENAME}" == "focal" ]; then # ubuntu focal
-    echo "Ubuntu focal"
-    NSSDIR="/usr/lib/$(uname -p)-linux-gnu"
-elif [ "${VERSION_CODENAME}" == "groovy" ]; then # ubuntu groovy
-    echo "Ubuntu groovy"
-    NSSDIR="/usr/lib/$(uname -p)-linux-gnu"
-fi
+
 PAMDIR="${NSSDIR}/security"
 
 if [ -d "${NSSDIR}" ]; then
@@ -28,6 +23,9 @@ if [ -d "${NSSDIR}" ]; then
     if [ -d "${PAMDIR}" ]; then
       echo "Linking PAM Module: /usr/local/lib/kanidm/pam_kanidm.so => ${PAMDIR}/pam_kanidm.so"
         ln -sf /usr/local/lib/kanidm/pam_kanidm.so "${PAMDIR}/pam_kanidm.so"
+    else
+        echo "Couldn't find PAM module dir: ${PAMDIR}, bailing."
+        exit 1
     fi
 else
     echo "Couldn't find NSS dir: ${NSSDIR}, bailing"

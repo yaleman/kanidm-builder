@@ -105,7 +105,7 @@ def run_build_container(
         sys.exit(1)
     return container
 
-def wait_for_container_to_finish(name: str):
+def wait_for_container_to_finish(name: str) -> bool:
     """ does what it says on the tin """
     try:
         docker_client = get_docker_client()
@@ -125,12 +125,14 @@ def wait_for_container_to_finish(name: str):
             container = docker_client.containers.get(name)
         except docker.errors.NotFound:
             logger.info("Container not running/created, looks to be done!")
-            continue
+            return True
         except docker.errors.APIError as api_error:
             logger.error(api_error)
             sys.exit(1)
     time.sleep(TIMER_LOOP_WAIT)
     logger.info("Finished waiting, carrying on.")
+    return True
+
 
 def build_clients(version: str):
     """ builds the clients """

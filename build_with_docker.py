@@ -74,20 +74,15 @@ def get_environment_data():
         ]
 
 
-def run_build_container(
-    command: str, version_tag_str: str
-) -> docker.client.ContainerCollection:
+def run_build_container(version_tag_str: str) -> docker.client.ContainerCollection:
     """ runs a container """
     docker_client = get_docker_client()
-    if not command.strip():
-        command = None
+    logger.info("Creating container={}", version_tag_str)
     try:
-        logger.info("Creating container={} command=\"{}\"", version_tag_str, command)
         container = docker_client.containers.run(
             name=version_tag_str,
             image=version_tag_str,
             auto_remove=True,
-            command=command,
             detach=True,
             environment=get_environment_data(),
             volumes={
@@ -136,27 +131,13 @@ def wait_for_container_to_finish(name: str) -> bool:
     return True
 
 
-def build_clients(version: str):
+def build_kanidm(version: str):
     """ builds the clients """
     version_tag = f"kanidm_{version}"
     logger.info("Running client build for {}", version)
-    for command in client_build_commands:
-        run_build_container(command, version_tag)
-        wait_for_container_to_finish(version_tag)
+    run_build_container(version_tag)
+    wait_for_container_to_finish(version_tag)
 
-def build_server(version_string: str) -> bool:
-    """ does the server build thing """
-    version_tag = f"kanidm_{version_string}"
-
-    if version_string == "wasm":
-        build_commands = [""]
-    else:
-        build_commands = server_build_commands
-
-    logger.info("Running server build for {}", version_string)
-    for command in build_commands:
-        run_build_container(command, version_tag)
-        wait_for_container_to_finish(version_tag)
 
 
 def check_if_need_to_build_image(version: str) -> bool:
@@ -190,7 +171,7 @@ def check_if_need_to_build_image(version: str) -> bool:
     return True
 
 
-def build_version(version_string: str, client_only: bool, force_container_build: bool):
+def build_version(version_string: str, force_container_build: bool):
     """ builds a particular version """
     client = get_docker_client()
 
@@ -255,14 +236,7 @@ def build_version(version_string: str, client_only: bool, force_container_build:
         logger.error(api_error)
         sys.exit()
 
-
-
-    build_clients(version_string)
-    if not client_only:
-        try:
-            build_server(version_string)
-        except NotImplementedError:
-            logger.warning("Not actually building the server yet... :)")
+    build_kanidm(version_string)
 
     logger.info("Done building {}!", version_string)
 
@@ -273,22 +247,15 @@ def build_version(version_string: str, client_only: bool, force_container_build:
     help="Specific version to build ({})".format(",".join(VERSIONS)),
 )
 @click.option(
-    "--client-only", "-c", help="Build only the clients", is_flag=True, default=False
-)
-@click.option(
     "--force-build", "-b", help="Force container build", is_flag=True, default=False
 )
-def run_cli(version: str, client_only: bool, force_build: bool) -> None:
+def run_cli(version: str, force_build: bool) -> None:
     """ does the CLI thing"""
-    if client_only:
-        logger.info("Building just the clients.")
-    else:
-        logger.info("Building clients and server.")
 
     if not version:
         logger.info("Building all versions.")
         for version_name in VERSIONS:
-            build_version(version_name, client_only, force_build)
+            build_version(version_name, force_build)
     else:
         if version not in VERSIONS:
             logger.error(
@@ -298,7 +265,7 @@ def run_cli(version: str, client_only: bool, force_build: bool) -> None:
             )
             sys.exit(1)
         else:
-            build_version(version, client_only, force_build)
+            build_version(version, force_build)
 
 
 if __name__ == "__main__":

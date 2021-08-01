@@ -2,20 +2,8 @@
 
 """ does the post-installation thing """
 
-if [ -d "/usr/lib/$(uname -m)-linux-gnu" ]; then
-    NSSDIR="/usr/lib/$(uname -m)-linux-gnu"
-elif [ -d "/lib/$(uname -m)-linux-gnu" ]; then
-    NSSDIR="/lib/$(uname -m)-linux-gnu"
-elif [ -d "/usr/lib/$(uname -p)-linux-gnu" ]; then
-    NSSDIR="/usr/lib/$(uname -p)-linux-gnu"
-elif [ -d "/lib/$(uname -p)-linux-gnu" ]; then
-    NSSDIR="/lib/$(uname -p)-linux-gnu"
-else
-    echo "Couldn't figure out where the NSS dir is? uname -p = $(uname -p) uname -m = $(uname -m)"
-fi
-
-PAMDIR="${NSSDIR}/security"
-
+# shellcheck disable=SC1091
+source /usr/local/lib/kanidm/build_find_pamdir.sh
 
 
 ############ POST INSTALLATION STUFF

@@ -2,6 +2,11 @@
 
 # does the cleanup-before-removal-installation thing
 
+
+# shellcheck disable=SC1091
+source /usr/local/lib/kanidm/build_find_pamdir.sh
+
+
 if [ -d "/usr/lib/$(uname -m)-linux-gnu" ]; then
     NSSDIR="/usr/lib/$(uname -m)-linux-gnu"
 elif [ -d "/lib/$(uname -m)-linux-gnu" ]; then

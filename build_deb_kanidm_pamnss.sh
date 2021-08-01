@@ -21,6 +21,9 @@ mkdir -p "${TEMPDIR}/pkg-debian/DEBIAN"
 # {conffiles,control,md5sums,postinst,prerm}
 mkdir -p "${TEMPDIR}/pkg-debian/usr/local/lib/kanidm/"
 
+chmod +x "${BUILD_DIR}/build_find_pamdir.sh"
+cp "${BUILD_DIR}/build_find_pamdir.sh" "${TEMPDIR}/pkg-debian/usr/local/lib/kanidm/"
+
 cp "${BUILD_DIR}/target/release/libpam_kanidm.so" "${TEMPDIR}/pkg-debian/usr/local/lib/kanidm/pam_kanidm.so"  || {
     echo "Couldn't find libpam_kanidm.so, quitting"
     exit 1

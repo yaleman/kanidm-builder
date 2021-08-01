@@ -216,15 +216,15 @@ else
     echo "######################################################"
     echo "Doing default thing, running tests." | tee -a "${BUILD_LOG}"
     echo "######################################################"
-    RUST_BACKTRACE=1 cargo test --release || {
-        echo "Failed to pass tests, not doing build/copy stage" | tee -a "${BUILD_LOG}"
+    RUST_BACKTRACE=1 cargo test --release -- --no-capture || {
+        echo "Error: Failed to complete tests building  ${OSID}/${VERSION}, not doing build/copy stage" | tee -a "${BUILD_LOG}"
         exit 1
     }
     echo "######################################################"
     echo " Doing build stage"
     echo "######################################################"
     cargo build --workspace --release || {
-        echo "unable to build, bailing" | tee -a "${BUILD_LOG}"
+        echo "Error: failed to build ${OSID}/${VERSION}, bailing" | tee -a "${BUILD_LOG}"
         exit 1
     }
 
@@ -247,6 +247,4 @@ fi
 
 upload_to_s3
 
-echo "######################################################"
-echo " All done!"
-echo "######################################################"
+echo "Completed build for ${OSID}/${VERSION}"

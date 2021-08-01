@@ -54,7 +54,6 @@ BUILD_LOG="/buildlogs/$(date "+%Y-%m-%d-%H-%M")-${OSID}-${VERSION}.log"
 mkdir -p "/buildlogs/"
 touch "${BUILD_LOG}"
 echo "Dumping environment:" | tee -a "${BUILD_LOG}"
-export | tee -a "${BUILD_LOG}"
 
 export BUILD_LOG
 

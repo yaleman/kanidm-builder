@@ -213,13 +213,13 @@ if [ -n "$*" ]; then
     $@
 
 else
-    echo "######################################################"
-    echo "Doing default thing, running tests." | tee -a "${BUILD_LOG}"
-    echo "######################################################"
-    RUST_BACKTRACE=1 cargo test --release -- || {
-        echo "Error: Failed to complete tests building  ${OSID}/${VERSION}, not doing build/copy stage" | tee -a "${BUILD_LOG}"
-        exit 1
-    }
+    # echo "######################################################"
+    # echo "Doing default thing, running tests." | tee -a "${BUILD_LOG}"
+    # echo "######################################################"
+    # RUST_BACKTRACE=1 cargo test --release -- || {
+    #     echo "Error: Failed to complete tests building  ${OSID}/${VERSION}, not doing build/copy stage" | tee -a "${BUILD_LOG}"
+    #     exit 1
+    # }
     echo "######################################################"
     echo " Doing build stage"
     echo "######################################################"

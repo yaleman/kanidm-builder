@@ -36,6 +36,7 @@ else
     echo "Couldn't find sccache, boo."
 fi
 
+echo "osid=\"${OSID}\" os_version=\"${VERSION}\""
 
 OUTPUT="$(echo "${BUILD_OUTPUT_BASE}/${OSID}/${VERSION}/" | tr -d '"')"
 echo "######################################################"
@@ -43,7 +44,6 @@ echo "######################################################"
 echo "Making output dir: ${OUTPUT}"
 mkdir -p "${OUTPUT}"
 
-echo "Running OS-specific things"
 # shellcheck disable=SC2086
 #./os_specific/$OSID.sh
 
@@ -59,8 +59,12 @@ rustup default "${RUST_VERSION}"
 echo "######################################################"
 echo " Installing  wasm-pack"
 echo "######################################################"
-cargo install wasm-pack || failed_build_wasm
+RUST_BACKTRACE=full cargo install wasm-pack || failed_build_wasm
+echo "######################################################"
+echo " Installing  npm packages"
+echo "######################################################"
 npm install --global rollup || failed_build_wasm
+
 cd /
 BUILD_DIR="/source/${OSID}/${VERSION}"
 echo "######################################################"

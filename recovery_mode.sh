@@ -2,7 +2,7 @@
 
 if [ -z "$1" ]; then
         echo "Didn't specify a volume to recover, here's a list"
-        docker volume ls | awk '{print $2}' | grep -E '^kanidm_build'
+        docker volume ls | awk '{print $2}' | grep -E '^kanidm_'
         exit 1
 fi
 

@@ -34,5 +34,5 @@ echo "######################################"
 echo " RUNNING CONTAINER ${1}"
 echo "######################################"
 
-docker run --rm -it --env-file=.env --volume "$1:/data" "$1"  bash
+docker run --rm -it --env-file=.env -e "RECOVERY_MODE=1" --volume "$1:/data" "$1"  bash
 

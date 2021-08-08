@@ -56,17 +56,21 @@ echo " Setting rust version to ${RUST_VERSION}"
 echo "######################################################"
 rustup default "${RUST_VERSION}"
 
-echo "######################################################"
-echo " Installing  wasm-pack"
-echo "######################################################"
-RUST_BACKTRACE=full cargo install wasm-pack || failed_build_wasm
-echo "######################################################"
-echo " Installing  npm packages"
-echo "######################################################"
-npm install --global rollup || failed_build_wasm
+if [ -z "${RECOVERY_MODE}" ]; then
+    echo "######################################################"
+    echo " Installing  wasm-pack"
+    echo "######################################################"
+    RUST_BACKTRACE=full cargo install wasm-pack || failed_build_wasm
+    echo "######################################################"
+    echo " Installing  npm packages"
+    echo "######################################################"
+    npm install --global rollup || failed_build_wasm
+fi
 
 cd /
 BUILD_DIR="/source/${OSID}/${VERSION}"
+
+
 echo "######################################################"
 echo " Cloning from ${SOURCE_REPO} into ${BUILD_DIR}"
 echo "######################################################"

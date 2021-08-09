@@ -32,6 +32,7 @@ if [ "$(which sccache | wc -l)" -ne 0 ]; then
     export RUSTC_WRAPPER="${SCCACHE}"
 
     $SCCACHE --start-server
+    $SCCACHE -s
 else
     echo "Couldn't find sccache, boo."
 fi

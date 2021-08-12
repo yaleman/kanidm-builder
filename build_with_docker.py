@@ -193,7 +193,8 @@ def build_version(version_string: str, force_container_build: bool):
                 timeout=3600,
                 # TODO: can we label this with the github commit id?
             )
-        except docker.errors.BuildError as error_message:
+        except docker.errors.BuildError as build_error:
+            logger.error("docker.errors.BuildError for {}: {}", version_tag, build_error)
             return False
         logger.debug("Image: {}", image)
 
@@ -232,11 +233,8 @@ def build_version(version_string: str, force_container_build: bool):
                 # labels={"key": "value"},
             )
             logger.debug("result of build volume: {}", create_volume)
-        except docker.errors.BuildError as build_error:
-            logger.error("docker.errors.BuildError for {}: {}", version_tag, build_error)
-            return False
-        except Exception as build_error:
-            logger.error("Build error for {}: {}", version_tag, build_error)
+        except Exception as volume_error:
+            logger.error("Volume create error for {}: {}", version_tag, volume_error)
             return False
     except docker.errors.APIError as api_error:
         logger.error(api_error)

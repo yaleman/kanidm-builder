@@ -195,11 +195,11 @@ def build_version(version_string: str, force_container_build: bool):
             )
         except docker.errors.BuildError as build_error:
             logger.error("docker.errors.BuildError for {}: {}", version_tag, build_error)
+            if 'returned a non-zero code: 104' in build_error:
+                logger.error("Zypper returned 104, which means package not found.")
             return False
         except Exception as build_error:
             logger.error("Exception for {}: {}", version_tag, build_error)
-            if 'returned a non-zero code: 104' in f"{build_error}":
-                logger.error("Zypper returned 104, which means package not found.")
             return False
         logger.debug("Image: {}", image)
 

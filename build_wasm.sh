@@ -5,7 +5,7 @@
 # James Hodgkinson 2021
 
 function failed_build_wasm {
-    echo "Failed to install wasm-pack, bailing"
+    echo "Failed to build and install wasm-pack, bailing"
     exit 1
 }
 

@@ -183,15 +183,18 @@ def build_version(version_string: str, force_container_build: bool):
 
     if container_build:
         logger.info("Building container {}", version_string)
-        image = client.images.build(
-            path=".",
-            dockerfile=f"Dockerfile_{version_string}",
-            tag=version_tag,
-            rm=True,
-            pull=True,
-            timeout=3600,
-            # TODO: can we label this with the github commit id?
-        )
+        try:
+            image = client.images.build(
+                path=".",
+                dockerfile=f"Dockerfile_{version_string}",
+                tag=version_tag,
+                rm=True,
+                pull=True,
+                timeout=3600,
+                # TODO: can we label this with the github commit id?
+            )
+        except docker.errors.BuildError as error_message:
+            return False
         logger.debug("Image: {}", image)
 
     try:
@@ -216,7 +219,7 @@ def build_version(version_string: str, force_container_build: bool):
                 client.volumes.get(version_tag).remove()
             except docker.errors.APIError as api_error:
                 logger.error(api_error)
-                sys.exit()
+                return False
     except docker.errors.NotFound as not_found:
         logger.debug("Volume {} not found: {}", version_tag, not_found)
         logger.info("Creating volume {}", version_tag)
@@ -229,16 +232,20 @@ def build_version(version_string: str, force_container_build: bool):
                 # labels={"key": "value"},
             )
             logger.debug("result of build volume: {}", create_volume)
-        except docker.errors.APIError as api_error:
-            logger.error(api_error)
-            sys.exit()
+        except docker.errors.BuildError as build_error:
+            logger.error("docker.errors.BuildError for {}: {}", version_tag, build_error)
+            return False
+        except Exception as build_error:
+            logger.error("Build error for {}: {}", version_tag, build_error)
+            return False
     except docker.errors.APIError as api_error:
         logger.error(api_error)
-        sys.exit()
+        return False
 
     build_kanidm(version_string)
 
     logger.info("Done building {}!", version_string)
+    return True
 
 @click.command()
 @click.option(
@@ -255,7 +262,8 @@ def run_cli(version: str, force_build: bool) -> None:
     if not version:
         logger.info("Building all versions.")
         for version_name in VERSIONS:
-            build_version(version_name, force_build)
+            if not build_version(version_name, force_build):
+                print(f"Failed to build {version_name} 😢")
     else:
         if version not in VERSIONS:
             logger.error(

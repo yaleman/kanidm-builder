@@ -5,12 +5,12 @@ RUN /usr/bin/sed -ibak -e "s#baseurl.*#baseurl=$TUMBLEWEED_REPO_OSS#" /etc/zypp/
 
 RUN zypper refresh
 RUN zypper --non-interactive update
-RUN zypper --non-interactive install \
-    libudev-devel libopenssl-devel \
-    sqlite3-devel \
-    curl git gcc sccache which \
-    pam-devel \
-    iproute2 aws-cli
+RUN zypper --non-interactive install libudev-devel libopenssl-devel
+RUN zypper --non-interactive install sqlite3-devel
+RUN zypper --non-interactive install curl git gcc
+RUN zypper --non-interactive install sccache
+RUN zypper --non-interactive install which
+RUN zypper --non-interactive install pam-devel iproute2 aws-cli
 RUN zypper clean -a
 
 COPY install-rust.sh /usr/local/bin/

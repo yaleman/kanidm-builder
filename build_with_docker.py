@@ -196,6 +196,9 @@ def build_version(version_string: str, force_container_build: bool):
         except docker.errors.BuildError as build_error:
             logger.error("docker.errors.BuildError for {}: {}", version_tag, build_error)
             return False
+        except Exception as build_error:
+            logger.error("Exception for {}: {}", version_tag, build_error)
+            return False
         logger.debug("Image: {}", image)
 
     try:

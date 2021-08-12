@@ -5,12 +5,17 @@ RUN /usr/bin/sed -ibak -e "s#baseurl.*#baseurl=$TUMBLEWEED_REPO_OSS#" /etc/zypp/
 
 RUN /usr/bin/zypper refresh
 RUN /usr/bin/zypper --non-interactive update
-RUN /usr/bin/zypper --non-interactive install libudev-devel libopenssl-devel
+RUN /usr/bin/zypper --non-interactive install libudev-devel
+RUN /usr/bin/zypper --non-interactive install libopenssl-devel
+RUN /usr/bin/zypper --non-interactive install pam-devel
 RUN /usr/bin/zypper --non-interactive install sqlite3-devel
-RUN /usr/bin/zypper --non-interactive install curl git gcc
+RUN /usr/bin/zypper --non-interactive install curl
+RUN /usr/bin/zypper --non-interactive install git
+RUN /usr/bin/zypper --non-interactive install gcc
 RUN /usr/bin/zypper --non-interactive install sccache
 RUN /usr/bin/zypper --non-interactive install which
-RUN /usr/bin/zypper --non-interactive install pam-devel iproute2 aws-cli
+RUN /usr/bin/zypper --non-interactive install iproute2
+RUN /usr/bin/zypper --non-interactive install aws-cli
 RUN /usr/bin/zypper clean -a
 
 COPY install-rust.sh /usr/local/bin/

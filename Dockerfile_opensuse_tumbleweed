@@ -5,8 +5,8 @@ RUN /usr/bin/sed -ibak -e "s#baseurl.*#baseurl=$TUMBLEWEED_REPO_OSS#" /etc/zypp/
 
 RUN /usr/bin/zypper refresh
 RUN /usr/bin/zypper --non-interactive update
-RUN /usr/bin/zypper --non-interactive install libudev-devel
 RUN /usr/bin/zypper --non-interactive install libopenssl-devel
+RUN /usr/bin/zypper --non-interactive install libudev-devel
 RUN /usr/bin/zypper --non-interactive install pam-devel
 RUN /usr/bin/zypper --non-interactive install sqlite3-devel
 RUN /usr/bin/zypper --non-interactive install curl

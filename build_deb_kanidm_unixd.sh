@@ -25,8 +25,14 @@ mkdir -p "${DEB_DIR}/pkg-debian/etc/systemd/system/"
 # mkdir -p "${DEB_DIR}/pkg-debian/var/lib/kanidm/"
 mkdir -p "${DEB_DIR}/pkg-debian/usr/local/sbin/"
 
+echo 'Adding kanidm_unixd_*'
 find "${BUILD_DIR}/target/release/" -name 'kanidm_unixd*' -exec cp "{}" "${DEB_DIR}/pkg-debian/usr/local/sbin/" \;   || {
     echo "Couldn't find kanidm_unixd, quitting"
+    exit 1
+}
+echo 'Adding kanidm_cache_*'
+ find "${BUILD_DIR}/target/release/" -name 'kanidm_cache*' -exec cp "{}" "${DEB_DIR}/pkg-debian/usr/local/sbin/" \;   || {
+    echo "Couldn't find kanidm_cache binaries, quitting"
     exit 1
 }
 

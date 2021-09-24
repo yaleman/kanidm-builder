@@ -25,10 +25,10 @@ function upload_to_s3() {
     find "${S3_SOURCE}" -maxdepth 1 | tee -a "${BUILD_LOG}"
 
     echo "Copying build artifacts to s3 (source=${S3_SOURCE} destination=${S3_DESTINATION})" | tee -a "${BUILD_LOG}"
-    aws --endpoint-url "${S3_HOSTNAME}"  s3 sync "${S3_SOURCE}" "${S3_DESTINATION}" | tee -a "${BUILD_LOG}"
+    aws --endpoint-url "${S3_HOSTNAME}" --no-progress s3 sync "${S3_SOURCE}" "${S3_DESTINATION}" | tee -a "${BUILD_LOG}"
 
     echo "Copying build logs to s3"
-    aws --endpoint-url "${S3_HOSTNAME}" \
+    aws --endpoint-url "${S3_HOSTNAME}" --no-progress \
         s3 sync \
         "/buildlogs/" \
         "s3://${BUILD_ARTIFACT_BUCKET}/logs/" 2>&1 | grep -v InsecureRequestWarning
@@ -95,7 +95,7 @@ echo "######################################################"
 echo " Trying to grab sccache" | tee -a "${BUILD_LOG}"
 echo "######################################################"
 
-if [ "$(which sccache | wc -l)" -ne 0 ]; then
+if [ "$(which sccache | wc -l)" -eq 0 ]; then
     aws --endpoint-url "${S3_HOSTNAME}"  s3 cp "s3://${BUILD_ARTIFACT_BUCKET}/sccache-${OSID}-${VERSION}" /usr/local/bin/sccache
 fi
 

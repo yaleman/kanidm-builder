@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# does the post-installation thing
-
 # shellcheck disable=SC1091
 source /usr/local/lib/kanidm/build_find_pamdir.sh
 

@@ -1,7 +1,7 @@
 FROM opensuse/tumbleweed
 
-ARG TUMBLEWEED_REPO_OSS=http://download.opensuse.org/tumbleweed/repo/oss/
-RUN /usr/bin/sed -ibak -e "s#baseurl.*#baseurl=$TUMBLEWEED_REPO_OSS#" /etc/zypp/repos.d/repo-oss.repo
+#ARG TUMBLEWEED_REPO_OSS=http://download.opensuse.org/tumbleweed/repo/oss/
+#RUN /usr/bin/sed -ibak -e "s#baseurl.*#baseurl=$TUMBLEWEED_REPO_OSS#" /etc/zypp/repos.d/repo-oss.repo
 
 RUN zypper refresh
 RUN zypper --non-interactive update

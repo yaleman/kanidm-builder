@@ -24,7 +24,7 @@ fi
 
 echo "Reloading systemd service config and starting kanidm-unixd services..."
 systemctl daemon-reload
-systemctl --enable --now kanidm-unixd.service
-systemctl --enable --now kanidm-unixd-tasks.service
+systemctl enable --now kanidm-unixd.service
+systemctl enable --now kanidm-unixd-tasks.service
 
 echo "Finished installing kanidm-pamnss!"

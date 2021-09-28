@@ -16,15 +16,23 @@ from loguru import logger
 MIN_CONTAINER_AGE = 3600
 TIMER_LOOP_WAIT = 60
 VERSIONS = [
-    "debian_buster",
-    "opensuse_leap_152",
-    "opensuse_leap_153",
-    "opensuse_tumbleweed",
-    "ubuntu_bionic",  # 18.04
-    "ubuntu_focal",  # 20.04
-    "ubuntu_groovy",  # 20.10
-    "wasm",
+    # "debian_buster",
+    # "opensuse_leap_152",
+    # "opensuse_leap_153",
+    # "opensuse_tumbleweed",
+    # "ubuntu_bionic",  # 18.04
+    # "ubuntu_focal",  # 20.04
+    # "ubuntu_groovy",  # 20.10
+    # "wasm",
 ]
+
+for filename in os.listdir("."):
+    if filename.startswith("Dockerfile_"):
+        logger.debug("Found file: {}", filename)
+        version_name = filename.replace("Dockerfile_", "")
+        if version_name not in VERSIONS:
+            logger.debug("Adding version: {}", version_name)
+            VERSIONS.append(version_name)
 
 # find all the things
 # find . -name Cargo.toml -exec grep -A5 -E '(bin|lib)' {} \; | grep -E '(^\[|name)' | grep -v dependencies

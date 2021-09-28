@@ -1,0 +1,34 @@
+FROM ubuntu:hirsute
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN sed -ibak -e 's#\/archive#\/au.archive#' /etc/apt/sources.list
+RUN apt-get update
+RUN apt-get install tzdata
+RUN ln -fs /usr/share/zoneinfo/Australia/Brisbane /etc/localtime
+RUN dpkg-reconfigure --frontend noninteractive tzdata
+RUN apt-get -y install \
+    git curl build-essential \
+    clang \
+    libstd-rust-dev libssl-dev \
+    libsqlite3-dev \
+    libudev-dev libpam0g-dev \
+    python3-pkgconfig \
+    awscli
+
+COPY RUST_VERSION /etc/RUST_VERSION
+COPY identify_os.sh /etc/profile.d/identify_os.sh
+
+COPY install-rust.sh /usr/local/bin/
+RUN chmod 755 /usr/local/bin/install-rust.sh
+
+# because paths are hard
+RUN echo 'PATH=$HOME/.cargo/bin:$PATH' >> /etc/profile
+
+RUN /usr/local/bin/install-rust.sh
+
+COPY build*.sh /usr/local/sbin/
+COPY build_local_arch.sh /usr/local/sbin/
+COPY build_deb_kanidmd.sh /usr/local/sbin/
+RUN chmod 755 /usr/local/sbin/build*.sh
+
+ENTRYPOINT ["/usr/local/sbin/build_local_arch.sh" ]

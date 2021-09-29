@@ -147,7 +147,7 @@ Description: Kanidm-unix daemon
 EOM
 {
     echo "Recommends: kanidm-pamnss (>=${KANIDM_VERSION})"
-    echo "Version: ${KANIDM_VERSION}-$(date +%s)"
+    echo "Version: ${KANIDM_VERSION}$(date +%s)"
     echo "Installed-Size: $KANIDMD_SIZE"
     echo "Architecture: ${ARCH}"
 }  >> "${DEB_DIR}/pkg-debian/DEBIAN/control"

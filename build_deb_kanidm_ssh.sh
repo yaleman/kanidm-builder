@@ -109,7 +109,7 @@ Maintainer: James Hodgkinson
 Description: Kanidm SSH Utils
 EOM
 {
-    echo "Version: ${KANIDM_VERSION}-$(date +%s)"
+    echo "Version: ${KANIDM_VERSION}$(date +%s)"
     echo "Installed-Size: $KANIDMD_SIZE"
     echo "Architecture: ${ARCH}"
 }  >> "${TEMPDIR}/pkg-debian/DEBIAN/control"

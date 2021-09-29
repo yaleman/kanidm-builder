@@ -39,6 +39,7 @@ cp "${BUILD_DIR}/examples/config" "${TEMPDIR}/pkg-debian/usr/local/share/kanidm/
 ##############################################################################
 # Things that won't get deleted without a purge of this package
 ##############################################################################
+touch "${TEMPDIR}/pkg-debian/DEBIAN/conffiles"
 
 # cat > "${TEMPDIR}/pkg-debian/DEBIAN/conffiles" <<- 'EOM'
 # EOM

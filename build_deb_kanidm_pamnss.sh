@@ -42,6 +42,7 @@ cp "${BUILD_DIR}/target/release/libnss_kanidm.so" "${TEMPDIR}/pkg-debian/usr/loc
 ##############################################################################
 # Things that won't get deleted without a purge of this package
 ##############################################################################
+touch "${TEMPDIR}/pkg-debian/DEBIAN/conffiles"
 
 #cat > "${TEMPDIR}/pkg-debian/DEBIAN/conffiles" <<- 'EOM'
 #/usr/local/lib/kanidm/

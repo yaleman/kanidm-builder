@@ -100,8 +100,7 @@ def run_build_container(version_tag_str: str) -> docker.client.ContainerCollecti
                 },
             },
         )
-        logger.info("Starting container")
-        container.start()
+        logger.info("Starting container: {}", container.start())
     except docker.errors.APIError as error_message:
         logger.error(error_message)
         sys.exit(1)

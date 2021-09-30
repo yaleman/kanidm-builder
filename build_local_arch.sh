@@ -67,7 +67,7 @@ if [ -z "${SOURCE_REPO}" ]; then
 fi
 BUILD_DIR="/source/${OSID}/${VERSION}"
 
-echo "Building os=${OSID} os_version=${VERSION}" | tee -a "${BUILD_LOG}"
+echo "Building kanidm os=${OSID} os_version=${VERSION}" | tee -a "${BUILD_LOG}"
 
 echo "######################################################"
 echo " Setting up AWS Config" | tee -a "${BUILD_LOG}"

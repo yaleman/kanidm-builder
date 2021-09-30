@@ -100,7 +100,8 @@ def run_build_container(version_tag_str: str) -> docker.client.ContainerCollecti
                 },
             },
         )
-        logger.info("Starting kandim build container: {}", container.start())
+        logger.info("Starting kandim build container...")
+        container.start()
     except docker.errors.APIError as error_message:
         logger.error(error_message)
         sys.exit(1)
@@ -125,6 +126,7 @@ def wait_for_container_to_finish(name: str) -> bool:
                 name,
                 container.status,
             )
+            logger.debug("Container info: {}", container)
             time.sleep(TIMER_LOOP_WAIT)
             container = docker_client.containers.get(name)
         except docker.errors.NotFound:

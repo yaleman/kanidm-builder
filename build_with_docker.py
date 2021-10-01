@@ -116,6 +116,7 @@ def wait_for_container_to_finish(name: str) -> bool:
     try:
         docker_client = get_docker_client()
         container = docker_client.containers.get(name)
+        container_id = container.short_id
     except docker.errors.NotFound:
         logger.error("Container {} not found while trying to run it, bailing because something went wrong.", name)
         sys.exit(1)
@@ -123,32 +124,30 @@ def wait_for_container_to_finish(name: str) -> bool:
         try:
             docker_client = get_docker_client()
             logger.debug(
-                "Waiting for container_name={} id={} state={} to finish running.",
+                "container_name={} id={} state={}",
                 name,
-                container.short_id,
+                container_id,
                 container.status,
             )
             time.sleep(TIMER_LOOP_WAIT)
             container = docker_client.containers.get(name)
         except docker.errors.NotFound:
-            logger.info("Container not running/created, looks to be done!")
+            logger.info("container_name={} state=not_found looks to be done!", name)
             return True
         except docker.errors.APIError as api_error:
-            logger.error(api_error)
+            logger.error("API Error while waiting for container_name={} id={} error='{}'", name, container_id, api_error)
             sys.exit(1)
     time.sleep(TIMER_LOOP_WAIT)
-    logger.info("Finished waiting, carrying on.")
+    logger.info("state=finished container_name={} id={}", name, container_id)
     return True
 
 
 def build_kanidm(version: str):
     """ builds the clients """
     version_tag = f"kanidm_{version}"
-    logger.info("Running client build for {}", version)
+    logger.info("Running client build for version_tag={}", version)
     run_build_container(version_tag)
     wait_for_container_to_finish(version_tag)
-
-
 
 def check_if_need_to_build_image(version: str) -> bool:
     """ checks if you need to rebuild the image """
@@ -192,7 +191,7 @@ def build_version(version_string: str, force_container_build: bool):
         container_build = force_container_build
 
     if container_build:
-        logger.info("Building container {}", version_string)
+        logger.info("Building container_name={}", version_string)
         try:
             image = client.images.build(
                 path=".",

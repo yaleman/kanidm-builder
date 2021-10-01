@@ -102,7 +102,7 @@ def run_build_container(version_tag_str: str) -> docker.client.ContainerCollecti
         )
         logger.info("Starting kandim build container...")
         container.start()
-        logger.info("Started build container for version_tag_str={} id={}", version_tag_str, container.id)
+        logger.info("Started build container for version_tag_str={} id={}", version_tag_str, container.short_id)
     except docker.errors.APIError as error_message:
         logger.error(error_message)
         sys.exit(1)
@@ -125,7 +125,7 @@ def wait_for_container_to_finish(name: str) -> bool:
             logger.debug(
                 "Waiting for container_name={} id={} state={} to finish running.",
                 name,
-                container.id,
+                container.short_id,
                 container.status,
             )
             time.sleep(TIMER_LOOP_WAIT)

@@ -24,10 +24,14 @@ VERSIONS = [
     # "ubuntu_focal",  # 20.04
     # "ubuntu_groovy",  # 20.10
     # "wasm",
+    "debian_bullseye"
 ]
 
 for filename in os.listdir("."):
     if filename.startswith("Dockerfile_"):
+        if filename.endswith("_generic"):
+            logger.debug("Skipping {} as it's a generic", filename)
+            continue
         logger.debug("Found file: {}", filename)
         version_name = filename.replace("Dockerfile_", "")
         if version_name not in VERSIONS:

@@ -1,0 +1,32 @@
+ARG DISTRO
+
+FROM debian:$DISTRO
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update
+RUN apt-get install tzdata
+RUN ln -fs /usr/share/zoneinfo/Australia/Brisbane /etc/localtime
+RUN dpkg-reconfigure --frontend noninteractive tzdata
+RUN apt-get install -y git curl \
+    clang build-essential \
+    librust-openssl-dev libssl-dev libsqlite3-dev libudev-dev libpam0g-dev \
+    awscli
+# to get pgrep
+RUN apt-get install -y procps
+
+COPY install-rust.sh /usr/local/bin/
+COPY RUST_VERSION /etc/RUST_VERSION
+COPY identify_os.sh /etc/profile.d/identify_os.sh
+
+RUN chmod 755 /usr/local/bin/install-rust.sh
+# because paths are hard
+RUN echo 'PATH=$HOME/.cargo/bin:$PATH' >> /etc/profile
+
+# because we don't need to run as root, it'd be nice to do this... but rustup gets in the way
+# USER 9000
+
+RUN /usr/local/bin/install-rust.sh
+
+COPY build*.sh /usr/local/sbin/
+RUN chmod 755 /usr/local/sbin/build*.sh
+
+ENTRYPOINT ["/usr/local/sbin/build_local_arch.sh" ]

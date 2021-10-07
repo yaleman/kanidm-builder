@@ -1,4 +1,6 @@
-FROM ubuntu:hirsute
+ARG DISTRO=thiscannotpossiblywork
+FROM ubuntu:$DISTRO
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN sed -ibak -e 's#\/archive#\/au.archive#' /etc/apt/sources.list

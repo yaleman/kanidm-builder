@@ -16,14 +16,15 @@ from loguru import logger
 MIN_CONTAINER_AGE = 3600
 TIMER_LOOP_WAIT = 60
 VERSIONS = [
-    # "debian_buster",
     # "opensuse_leap_152",
     # "opensuse_leap_153",
     # "opensuse_tumbleweed",
-    # "ubuntu_bionic",  # 18.04
-    # "ubuntu_focal",  # 20.04
-    # "ubuntu_groovy",  # 20.10
+    "ubuntu_bionic",  # 18.04
+    "ubuntu_focal",  # 20.04
+    "ubuntu_groovy",  # 20.10
+    "ubuntu_hirsute",  # 21
     # "wasm",
+    "debian_buster",
     "debian_bullseye"
 ]
 

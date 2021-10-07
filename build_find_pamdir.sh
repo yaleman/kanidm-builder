@@ -9,7 +9,7 @@ if [ -d "/lib/$(uname -p)-linux-gnu/security" ]; then
 elif [ -d "/usr/lib/$(uname -m)-linux-gnu/security" ]; then
     NSSDIR="/usr/lib/$(uname -m)-linux-gnu"
 elif [ -d "/lib/$(uname -m)-linux-gnu/security" ]; then
-    NSSDIR="/lib/$(uname -m)-linux-gnu/security"
+    NSSDIR="/lib/$(uname -m)-linux-gnu" # found in debian buster
 elif [ -d "/usr/lib/$(uname -p)-linux-gnu/security" ]; then
     NSSDIR="/usr/lib/$(uname -p)-linux-gnu"
 else

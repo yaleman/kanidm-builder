@@ -194,12 +194,26 @@ def build_version(version_string: str, force_container_build: bool):
     else:
         container_build = force_container_build
 
+    dockerfile = f"Dockerfile_{version_string}"
+    if not os.path.exists(dockerfile):
+        os_ver = version_string.split("_")[0]
+        generic_dockerfile = f"Dockerfile_{os_ver}_generic"
+        if os.path.exists(generic_dockerfile):
+            dockerfile = generic_dockerfile
+        else:
+            logger.error("Couldn't find Dockerfile for {}, tried {} and {}",
+                         version_string,
+                         dockerfile,
+                         generic_dockerfile,
+                         )
+            sys.exit(1)
+
     if container_build:
         logger.info("Building container_name={}", version_string)
         try:
             image = client.images.build(
                 path=".",
-                dockerfile=f"Dockerfile_{version_string}",
+                dockerfile=dockerfile,
                 tag=version_tag,
                 rm=True,
                 pull=True,

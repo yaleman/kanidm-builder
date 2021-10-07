@@ -1,4 +1,4 @@
-ARG DISTRO
+ARG DISTRO=thiscannotpossiblywork
 
 FROM debian:$DISTRO
 ENV DEBIAN_FRONTEND=noninteractive

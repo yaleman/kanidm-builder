@@ -1,35 +1,32 @@
-FROM opensuse/tumbleweed
+FROM ubuntu:hirsute
+ENV DEBIAN_FRONTEND=noninteractive
 
-#ARG TUMBLEWEED_REPO_OSS=http://download.opensuse.org/tumbleweed/repo/oss/
-#RUN /usr/bin/sed -ibak -e "s#baseurl.*#baseurl=$TUMBLEWEED_REPO_OSS#" /etc/zypp/repos.d/repo-oss.repo
+RUN sed -ibak -e 's#\/archive#\/au.archive#' /etc/apt/sources.list
+RUN apt-get update
+RUN apt-get install tzdata
+RUN ln -fs /usr/share/zoneinfo/Australia/Brisbane /etc/localtime
+RUN dpkg-reconfigure --frontend noninteractive tzdata
+RUN apt-get -y install \
+    git curl build-essential \
+    clang \
+    libstd-rust-dev libssl-dev \
+    libsqlite3-dev \
+    libudev-dev libpam0g-dev \
+    python3-pkgconfig \
+    awscli
 
-RUN zypper refresh
-RUN zypper --non-interactive update
-RUN zypper --non-interactive install \
-    libudev-devel make libopenssl-devel \
-    sqlite3-devel \
-    curl git gcc sccache which \
-    pam-devel \
-    iproute2 aws-cli \
-    nodejs-default npm-default \
-    tar gzip
-RUN zypper clean -a
-
-COPY install-rust.sh /usr/local/bin/
 COPY RUST_VERSION /etc/RUST_VERSION
 COPY identify_os.sh /etc/profile.d/identify_os.sh
 
-
+COPY install-rust.sh /usr/local/bin/
 RUN chmod 755 /usr/local/bin/install-rust.sh
+
 # because paths are hard
 RUN echo 'PATH=$HOME/.cargo/bin:$PATH' >> /etc/profile
 
-# because we don't need to run as root, it'd be nice to do this... but rustup gets in the way
-# USER 9000
-
 RUN /usr/local/bin/install-rust.sh
 
-COPY build_wasm.sh /usr/local/sbin/
-RUN chmod 755 /usr/local/sbin/build_wasm.sh
+COPY build*.sh /usr/local/sbin/
+RUN chmod 755 /usr/local/sbin/build*.sh
 
 ENTRYPOINT ["/usr/local/sbin/build_wasm.sh" ]

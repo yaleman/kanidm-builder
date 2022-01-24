@@ -6,11 +6,12 @@ builds kanidm images with docker and a spoon full of nightmares
 """
 
 import os.path
+from pathlib import Path
 import sys
 import time
 
 import click
-import docker
+import docker # type: ignore
 from loguru import logger
 
 MIN_CONTAINER_AGE = 3600
@@ -76,10 +77,11 @@ def get_docker_client():
 
 def get_environment_data():
     """ loads the file, does the thing"""
-    if not os.path.exists(".env"):
+    envfile = Path(".env")
+    if not envfile.exists():
         logger.error("Please make a .env file")
         sys.exit(1)
-    with open(".env", "r") as file_handle:
+    with envfile.open(encoding="utf8") as file_handle:
         return [
             line.strip()
             for line in file_handle.readlines()
@@ -185,15 +187,13 @@ def check_if_need_to_build_image(version: str) -> bool:
     return True
 
 
-def build_version(version_string: str, force_container_build: bool):
+# pylint: disable=too-many-locals,too-many-branches,too-many-statements
+def build_version(version_string: str, force_build: bool):
     """ builds a particular version """
     client = get_docker_client()
 
     version_tag = f"kanidm_{version_string}"
-    if not force_container_build:
-        container_build = check_if_need_to_build_image(version_string)
-    else:
-        container_build = force_container_build
+    container_build = check_if_need_to_build_image(version_string) if not force_build else force_build
 
     dockerfile = f"Dockerfile_{version_string}"
     buildargs = {}
@@ -231,7 +231,8 @@ def build_version(version_string: str, force_container_build: bool):
             if 'returned a non-zero code: 139' in f"{build_error}":
                 logger.error("Zypper returned 139, which means glibc has blown up.")
             return False
-        except Exception as build_error:
+
+        except Exception as build_error: #pylint: disable=broad-except
             logger.error("Exception for {}: {}", version_tag, build_error)
             return False
         logger.debug("Image: {}", image)
@@ -271,7 +272,7 @@ def build_version(version_string: str, force_container_build: bool):
                 # labels={"key": "value"},
             )
             logger.debug("result of build volume: {}", create_volume)
-        except Exception as volume_error:
+        except Exception as volume_error: #pylint: disable=broad-except
             logger.error("Volume create error for {}: {}", version_tag, volume_error)
             return False
     except docker.errors.APIError as api_error:
@@ -287,7 +288,7 @@ def build_version(version_string: str, force_container_build: bool):
 @click.option(
     "--version",
     "-V",
-    help="Specific version to build ({})".format(",".join(VERSIONS)),
+    help=f"Specific version to build ({','.join(VERSIONS)})",
 )
 @click.option(
     "--force-build", "-b", help="Force container build", is_flag=True, default=False
@@ -297,9 +298,9 @@ def run_cli(version: str, force_build: bool) -> None:
 
     if not version:
         logger.info("Building all versions.")
-        for version_name in VERSIONS:
-            if not build_version(version_name, force_build):
-                print(f"Failed to build {version_name} 😢")
+        for version_to_build in VERSIONS:
+            if not build_version(version_to_build, force_build):
+                logger.error("Failed to build {} 😢", version_to_build)
     else:
         if version not in VERSIONS:
             logger.error(

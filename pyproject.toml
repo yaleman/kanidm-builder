@@ -9,7 +9,7 @@ license = "MIT"
 python = "^3.7"
 click = "^8.0.3"
 docker = "^5.0.3"
-loguru = "^0.5.3"
+loguru = "^0.6.0"
 six = "^1.16.0"
 
 [tool.poetry.dev-dependencies]

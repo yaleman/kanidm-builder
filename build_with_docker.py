@@ -189,13 +189,13 @@ def check_if_need_to_build_image(version: str) -> bool:
     return True
 
 def remove_volume(
-    docker_client: docker.APIClient,
     name: str
     ) -> bool:
     """ removes a python volume, returns bool about result """
+    client = docker.APIClient()
     try:
         logger.debug("Removing volume: {}", name)
-        docker_client.remove_volume(name)
+        client.remove_volume(name)
         return True
     except docker.errors.NotFound as error:
         logger.error("Couldn't find volume to remove {}: {}", name, error)
@@ -251,13 +251,13 @@ def build_version(
             if 'returned a non-zero code: 139' in f"{build_error}":
                 logger.error("Zypper returned 139, which means glibc has blown up.")
             if not keep_volume:
-                remove_volume(client, version_string)
+                remove_volume(version_string)
             return False
 
         except Exception as build_error: #pylint: disable=broad-except
             logger.error("Exception for {}: {}", version_tag, build_error)
             if not keep_volume:
-                remove_volume(client, version_tag)
+                remove_volume(version_tag)
             return False
         logger.debug("Image: {}", image)
 
@@ -267,7 +267,7 @@ def build_version(
         old_container.remove(force=True)
 
         if not keep_volume:
-            remove_volume(client, version_tag)
+            remove_volume(version_tag)
     except docker.errors.NotFound:
         logger.debug("Container {} not found, don't need to kill it!", version_tag)
     except docker.errors.APIError as api_error:
@@ -275,12 +275,12 @@ def build_version(
         sys.exit()
     finally:
         if not keep_volume:
-            remove_volume(client, version_tag)
+            remove_volume(version_tag)
 
     try:
         if client.volumes.get(version_tag):
             logger.debug("found existing volume for {}", version_tag)
-            remove_volume(client, version_tag)
+            remove_volume(version_tag)
     except docker.errors.NotFound as not_found:
         logger.debug("Volume {} not found: {}", version_tag, not_found)
         logger.info("Creating volume {}", version_tag)
@@ -303,7 +303,7 @@ def build_version(
     build_kanidm(version_string)
 
     if not keep_volume:
-        remove_volume(client, version_tag)
+        remove_volume(version_tag)
     logger.info("Done building {}!", version_string)
     return True
 

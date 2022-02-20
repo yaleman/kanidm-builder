@@ -9,9 +9,11 @@ import os.path
 from pathlib import Path
 import sys
 import time
+from typing import List, Optional
 
 import click
 import docker # type: ignore
+import docker.errors # type: ignore
 from loguru import logger
 
 MIN_CONTAINER_AGE = 3600
@@ -67,7 +69,7 @@ server_build_commands = [
 ]
 
 
-def get_docker_client():
+def get_docker_client() -> docker.DockerClient:
     """returns a docker client, just in case I want to run this remotely
 
     yes, premature optimization, no I don't care for your judgement.
@@ -75,7 +77,7 @@ def get_docker_client():
     return docker.from_env()
 
 
-def get_environment_data():
+def get_environment_data() -> List[str]:
     """ loads the file, does the thing"""
     envfile = Path(".env")
     if not envfile.exists():
@@ -149,7 +151,7 @@ def wait_for_container_to_finish(name: str) -> bool:
     return True
 
 
-def build_kanidm(version: str):
+def build_kanidm(version: str) -> None:
     """ builds the clients """
     version_tag = f"kanidm_{version}"
     logger.info("Running client build for version_tag={}", version)
@@ -186,9 +188,27 @@ def check_if_need_to_build_image(version: str) -> bool:
         logger.info("Didn't find an existing image, building.")
     return True
 
+def remove_volume(
+    docker_client: docker.APIClient,
+    name: str
+    ) -> bool:
+    """ removes a python volume, returns bool about result """
+    try:
+        logger.debug("Removing volume: {}", name)
+        docker_client.remove_volume(name)
+        return True
+    except docker.errors.NotFound as error:
+        logger.error("Couldn't find volume to remove {}: {}", name, error)
+        return False
+
+
 
 # pylint: disable=too-many-locals,too-many-branches,too-many-statements
-def build_version(version_string: str, force_build: bool):
+def build_version(
+    version_string: str,
+    force_build: bool,
+    keep_volume: bool,
+    ) -> bool:
     """ builds a particular version """
     client = get_docker_client()
 
@@ -230,10 +250,14 @@ def build_version(version_string: str, force_build: bool):
                 logger.error("Zypper returned 104, which means package not found.")
             if 'returned a non-zero code: 139' in f"{build_error}":
                 logger.error("Zypper returned 139, which means glibc has blown up.")
+            if not keep_volume:
+                remove_volume(client, version_string)
             return False
 
         except Exception as build_error: #pylint: disable=broad-except
             logger.error("Exception for {}: {}", version_tag, build_error)
+            if not keep_volume:
+                remove_volume(client, version_tag)
             return False
         logger.debug("Image: {}", image)
 
@@ -241,25 +265,22 @@ def build_version(version_string: str, force_build: bool):
         old_container = client.containers.get(version_tag)
         logger.info("Killing container {}", version_tag)
         old_container.remove(force=True)
+
+        if not keep_volume:
+            remove_volume(client, version_tag)
     except docker.errors.NotFound:
         logger.debug("Container {} not found, don't need to kill it!", version_tag)
     except docker.errors.APIError as api_error:
         logger.error(api_error)
         sys.exit()
-
-    # logger.debug("Listing volumes")
-    # for volume in client.volumes.list():
-    #     logger.debug(volume)
+    finally:
+        if not keep_volume:
+            remove_volume(client, version_tag)
 
     try:
         if client.volumes.get(version_tag):
             logger.debug("found existing volume for {}", version_tag)
-            try:
-                logger.debug("Removing volume {}", version_tag)
-                client.volumes.get(version_tag).remove()
-            except docker.errors.APIError as api_error:
-                logger.error(api_error)
-                return False
+            remove_volume(client, version_tag)
     except docker.errors.NotFound as not_found:
         logger.debug("Volume {} not found: {}", version_tag, not_found)
         logger.info("Creating volume {}", version_tag)
@@ -281,6 +302,8 @@ def build_version(version_string: str, force_build: bool):
 
     build_kanidm(version_string)
 
+    if not keep_volume:
+        remove_volume(client, version_tag)
     logger.info("Done building {}!", version_string)
     return True
 
@@ -291,15 +314,21 @@ def build_version(version_string: str, force_build: bool):
     help=f"Specific version to build ({','.join(VERSIONS)})",
 )
 @click.option(
+    "--keep-volume", "-k", help="Keep the volume after building - for debugging etc", is_flag=True, default=False
+)
+@click.option(
     "--force-build", "-b", help="Force container build", is_flag=True, default=False
 )
-def run_cli(version: str, force_build: bool) -> None:
+def run_cli(
+    version: Optional[str] = None,
+    force_build: bool =False,
+    keep_volume: bool = False) -> None:
     """ does the CLI thing"""
 
     if not version:
         logger.info("Building all versions.")
         for version_to_build in VERSIONS:
-            if not build_version(version_to_build, force_build):
+            if not build_version(version_to_build, force_build, keep_volume):
                 logger.error("Failed to build {} 😢", version_to_build)
     else:
         if version not in VERSIONS:
@@ -310,7 +339,7 @@ def run_cli(version: str, force_build: bool) -> None:
             )
             sys.exit(1)
         else:
-            build_version(version, force_build)
+            build_version(version, force_build, keep_volume)
 
 
 if __name__ == "__main__":

@@ -292,8 +292,7 @@ def build_version(
                 # driver_opts={'foo': 'bar', 'baz': 'false'},
                 # labels={"key": "value"},
             )
-            logger.debug("result of build volume: {}", create_volume)
-            logger.debug("result of build volume: {}", dir(create_volume))
+            logger.debug("result of build volume: {}", getattr(create_volume, "name", str(create_volume)))
         except Exception as volume_error: #pylint: disable=broad-except
             logger.error("Volume create error for {}: {}", version_tag, volume_error)
             return False

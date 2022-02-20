@@ -198,7 +198,7 @@ def remove_volume(
         client.remove_volume(name)
         return True
     except docker.errors.NotFound as error:
-        logger.error("Couldn't find volume to remove {}: {}", name, error)
+        logger.debug("Couldn't find volume to remove {}: {}", name, error)
         return False
 
 
@@ -293,6 +293,7 @@ def build_version(
                 # labels={"key": "value"},
             )
             logger.debug("result of build volume: {}", create_volume)
+            logger.debug("result of build volume: {}", dir(create_volume))
         except Exception as volume_error: #pylint: disable=broad-except
             logger.error("Volume create error for {}: {}", version_tag, volume_error)
             return False

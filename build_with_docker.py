@@ -215,12 +215,12 @@ def build_version(
     version_tag = f"kanidm_{version_string}"
     container_build = check_if_need_to_build_image(version_string) if not force_build else force_build
 
-    dockerfile = f"Dockerfile_{version_string}"
+    dockerfile = Path(f"Dockerfile_{version_string}")
     buildargs = {}
-    if not os.path.exists(dockerfile):
+    if not dockerfile.exists():
         os_ver = version_string.split("_")[0]
-        generic_dockerfile = f"Dockerfile_{os_ver}_generic"
-        if os.path.exists(generic_dockerfile):
+        generic_dockerfile = Path(f"Dockerfile_{os_ver}_generic")
+        if generic_dockerfile.exists():
             dockerfile = generic_dockerfile
             buildargs['DISTRO'] = "_".join(version_string.split("_")[1:])
         else:
@@ -236,7 +236,7 @@ def build_version(
         try:
             image = client.images.build(
                 path=".",
-                dockerfile=dockerfile,
+                dockerfile=dockerfile.name,
                 tag=version_tag,
                 rm=True,
                 pull=True,

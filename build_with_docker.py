@@ -26,6 +26,7 @@ VERSIONS = [
     "ubuntu_focal",  # 20.04
     "ubuntu_groovy",  # 20.10
     "ubuntu_hirsute",  # 21
+    "ubuntu_impish", # 21.10
     # "wasm",
     "debian_buster",
     "debian_bullseye"

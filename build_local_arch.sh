@@ -39,6 +39,13 @@ echo "######################################################"
 echo " Starting build script"
 echo "######################################################"
 
+
+if [ "${UPLOAD_ARTIFACTS}" -eq 1 ]; then
+    echo "Artifacts will be uploaded to s3 on success."
+else
+    echo "Not uploading build artifacts to s3!"
+fi
+
 PATH=/root/.cargo/bin:$PATH
 export PATH
 
@@ -247,6 +254,10 @@ if [ "$(pgrep sccache | wc -l)" -ne 0 ]; then
     $SCCACHE -s
 fi
 
-upload_to_s3
+if [ "${UPLOAD_ARTIFACTS}" -eq 1 ]; then
+    upload_to_s3
+else
+    echo "Not uploading build artifacts to s3!"
+fi
 
 echo "Completed build for ${OSID}/${VERSION}"

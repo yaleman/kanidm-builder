@@ -104,6 +104,7 @@ def run_build_container(version_tag_str: str) -> docker.client.ContainerCollecti
             auto_remove=True,
             detach=True,
             environment=get_environment_data(),
+            network_mode="host",
             volumes={
                 f"{version_tag_str}": {
                     "bind": "/source",

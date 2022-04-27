@@ -27,6 +27,7 @@ VERSIONS = [
     "ubuntu_groovy",  # 20.10
     "ubuntu_hirsute",  # 21
     "ubuntu_impish", # 21.10
+    "ubuntyu_jammy",
     # "wasm",
     "debian_buster",
     "debian_bullseye"

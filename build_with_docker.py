@@ -9,7 +9,7 @@ import os.path
 from pathlib import Path
 import sys
 import time
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import click
 import docker # type: ignore
@@ -204,6 +204,62 @@ def remove_volume(
         return False
 
 
+def try_get_generic(version_string: str, buildargs: Dict[str, str]) -> str:
+    """ if you can't find the real one, try a generic """
+    os_ver = version_string.split("_")[0]
+    generic_dockerfile = Path(f"Dockerfile_{os_ver}_generic")
+    if generic_dockerfile.exists():
+        buildargs['DISTRO'] = "_".join(version_string.split("_")[1:])
+        return str(generic_dockerfile)
+    logger.error("Couldn't find Dockerfile for {}, tried {} and {}",
+                    version_string,
+                    generic_dockerfile,
+                    )
+    sys.exit(1)
+
+def cleanup_before_build(
+    client: docker.DockerClient,
+    version_tag: str,
+    keep_volume: bool,
+    ) -> None:
+    """ removes the old volume/container  if not needed """
+    try:
+        old_container = client.containers.get(version_tag)
+        logger.info("Killing container {}", version_tag)
+        old_container.remove(force=True)
+
+        if not keep_volume:
+            remove_volume(version_tag)
+    except docker.errors.NotFound:
+        logger.debug("Container {} not found, don't need to kill it!", version_tag)
+    except docker.errors.APIError as api_error:
+        logger.error(api_error)
+        sys.exit()
+    finally:
+        if not keep_volume:
+            remove_volume(version_tag)
+    try:
+        if client.volumes.get(version_tag):
+            logger.debug("found existing volume for {}", version_tag)
+            remove_volume(version_tag)
+    except docker.errors.NotFound as not_found:
+        logger.debug("Volume {} not found: {}", version_tag, not_found)
+        logger.info("Creating volume {}", version_tag)
+        # create volume for container
+        try:
+            create_volume = client.volumes.create(
+                name=version_tag,
+                driver="local",
+                # driver_opts={'foo': 'bar', 'baz': 'false'},
+                # labels={"key": "value"},
+            )
+            logger.debug("result of build volume: {}", getattr(create_volume, "name", str(create_volume)))
+        except Exception as volume_error: #pylint: disable=broad-except
+            logger.error("Volume create error for {}: {}", version_tag, volume_error)
+            sys.exit(1)
+    except docker.errors.APIError as api_error:
+        logger.error(api_error)
+        sys.exit(1)
 
 # pylint: disable=too-many-locals,too-many-branches,too-many-statements
 def build_version(
@@ -218,20 +274,9 @@ def build_version(
     container_build = check_if_need_to_build_image(version_string) if not force_build else force_build
 
     dockerfile = Path(f"Dockerfile_{version_string}")
-    buildargs = {}
+    buildargs: Dict[str, str] = {}
     if not dockerfile.exists():
-        os_ver = version_string.split("_")[0]
-        generic_dockerfile = Path(f"Dockerfile_{os_ver}_generic")
-        if generic_dockerfile.exists():
-            dockerfile = generic_dockerfile
-            buildargs['DISTRO'] = "_".join(version_string.split("_")[1:])
-        else:
-            logger.error("Couldn't find Dockerfile for {}, tried {} and {}",
-                         version_string,
-                         dockerfile,
-                         generic_dockerfile,
-                         )
-            sys.exit(1)
+        dockerfile = Path(try_get_generic(version_string, buildargs))
 
     if container_build:
         logger.info("Building container_name={}", version_string)
@@ -263,45 +308,9 @@ def build_version(
             return False
         logger.debug("Image: {}", image)
 
-    try:
-        old_container = client.containers.get(version_tag)
-        logger.info("Killing container {}", version_tag)
-        old_container.remove(force=True)
 
-        if not keep_volume:
-            remove_volume(version_tag)
-    except docker.errors.NotFound:
-        logger.debug("Container {} not found, don't need to kill it!", version_tag)
-    except docker.errors.APIError as api_error:
-        logger.error(api_error)
-        sys.exit()
-    finally:
-        if not keep_volume:
-            remove_volume(version_tag)
 
-    try:
-        if client.volumes.get(version_tag):
-            logger.debug("found existing volume for {}", version_tag)
-            remove_volume(version_tag)
-    except docker.errors.NotFound as not_found:
-        logger.debug("Volume {} not found: {}", version_tag, not_found)
-        logger.info("Creating volume {}", version_tag)
-        # create volume for container
-        try:
-            create_volume = client.volumes.create(
-                name=version_tag,
-                driver="local",
-                # driver_opts={'foo': 'bar', 'baz': 'false'},
-                # labels={"key": "value"},
-            )
-            logger.debug("result of build volume: {}", getattr(create_volume, "name", str(create_volume)))
-        except Exception as volume_error: #pylint: disable=broad-except
-            logger.error("Volume create error for {}: {}", version_tag, volume_error)
-            return False
-    except docker.errors.APIError as api_error:
-        logger.error(api_error)
-        return False
-
+    cleanup_before_build(client, version_tag, keep_volume)
     build_kanidm(version_string)
 
     if not keep_volume:

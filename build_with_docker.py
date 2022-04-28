@@ -86,11 +86,13 @@ def get_environment_data() -> List[str]:
         logger.error("Please make a .env file")
         sys.exit(1)
     with envfile.open(encoding="utf8") as file_handle:
-        return [
+        environment = [
             line.strip()
             for line in file_handle.readlines()
             if (not line.startswith("#") and not line.strip() == "")
         ]
+        logger.debug("environment:\n{}", environment)
+        return environment
 
 
 def run_build_container(version_tag_str: str) -> docker.client.ContainerCollection:

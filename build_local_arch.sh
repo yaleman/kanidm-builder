@@ -40,6 +40,11 @@ echo " Starting build script"
 echo "######################################################"
 
 
+if [ -z "${UPLOAD_ARTIFACTS}" ]; then
+    echo "Upload Artifacts wasn't set, just doing it anyway!"
+    UPLOAD_ARTIFACTS=1
+fi
+
 if [ "${UPLOAD_ARTIFACTS}" -eq 1 ]; then
     echo "Artifacts will be uploaded to s3 on success."
 else

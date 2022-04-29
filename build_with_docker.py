@@ -269,6 +269,7 @@ def build_version(
     version_string: str,
     force_build: bool,
     keep_volume: bool,
+    just_build_image: bool,
     ) -> bool:
     """ builds a particular version """
     client = get_docker_client()
@@ -311,7 +312,8 @@ def build_version(
             return False
         logger.debug("Image: {}", image)
 
-
+    if just_build_image:
+        return True
 
     cleanup_before_build(client, version_tag, keep_volume)
     build_kanidm(version_string)
@@ -333,17 +335,29 @@ def build_version(
 @click.option(
     "--force-build", "-b", help="Force container build", is_flag=True, default=False
 )
+@click.option(
+    "--just-build-image", "-j", is_flag=True, default=False, help="Only build the docker image"
+)
 def run_cli(
     version: Optional[str] = None,
     force_build: bool =False,
-    keep_volume: bool = False) -> None:
+    keep_volume: bool = False,
+    just_build_image: bool=False,
+    ) -> None:
     """ does the CLI thing"""
 
+
+
     if not version:
+        versions_to_build = VERSIONS
         logger.info("Building all versions.")
-        for version_to_build in VERSIONS:
-            if not build_version(version_to_build, force_build, keep_volume):
-                logger.error("Failed to build {} 😢", version_to_build)
+        # for version_to_build in VERSIONS:
+        #     if not build_version(
+        #         version_to_build,
+        #         force_build,
+        #         keep_volume,
+        #         ):
+        #         logger.error("Failed to build {} 😢", version_to_build)
     else:
         if version not in VERSIONS:
             logger.error(
@@ -352,8 +366,16 @@ def run_cli(
                 ",".join(VERSIONS),
             )
             sys.exit(1)
-        else:
-            build_version(version, force_build, keep_volume)
+        versions_to_build = [version]
+
+    for version in versions_to_build:
+        if not build_version(
+            version,
+            force_build,
+            keep_volume,
+            just_build_image,
+        ):
+            logger.error("Failed to build {}", version)
 
 
 if __name__ == "__main__":

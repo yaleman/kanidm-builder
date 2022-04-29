@@ -91,7 +91,7 @@ def get_environment_data() -> List[str]:
             for line in file_handle.readlines()
             if (not line.startswith("#") and not line.strip() == "")
         ]
-        logger.debug("environment:\n{}", environment)
+        # logger.debug("environment:\n{}", environment)
         return environment
 
 

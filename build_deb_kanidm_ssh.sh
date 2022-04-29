@@ -93,7 +93,7 @@ chmod +x "${TEMPDIR}/pkg-debian/DEBIAN/postinst"
 ##############################################################################
 find . -type f ! -regex '.*?debian-binary.*' ! -regex '.*?debian-binary.*' ! -regex '.*?DEBIAN.*' -printf '%P ' | xargs md5sum > "${TEMPDIR}/pkg-debian/DEBIAN/md5sums"
 
-KANIDM_VERSION="$(./build_deb_get_kanidm_version.sh "${BUILD_DIR}")"
+KANIDM_VERSION="$(/usr/local/sbin/build_deb_get_kanidm_version.sh "${BUILD_DIR}")"
 
 KANIDMD_SIZE="$(du -s --block-size=K "${TEMPDIR}/" | awk '{print $1}' | tr -d 'K')"
 ARCH="$(dpkg --print-architecture)"

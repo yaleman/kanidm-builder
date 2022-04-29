@@ -10,7 +10,7 @@ if [ ! -d "${BUILD_DIR}" ]; then
     echo "Coudn't find build dir (${BUILD_DIR}) bailing."
     exit 1
 fi
-KANIDM_VERSION="$(./build_deb_get_kanidm_version.sh "${BUILD_DIR}")"
+KANIDM_VERSION="$(/usr/local/sbin/build_deb_get_kanidm_version.sh "${BUILD_DIR}")"
 
 if [ -z "${KANIDM_VERSION}" ]; then
     echo "Couldn't pull Kanidm version, bailing"

@@ -216,7 +216,7 @@ git branch -vv
 echo " ### Status ### "
 git status
 
-if [ -z "$(./build_deb_get_kanidm_version.sh)" ]; then
+if [ -z "$(/usr/local/sbin/build_deb_get_kanidm_version.sh)" ]; then
     echo "Coudln't pull kanidm version, bailing"
     exit 1
 fi

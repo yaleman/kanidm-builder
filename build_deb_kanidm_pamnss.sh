@@ -10,6 +10,12 @@ if [ ! -d "${BUILD_DIR}" ]; then
     echo "Coudn't find build dir (${BUILD_DIR}) bailing."
     exit 1
 fi
+KANIDM_VERSION="$(./build_deb_get_kanidm_version.sh "${BUILD_DIR}")"
+
+if [ -z "${KANIDM_VERSION}" ]; then
+    echo "Couldn't pull Kanidm version, bailing"
+    exit 1
+fi
 
 echo "Building .deb package for kanidm-pamnss ${OSID} ${VERSION}"
 
@@ -66,7 +72,6 @@ chmod +x "${TEMPDIR}/pkg-debian/DEBIAN/prerm"
 ##############################################################################
 find . -type f ! -regex '.*?debian-binary.*' ! -regex '.*?debian-binary.*' ! -regex '.*?DEBIAN.*' -printf '%P ' | xargs md5sum > "${TEMPDIR}/pkg-debian/DEBIAN/md5sums"
 
-KANIDM_VERSION="$(./build_deb_get_kanidm_version.sh "${BUILD_DIR}")"
 
 KANIDMD_SIZE="$(du -s --block-size=K "${TEMPDIR}/" | awk '{print $1}' | tr -d 'K')"
 ARCH="$(dpkg --print-architecture)"

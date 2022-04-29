@@ -119,7 +119,6 @@ fi
 
 
 if [ "$(which sccache | wc -l)" -ne 0 ]; then
-
     echo "######################################################"
     echo " Starting sccache"
     echo "######################################################"
@@ -177,7 +176,7 @@ cd /
 
 if [ $NEED_TO_REPLACE_SOURCE_REPO -eq 1 ]; then
     echo "######################################################"
-    echo " Cloning from ${SOURCE_REPO} into ${BUILD_DIR}"
+    echo " Cloning from ${SOURCE_REPO} (branch ${SOURCE_REPO_BRANCH}) into ${BUILD_DIR}"
     echo "######################################################"
     rm -rf /source/*
 
@@ -185,7 +184,7 @@ if [ $NEED_TO_REPLACE_SOURCE_REPO -eq 1 ]; then
 
     if [ ! -f "${BUILD_DIR}" ]; then
         echo "Cloning repo"
-        git clone "${SOURCE_REPO}" "${BUILD_DIR}"
+        git clone --branch "${SOURCE_REPO_BRANCH}" "${SOURCE_REPO}" "${BUILD_DIR}"
     else
         echo "Repo already exists at ${BUILD_DIR}, don't need to clone"
     fi
@@ -216,6 +215,11 @@ echo " ### Branches ### "
 git branch -vv
 echo " ### Status ### "
 git status
+
+if [ -z "$(./build_deb_get_kanidm_version.sh)" ]; then
+    echo "Coudln't pull kanidm version, bailing"
+    exit 1
+fi
 
 echo "######################################################"
 echo " Setup done, starting long tasks"

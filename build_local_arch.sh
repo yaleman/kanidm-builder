@@ -217,7 +217,7 @@ echo " ### Status ### "
 git status
 
 if [ -z "$(/usr/local/sbin/build_deb_get_kanidm_version.sh)" ]; then
-    echo "Coudln't pull kanidm version, bailing"
+    echo "Couldn't pull kanidm version, bailing"
     exit 1
 else
     echo "Building kanidm $(/usr/local/sbin/build_deb_get_kanidm_version.sh)"

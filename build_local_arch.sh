@@ -65,9 +65,9 @@ source /etc/profile.d/identify_os.sh
 BUILD_LOG="/buildlogs/$(date "+%Y-%m-%d-%H-%M")-${OSID}-${VERSION}.log"
 mkdir -p "/buildlogs/"
 touch "${BUILD_LOG}"
-echo "Dumping environment:"
-
-export BUILD_LOG
+# echo "Dumping environment:"
+#
+# export BUILD_LOG
 
 if [ "${OSID}" == "Unknown" ]; then
     echo "Sorry, unsupported OS, quitting"
@@ -219,6 +219,8 @@ git status
 if [ -z "$(/usr/local/sbin/build_deb_get_kanidm_version.sh)" ]; then
     echo "Coudln't pull kanidm version, bailing"
     exit 1
+else
+    echo "Building kanidm $(/usr/local/sbin/build_deb_get_kanidm_version.sh)"
 fi
 
 echo "######################################################"

@@ -338,7 +338,7 @@ def build_version(
 @click.option(
     "--just-build-image", "-j", is_flag=True, default=False, help="Only build the docker image"
 )
-def run_cli(
+def cli(
     version: Optional[str] = None,
     force_build: bool =False,
     keep_volume: bool = False,
@@ -379,4 +379,4 @@ def run_cli(
 
 
 if __name__ == "__main__":
-    run_cli()  # pylint: disable=no-value-for-parameter
+    cli()  # pylint: disable=no-value-for-parameter

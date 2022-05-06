@@ -1,3 +1,11 @@
 .terraform/
 terraform.tf
 .env
+**/__pycache__/*
+venv/
+.vscode/
+.DS_Store
+config.py
+*.egg-info/
+dist/
+build/

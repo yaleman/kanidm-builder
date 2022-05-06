@@ -15,7 +15,7 @@ RUN /usr/bin/zypper --non-interactive install pam-devel \
     sccache \
     which \
     iproute2 \
-    cli \
+    awscli \
     rust
 RUN /usr/bin/zypper clean -a
 

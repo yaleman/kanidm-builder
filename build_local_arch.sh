@@ -142,12 +142,16 @@ echo " Making output dir: ${OUTPUT}"
 echo "######################################################"
 mkdir -p "${OUTPUT}"
 
-RUST_VERSION="$(cat /etc/RUST_VERSION)"
-echo "######################################################"
-echo " Setting rust version to ${RUST_VERSION}"
-echo "######################################################"
-rustup default "${RUST_VERSION}"
+if [ -z "$(which rust)" ]; then
+    RUST_VERSION="$(cat /etc/RUST_VERSION)"
+    echo "######################################################"
+    echo " Setting rust version to ${RUST_VERSION}"
+    echo "######################################################"
+    rustup default "${RUST_VERSION}"
+else
+    echo "Rust is already installed: $(rustc --version)"
 
+fi
 
 NEED_TO_REPLACE_SOURCE_REPO=1
 if [ -f "${BUILD_DIR}/.git/config" ]; then

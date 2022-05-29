@@ -16,7 +16,7 @@ RUN /usr/bin/zypper --non-interactive install pam-devel \
     which \
     unzip \
     iproute2 \
-    rust
+    rust cargo
 RUN /usr/bin/zypper clean -a
 
 # install awscli

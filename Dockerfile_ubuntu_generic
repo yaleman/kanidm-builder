@@ -24,7 +24,7 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/aws
 WORKDIR /tmp/
 RUN unzip awscliv2.zip
 RUN ./aws/install
-RUN rm -rf /tmp/aws/
+RUN rm -rf /tmp/aws*
 
 COPY RUST_VERSION /etc/RUST_VERSION
 COPY identify_os.sh /etc/profile.d/identify_os.sh

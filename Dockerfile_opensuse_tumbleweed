@@ -32,11 +32,11 @@ COPY identify_os.sh /etc/profile.d/identify_os.sh
 # because paths are hard
 RUN echo 'PATH=$HOME/.cargo/bin:$PATH' >> /etc/profile
 
-# because we don't need to run as root, it'd be nice to do this... but rustup gets in the way
+
+COPY build_* /usr/local/sbin/
+RUN chmod 755 /usr/local/sbin/build_*.sh
+
+# TODO: run this as non-root, because we don't need to
 # USER 9000
-
-
-COPY build_local_arch.sh /usr/local/sbin/
-RUN chmod 755 /usr/local/sbin/build_local_arch.sh
 
 CMD ["/usr/local/sbin/build_local_arch.sh" ]

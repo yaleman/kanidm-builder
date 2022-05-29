@@ -185,7 +185,7 @@ def check_if_need_to_build_image(version: str) -> bool:
         logger.debug("image age:    {}", image_age)
         if (image_age) <= MIN_CONTAINER_AGE:
             logger.info(
-                "Skipping image create, image is only {} seconds old", image_age
+                "Skipping image create, image is only {} seconds old", int(image_age)
             )
             return False
         logger.debug("Build image is {} seconds old, building.", image_age)

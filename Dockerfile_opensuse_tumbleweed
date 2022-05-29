@@ -11,6 +11,7 @@ RUN /usr/bin/zypper --non-interactive install pam-devel \
     sqlite3-devel \
     curl \
     git \
+    make \
     gcc \
     sccache \
     which \

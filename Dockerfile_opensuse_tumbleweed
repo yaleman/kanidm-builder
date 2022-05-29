@@ -28,7 +28,6 @@ RUN echo 'PATH=$HOME/.cargo/bin:$PATH' >> /etc/profile
 # because we don't need to run as root, it'd be nice to do this... but rustup gets in the way
 # USER 9000
 
-RUN /usr/local/bin/install-rust.sh
 
 COPY build_local_arch.sh /usr/local/sbin/
 RUN chmod 755 /usr/local/sbin/build_local_arch.sh

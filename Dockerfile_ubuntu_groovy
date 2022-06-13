@@ -15,7 +15,15 @@ RUN apt-get -y install \
     libsqlite3-dev \
     libudev-dev libpam0g-dev \
     python3-pkgconfig \
-    awscli
+    unzip
+
+
+# installing awscli2
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
+WORKDIR /tmp/
+RUN unzip awscliv2.zip
+RUN ./aws/install
+RUN rm -rf /tmp/aws*
 
 COPY RUST_VERSION /etc/RUST_VERSION
 COPY identify_os.sh /etc/profile.d/identify_os.sh

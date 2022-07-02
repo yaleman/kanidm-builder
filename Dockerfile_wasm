@@ -14,8 +14,9 @@ RUN apt-get -y install \
     libudev-dev libpam0g-dev \
     python3-pkgconfig \
     awscli \
-    nodejs npm
-
+    unzip
+    # nodejs npm \
+#
 
 # installing awscli2
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
@@ -38,6 +39,7 @@ RUN /usr/local/bin/install-rust.sh
 COPY build*.sh /usr/local/sbin/
 RUN chmod 755 /usr/local/sbin/build*.sh
 
-RUN cargo install wasm-pack
+RUN /root/.cargo/bin/cargo install wasm-pack
+RUN apt-get clean
 
 ENTRYPOINT ["/usr/local/sbin/build_wasm.sh" ]

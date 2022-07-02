@@ -13,8 +13,7 @@ RUN apt-get -y install \
     libsqlite3-dev \
     libudev-dev libpam0g-dev \
     python3-pkgconfig \
-    awscli \
-    unzip
+    unzip rsync
     # nodejs npm \
 #
 

@@ -62,10 +62,10 @@ if [ -z "${RECOVERY_MODE}" ]; then
     echo " Installing  wasm-pack"
     echo "######################################################"
     RUST_BACKTRACE=full cargo install wasm-pack || failed_build_wasm
-    echo "######################################################"
-    echo " Installing  npm packages"
-    echo "######################################################"
-    npm install --global rollup || failed_build_wasm
+    # echo "######################################################"
+    # echo " Installing  npm packages"
+    # echo "######################################################"
+    # npm install --global rollup || failed_build_wasm
 fi
 
 cd /

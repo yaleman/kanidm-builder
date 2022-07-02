@@ -14,8 +14,6 @@ RUN apt-get -y install \
     libudev-dev libpam0g-dev \
     python3-pkgconfig \
     unzip rsync
-    # nodejs npm \
-#
 
 # installing awscli2
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"

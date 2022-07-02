@@ -16,6 +16,14 @@ RUN apt-get -y install \
     awscli \
     nodejs npm
 
+
+# installing awscli2
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
+WORKDIR /tmp/
+RUN unzip awscliv2.zip
+RUN ./aws/install
+RUN rm -rf /tmp/aws*
+
 COPY RUST_VERSION /etc/RUST_VERSION
 COPY identify_os.sh /etc/profile.d/identify_os.sh
 
@@ -29,5 +37,7 @@ RUN /usr/local/bin/install-rust.sh
 
 COPY build*.sh /usr/local/sbin/
 RUN chmod 755 /usr/local/sbin/build*.sh
+
+RUN cargo install wasm-pack
 
 ENTRYPOINT ["/usr/local/sbin/build_wasm.sh" ]

@@ -124,7 +124,7 @@ else
         echo "Coudln't move into ${BUILD_DIR}/kanidmd_web_ui bailing" | tee -a "${BUILD_LOG}"
         exit 1
     }
-    ./build_wasm.sh || {
+    ./build_wasm_release.sh || {
         echo "Unable to build WASM, bailing" | tee -a "${BUILD_LOG}"
         exit 1
     }

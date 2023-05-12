@@ -142,14 +142,14 @@ graph = ["objgraph (>=1.7.2)"]
 
 [[package]]
 name = "docker"
-version = "6.1.0"
+version = "6.1.2"
 description = "A Python library for the Docker Engine API."
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "docker-6.1.0-py3-none-any.whl", hash = "sha256:b65c999f87cb5c31700b6944dc17a631071170d1aab3ad6e23506068579f885d"},
-    {file = "docker-6.1.0.tar.gz", hash = "sha256:cb697eccfeff55d232f7a7f4f88cd3770d27327c38d6c266b8f55c9f14a8491e"},
+    {file = "docker-6.1.2-py3-none-any.whl", hash = "sha256:134cd828f84543cbf8e594ff81ca90c38288df3c0a559794c12f2e4b634ea19e"},
+    {file = "docker-6.1.2.tar.gz", hash = "sha256:dcc088adc2ec4e7cfc594e275d8bd2c9738c56c808de97476939ef67db5af8c2"},
 ]
 
 [package.dependencies]
@@ -749,4 +749,4 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7"
-content-hash = "08b75b44bef21e6701d2f0bdfbbb9630c99b097d36e1b238a63ae5e4fdcce587"
+content-hash = "94000af99d182f2f881e25ab491721bc093ff8661ee693a329f6b71d06be7382"
